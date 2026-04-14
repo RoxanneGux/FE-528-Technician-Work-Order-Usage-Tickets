@@ -194,9 +194,10 @@ export class WorkOrderDetailsComponent {
   ];
 
   public readonly moreActions = [
-    { title: 'Print Work Order', action: () => console.log('Action: Print Work Order') },
-    { title: 'Duplicate Work Order', action: () => console.log('Action: Duplicate Work Order') },
-    { title: 'View History', action: () => console.log('Action: View History') },
+    { title: 'Assignments', action: () => this.onAddEmployee() },
+    { title: 'Add Labor', action: () => console.log('Action: Add Labor') },
+    { title: 'Add Parts', action: () => console.log('Action: Add Parts') },
+    { title: 'Add Commercial', action: () => console.log('Action: Add Commercial') },
   ];
 
   // ── Actions ──
