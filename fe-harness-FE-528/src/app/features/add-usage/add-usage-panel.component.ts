@@ -27,7 +27,6 @@ import {
 } from '@assetworks-llc/aw-component-lib';
 
 import { MockDataService } from '../../services/mock-data.service';
-import { DialogService } from '../../services/dialog.service';
 import { UsageAssetSearchDialogComponent } from './asset-search-dialog.component';
 import { UsageTaskSearchDialogComponent } from './task-search-dialog.component';
 import {
@@ -59,6 +58,8 @@ import {
     AwIconComponent,
     AwInputDirective,
     AwSelectMenuComponent,
+    UsageAssetSearchDialogComponent,
+    UsageTaskSearchDialogComponent,
   ],
   providers: [provideNativeDateAdapter()],
   templateUrl: './add-usage-panel.component.html',
@@ -68,7 +69,6 @@ export class AddUsagePanelComponent {
   public readonly close = output<UsageEntryResult | null>();
 
   private readonly _mockData = inject(MockDataService);
-  private readonly _dialogService = inject(DialogService);
 
   /** Set by PanelService via Object.assign. Controls which fields are visible. */
   public displayMode: UsageDisplayMode = 'all';
@@ -193,27 +193,41 @@ export class AddUsagePanelComponent {
     }
   }
 
+  /** Show/hide asset search dialog. */
+  public readonly showAssetSearchDialog = signal(false);
+
+  /** Show/hide task search dialog. */
+  public readonly showTaskSearchDialog = signal(false);
+
   /** Close panel without returning data. */
   public onCancel(): void {
     this.close.emit(null);
   }
 
-  /** Open asset search dialog and populate the asset field on selection. */
+  /** Open asset search dialog. */
   public onAssetSearch(): void {
-    this._dialogService.open(UsageAssetSearchDialogComponent, {}, (result) => {
-      if (result) {
-        this.singleEntryForm.get('asset')?.setValue(result.assetId || result.AssetId);
-      }
-    });
+    this.showAssetSearchDialog.set(true);
   }
 
-  /** Open task search dialog and populate the task field on selection. */
+  /** Handle asset search dialog close. */
+  public onAssetSearchClose(result: any): void {
+    this.showAssetSearchDialog.set(false);
+    if (result?.action === 'go' && result.selectedAsset) {
+      this.singleEntryForm.get('asset')?.setValue(`(${result.selectedAsset.EquipmentId}) ${result.selectedAsset.EquipmentDescription}`);
+    }
+  }
+
+  /** Open task search dialog. */
   public onTaskSearch(): void {
-    this._dialogService.open(UsageTaskSearchDialogComponent, {}, (result) => {
-      if (result) {
-        this.singleEntryForm.get('task')?.setValue(result.taskId || result.TaskId);
-      }
-    });
+    this.showTaskSearchDialog.set(true);
+  }
+
+  /** Handle task search dialog close. */
+  public onTaskSearchClose(result: any): void {
+    this.showTaskSearchDialog.set(false);
+    if (result && result instanceof Set) {
+      this.singleEntryForm.get('task')?.setValue(Array.from(result).join(', '));
+    }
   }
 
   /** Create a new FormGroup for a usage entry row with today's date as default. */

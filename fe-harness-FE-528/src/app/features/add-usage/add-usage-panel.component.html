@@ -380,3 +380,13 @@
 <div class="aw-sticky-footer">
   <aw-action-bar [actionsLeft]="footerActionsLeft" [actionsRight]="footerActionsRight"></aw-action-bar>
 </div>
+
+<!-- Asset Search Dialog -->
+@if (showAssetSearchDialog()) {
+  <app-usage-asset-search-dialog (close)="onAssetSearchClose($event)"></app-usage-asset-search-dialog>
+}
+
+<!-- Task Search Dialog -->
+@if (showTaskSearchDialog()) {
+  <app-usage-task-search-dialog (close)="onTaskSearchClose($event)"></app-usage-task-search-dialog>
+}
