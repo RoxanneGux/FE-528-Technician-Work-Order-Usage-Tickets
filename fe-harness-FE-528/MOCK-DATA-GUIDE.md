@@ -336,3 +336,32 @@ Times are formatted as "H:MM AM/PM" (e.g., "9:00 AM", "2:30 PM").
 | Skill: Welding | Robert Chen, Lisa Thompson, Angela Foster |
 | Skill: HVAC | Sarah Williams, Lisa Thompson, Kevin Wright, Angela Foster |
 | Location: Building A + Skill: Electrical | Sarah Williams, Maria Garcia |
+
+
+## Asset Search (Add Usage Panel)
+
+The Asset search dialog in the Add Usage panel shows assets after typing 2+ characters. Includes fleet and linear assets.
+
+### Assets (10 total)
+
+| Equipment ID | Description | Asset Type | Asset Number | Active |
+|---|---|---|---|---|
+| R-12345 | MOTOR POOL SEDAN | Vehicle | R-12345 | Yes |
+| QA-FLEET-002 | QA FLEET TRUCK 002 | Vehicle | QA-FLEET-002 | Yes |
+| K123-456 | SERIES 50 DETROIT DIESEL GAS ENGINE | Engine | K123-456 | Yes |
+| QA-C-001 | CARGO VAN 2500 | Vehicle | QA-C-001 | Yes |
+| FL-VAN-03 | FLEET VAN 03 | Vehicle | FL-VAN-03 | Yes |
+| TX-TRUCK-07 | PICKUP TRUCK F-150 | Vehicle | TX-TRUCK-07 | Yes |
+| EQ-4821 | CENTRIFUGAL PUMP | Pump | EQ-4821 | Yes |
+| EQ-5102 | HYDRAULIC PRESS | Press | EQ-5102 | No |
+| ROAD07 | HIGHWAY 07 - MAIN CORRIDOR | Linear | ROAD07 | Yes |
+| UX-BRIDGE-LINEAR | UX TEST BRIDGE - LINEAR ASSET | Linear | UX-BRIDGE-LINEAR | Yes |
+
+### Asset Search Scenarios
+
+| I want to... | How |
+|---|---|
+| Search for fleet assets | Type "van" or "truck" or "sedan" in the search field |
+| Search for linear assets | Type "road" or "bridge" in the search field |
+| See inactive assets | Toggle "Include inactive assets" ON, then search for "press" (EQ-5102 is inactive) |
+| Select an asset | Click a row, then click "Go" |
