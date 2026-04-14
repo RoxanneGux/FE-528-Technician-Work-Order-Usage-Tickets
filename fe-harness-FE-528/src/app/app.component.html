@@ -1,0 +1,18 @@
+<aw-navigation-menu
+  [options]="navigationOptions()"
+  [menuItems]="menuItems()"
+  [userInformation]="userInformation()"
+  ariaLabel="Main navigation">
+  
+  <aw-top-navigation
+    [options]="topNavOptions()"
+    [navigationOptions]="searchOptions()"
+    searchPlaceholder="Search">
+  </aw-top-navigation>
+
+  <router-outlet />
+</aw-navigation-menu>
+
+<button class="theme-toggle-fab" (click)="toggleTheme()" [attr.aria-label]="isDarkMode() ? 'Switch to light mode' : 'Switch to dark mode'">
+  <aw-icon [iconName]="isDarkMode() ? 'light_mode' : 'dark_mode'" [iconColor]="''"></aw-icon>
+</button>

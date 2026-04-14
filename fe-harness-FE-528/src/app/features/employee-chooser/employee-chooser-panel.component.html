@@ -1,0 +1,138 @@
+<div class="employee-chooser-wrapper">
+  <div class="content-container">
+    <!-- Title -->
+    <aw-divider [title]="'Employee Selection'"></aw-divider>
+
+    <!-- Filter action bar: Search + Crew + Employee + filter icon -->
+    <div class="filter-action-bar">
+      <div class="filter-fields">
+        <aw-form-field class="filter-field">
+          <aw-icon [iconName]="'search'" position="prefix"></aw-icon>
+          <input AwInput [placeholder]="'Search'" [formControl]="searchControl" />
+        </aw-form-field>
+
+        <div class="filter-field">
+          <aw-form-field-label [required]="false">Crew</aw-form-field-label>
+          <aw-select-menu
+            placeholder="Filter on crew"
+            [ariaLabel]="'Crew filter'"
+            [singleSelectListItems]="crewFilterOptions()"
+            [enableListReset]="true"
+            [formControl]="crewFilterControl">
+          </aw-select-menu>
+        </div>
+
+        <div class="filter-field">
+          <aw-form-field-label [required]="false">Employee</aw-form-field-label>
+          <aw-select-menu
+            placeholder="Filter on employee"
+            [ariaLabel]="'Employee filter'"
+            [singleSelectListItems]="employeeFilterOptions()"
+            [enableListReset]="true"
+            [formControl]="employeeFilterControl">
+          </aw-select-menu>
+        </div>
+      </div>
+
+      <div class="filter-icon">
+        <button
+          AwButtonIconOnly
+          [buttonType]="'primary'"
+          [active]="activeFilterChips().length > 0"
+          [ariaLabel]="'Additional filters'"
+          (click)="openAdvancedFilter()">
+          <aw-icon [iconName]="'filter_list'" [iconColor]="''"></aw-icon>
+        </button>
+      </div>
+    </div>
+
+    <!-- Filter chips from side drawer -->
+    @if (activeFilterChips().length > 0) {
+      <div class="filter-chips-row">
+        @for (chip of activeFilterChips(); track chip) {
+          <aw-chip
+            [label]="chip"
+            [variant]="'outline'"
+            [id]="chip"
+            [showRemoveButton]="true"
+            (removed)="removeFilterChip(chip)">
+          </aw-chip>
+        }
+      </div>
+    }
+
+    <!-- Employee table -->
+    <!--
+      DEV NOTE: aw-table's empty state ".no-content" has no bottom padding by default.
+      Add this to your component SCSS or global styles to match the Figma design:
+        :host ::ng-deep aw-table .no-content { padding-bottom: 16px; }
+      In this harness it's applied globally in src/styles.scss under ".panel-overlay aw-table .no-content".
+    -->
+    <div class="d-block" (click)="onEmployeeDetailClick($event)">
+      <aw-table
+        [columnsDefinition]="columns"
+        [tableData]="tableData()"
+        [tableHeight]="'calc(100vh - 420px)'"
+        (checkboxList)="onCheckboxChange($event)">
+      </aw-table>
+    </div>
+
+    <!-- Add Employee(s) action bar below table -->
+    <div class="add-employee-bar">
+      @if (pendingSelection().size > 0) {
+        <button AwButton [buttonType]="'text'" (click)="clearAllSelections()">
+          <span>Clear All</span>
+        </button>
+      }
+      <button
+        AwButton
+        [buttonType]="'outlined'"
+        [disable]="pendingSelection().size === 0"
+        (click)="addPendingToSelection()">
+        <span>Add Employee(s)</span>
+        <aw-icon [iconName]="'arrow_downward'"></aw-icon>
+      </button>
+    </div>
+
+    <!-- Selected employees section — chips display -->
+    <div class="selected-employees-section">
+      @if (combinedSelectedEmployees().length > 0) {
+        <hr class="selected-divider" />
+        <span class="aw-st-1">Selected Employees</span>
+        <div class="selected-chips-row">
+          @for (emp of combinedSelectedEmployees(); track emp.EmployeeId) {
+            <aw-chip
+              [label]="emp.Name + ' - ' + emp.EmployeeId"
+              [variant]="'outline'"
+              [id]="emp.EmployeeId"
+              [showRemoveButton]="true"
+              (removed)="removeFromSelection(emp.EmployeeId)">
+            </aw-chip>
+          }
+        </div>
+      } @else {
+        <p class="no-selection-text">
+          No employees selected yet. Use the table above to find the employees to add to Work order
+        </p>
+      }
+    </div>
+  </div>
+</div>
+
+<!-- Footer action bar -->
+<div class="aw-sticky-footer">
+  <aw-action-bar
+    [actionsLeft]="footerActionsLeft()"
+    [actionsRight]="footerActionsRight()">
+  </aw-action-bar>
+</div>
+
+<!-- Side drawer with aw-filter-drawer for proper layout -->
+<aw-side-drawer [openFromRight]="true" #sideDrawerFilter>
+  <aw-filter-drawer
+    #filterDrawer
+    [drawerInformation]="drawerInfo"
+    [filterData]="filterData()"
+    (submittedDrawerData)="onFilterDrawerSubmit($event)">
+  </aw-filter-drawer>
+</aw-side-drawer>

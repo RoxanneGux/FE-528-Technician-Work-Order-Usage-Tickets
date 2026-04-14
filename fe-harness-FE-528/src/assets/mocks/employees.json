@@ -1,0 +1,831 @@
+{
+  "crews": [
+    { "crewId": "CRW-A", "description": "Maintenance Crew A" },
+    { "crewId": "CRW-B", "description": "Maintenance Crew B" },
+    { "crewId": "CRW-C", "description": "Electrical Crew" }
+  ],
+  "crewEmployees": [
+    {
+      "employeeId": "EMP-101",
+      "name": "Robert Chen",
+      "primaryCrewId": "CRW-A",
+      "crewDescription": "Maintenance Crew A",
+      "status": "Busy",
+      "isClockedIn": true,
+      "locationId": "LOC-01",
+      "shiftId": "SH-1",
+      "skills": ["SK-01", "SK-03"]
+    },
+    {
+      "employeeId": "EMP-102",
+      "name": "Sarah Williams",
+      "primaryCrewId": "CRW-A",
+      "crewDescription": "Maintenance Crew A",
+      "status": "Available",
+      "isClockedIn": true,
+      "locationId": "LOC-01",
+      "shiftId": "SH-1",
+      "skills": ["SK-02", "SK-04"]
+    },
+    {
+      "employeeId": "EMP-103",
+      "name": "James Martinez",
+      "primaryCrewId": "CRW-A",
+      "crewDescription": "Maintenance Crew A",
+      "status": "Available",
+      "isClockedIn": false,
+      "locationId": "LOC-02",
+      "shiftId": "SH-2",
+      "skills": ["SK-01"]
+    },
+    {
+      "employeeId": "EMP-104",
+      "name": "David Park",
+      "primaryCrewId": "CRW-B",
+      "crewDescription": "Maintenance Crew B",
+      "status": "Busy",
+      "isClockedIn": true,
+      "locationId": "LOC-02",
+      "shiftId": "SH-1",
+      "skills": ["SK-01", "SK-02"]
+    },
+    {
+      "employeeId": "EMP-105",
+      "name": "Lisa Thompson",
+      "primaryCrewId": "CRW-B",
+      "crewDescription": "Maintenance Crew B",
+      "status": "Available",
+      "isClockedIn": true,
+      "locationId": "LOC-03",
+      "shiftId": "SH-2",
+      "skills": ["SK-03", "SK-04"]
+    },
+    {
+      "employeeId": "EMP-106",
+      "name": "Maria Garcia",
+      "primaryCrewId": "CRW-C",
+      "crewDescription": "Electrical Crew",
+      "status": "Available",
+      "isClockedIn": true,
+      "locationId": "LOC-01",
+      "shiftId": "SH-3",
+      "skills": ["SK-02"]
+    },
+    {
+      "employeeId": "EMP-107",
+      "name": "Kevin Wright",
+      "primaryCrewId": "CRW-C",
+      "crewDescription": "Electrical Crew",
+      "status": "Busy",
+      "isClockedIn": true,
+      "locationId": "LOC-03",
+      "shiftId": "SH-1",
+      "skills": ["SK-02", "SK-04"]
+    },
+    {
+      "employeeId": "EMP-108",
+      "name": "Angela Foster",
+      "primaryCrewId": "CRW-A",
+      "crewDescription": "Maintenance Crew A",
+      "status": "Available",
+      "isClockedIn": true,
+      "locationId": "LOC-02",
+      "shiftId": "SH-3",
+      "skills": ["SK-01", "SK-03", "SK-04"]
+    }
+  ],
+  "advancedSearchEmployees": [
+    { "employeeId": "EMP-101", "name": "Robert Chen", "isClockedIn": true, "isJobbedOn": true },
+    { "employeeId": "EMP-102", "name": "Sarah Williams", "isClockedIn": true, "isJobbedOn": false },
+    { "employeeId": "EMP-103", "name": "James Martinez", "isClockedIn": false, "isJobbedOn": false },
+    { "employeeId": "EMP-104", "name": "David Park", "isClockedIn": true, "isJobbedOn": true },
+    { "employeeId": "EMP-105", "name": "Lisa Thompson", "isClockedIn": true, "isJobbedOn": false },
+    { "employeeId": "EMP-106", "name": "Maria Garcia", "isClockedIn": true, "isJobbedOn": false },
+    { "employeeId": "EMP-107", "name": "Kevin Wright", "isClockedIn": true, "isJobbedOn": true },
+    { "employeeId": "EMP-108", "name": "Angela Foster", "isClockedIn": true, "isJobbedOn": false }
+  ],
+  "filterOptions": {
+    "locations": [
+      { "id": "LOC-01", "name": "Building A" },
+      { "id": "LOC-02", "name": "Building B" },
+      { "id": "LOC-03", "name": "Warehouse" }
+    ],
+    "shifts": [
+      { "id": "SH-1", "description": "Day Shift (7AM-3PM)" },
+      { "id": "SH-2", "description": "Swing Shift (3PM-11PM)" },
+      { "id": "SH-3", "description": "Night Shift (11PM-7AM)" }
+    ],
+    "skills": [
+      { "id": "SK-01", "description": "Mechanical" },
+      { "id": "SK-02", "description": "Electrical" },
+      { "id": "SK-03", "description": "Welding" },
+      { "id": "SK-04", "description": "HVAC" }
+    ],
+    "crews": [
+      { "crewId": "CRW-A", "description": "Maintenance Crew A" },
+      { "crewId": "CRW-B", "description": "Maintenance Crew B" },
+      { "crewId": "CRW-C", "description": "Electrical Crew" }
+    ]
+  },
+  "employeeDetails": [
+    {
+      "employeeId": "EMP-101",
+      "timeCodeSummary": {
+        "todaysTimesheet": 6.5,
+        "capacityHours": 8.0,
+        "nwaHours": 1.0,
+        "hoursAvailable": 0.5,
+        "assignedHours": 7.5
+      },
+      "locations": [
+        { "locationId": "LOC-01", "locationName": "Building A", "isDefault": true },
+        { "locationId": "LOC-02", "locationName": "Building B", "isDefault": false }
+      ],
+      "workOrders": [
+        {
+          "workOrderId": "WO-2024-001",
+          "description": "HVAC System Repair - Building A",
+          "status": "In Progress",
+          "priority": "High",
+          "tasks": [
+            {
+              "taskId": "TSK-101",
+              "taskDescription": "Inspect compressor unit",
+              "estimatedHours": 2.0,
+              "chargedHours": 1.5,
+              "remainingHours": 0.5,
+              "status": "In Progress"
+            },
+            {
+              "taskId": "TSK-102",
+              "taskDescription": "Replace refrigerant lines",
+              "estimatedHours": 3.0,
+              "chargedHours": 0.0,
+              "remainingHours": 3.0,
+              "status": "Not Started"
+            }
+          ]
+        },
+        {
+          "workOrderId": "WO-2024-002",
+          "description": "Welding Repair - Warehouse Support Beams",
+          "status": "Scheduled",
+          "priority": "Medium",
+          "tasks": [
+            {
+              "taskId": "TSK-103",
+              "taskDescription": "Assess structural damage",
+              "estimatedHours": 1.5,
+              "chargedHours": 0.0,
+              "remainingHours": 1.5,
+              "status": "Not Started"
+            }
+          ]
+        }
+      ],
+      "appointments": [
+        {
+          "id": "APT-001",
+          "title": "Safety Training",
+          "start": "2024-12-10T09:00:00",
+          "end": "2024-12-10T11:00:00",
+          "color": "#4285f4"
+        },
+        {
+          "id": "APT-002",
+          "title": "Team Standup",
+          "start": "2024-12-11T08:00:00",
+          "end": "2024-12-11T08:30:00",
+          "color": "#34a853"
+        }
+      ],
+      "nonWorkActivities": [
+        {
+          "id": "NWA-101",
+          "type": "Training",
+          "start": "2024-12-10T13:00:00",
+          "end": "2024-12-10T15:00:00",
+          "hours": 2.0
+        },
+        {
+          "id": "NWA-102",
+          "type": "Vacation",
+          "start": "2024-12-17T08:00:00",
+          "end": "2024-12-17T17:00:00",
+          "hours": 8.0
+        }
+      ],
+      "indirectTasks": [
+        { "taskId": "IDT-101", "taskDescription": "Shop floor sweeping", "timePosted": 0.5 },
+        { "taskId": "IDT-102", "taskDescription": "Safety meeting attendance", "timePosted": 1.0 }
+      ]
+    },
+    {
+      "employeeId": "EMP-102",
+      "timeCodeSummary": {
+        "todaysTimesheet": 4.0,
+        "capacityHours": 8.0,
+        "nwaHours": 0.5,
+        "hoursAvailable": 3.5,
+        "assignedHours": 4.5
+      },
+      "locations": [
+        { "locationId": "LOC-01", "locationName": "Building A", "isDefault": true }
+      ],
+      "workOrders": [
+        {
+          "workOrderId": "WO-2024-003",
+          "description": "Electrical Panel Upgrade - Building A",
+          "status": "In Progress",
+          "priority": "High",
+          "tasks": [
+            {
+              "taskId": "TSK-201",
+              "taskDescription": "Disconnect old panel",
+              "estimatedHours": 1.5,
+              "chargedHours": 1.5,
+              "remainingHours": 0.0,
+              "status": "Completed"
+            },
+            {
+              "taskId": "TSK-202",
+              "taskDescription": "Install new breaker panel",
+              "estimatedHours": 3.0,
+              "chargedHours": 1.0,
+              "remainingHours": 2.0,
+              "status": "In Progress"
+            },
+            {
+              "taskId": "TSK-203",
+              "taskDescription": "Test circuits and label breakers",
+              "estimatedHours": 1.0,
+              "chargedHours": 0.0,
+              "remainingHours": 1.0,
+              "status": "Not Started"
+            }
+          ]
+        },
+        {
+          "workOrderId": "WO-2024-004",
+          "description": "HVAC Filter Replacement - Building A",
+          "status": "Scheduled",
+          "priority": "Low",
+          "tasks": [
+            {
+              "taskId": "TSK-204",
+              "taskDescription": "Replace air filters on floors 1-3",
+              "estimatedHours": 2.0,
+              "chargedHours": 0.0,
+              "remainingHours": 2.0,
+              "status": "Not Started"
+            }
+          ]
+        }
+      ],
+      "appointments": [
+        {
+          "id": "APT-003",
+          "title": "Electrical Safety Certification",
+          "start": "2024-12-12T13:00:00",
+          "end": "2024-12-12T16:00:00",
+          "color": "#fbbc04"
+        }
+      ],
+      "nonWorkActivities": [
+        {
+          "id": "NWA-201",
+          "type": "Sick Leave",
+          "start": "2024-12-11T08:00:00",
+          "end": "2024-12-11T17:00:00",
+          "hours": 8.0
+        },
+        {
+          "id": "NWA-202",
+          "type": "Meeting",
+          "start": "2024-12-17T10:00:00",
+          "end": "2024-12-17T11:30:00",
+          "hours": 1.5
+        }
+      ],
+      "indirectTasks": [
+        { "taskId": "IDT-201", "taskDescription": "Tool inventory check", "timePosted": 0.75 }
+      ]
+    },
+    {
+      "employeeId": "EMP-103",
+      "timeCodeSummary": {
+        "todaysTimesheet": 0.0,
+        "capacityHours": 8.0,
+        "nwaHours": 0.0,
+        "hoursAvailable": 8.0,
+        "assignedHours": 0.0
+      },
+      "locations": [
+        { "locationId": "LOC-02", "locationName": "Building B", "isDefault": true }
+      ],
+      "workOrders": [
+        {
+          "workOrderId": "WO-2024-005",
+          "description": "Conveyor Belt Maintenance - Building B",
+          "status": "Scheduled",
+          "priority": "Medium",
+          "tasks": [
+            {
+              "taskId": "TSK-301",
+              "taskDescription": "Lubricate bearings and rollers",
+              "estimatedHours": 2.0,
+              "chargedHours": 0.0,
+              "remainingHours": 2.0,
+              "status": "Not Started"
+            },
+            {
+              "taskId": "TSK-302",
+              "taskDescription": "Inspect belt tension and alignment",
+              "estimatedHours": 1.0,
+              "chargedHours": 0.0,
+              "remainingHours": 1.0,
+              "status": "Not Started"
+            }
+          ]
+        }
+      ],
+      "appointments": [],
+      "nonWorkActivities": [
+        {
+          "id": "NWA-301",
+          "type": "Vacation",
+          "start": "2024-12-10T08:00:00",
+          "end": "2024-12-10T17:00:00",
+          "hours": 8.0
+        },
+        {
+          "id": "NWA-302",
+          "type": "Training",
+          "start": "2024-12-17T09:00:00",
+          "end": "2024-12-17T12:00:00",
+          "hours": 3.0
+        }
+      ],
+      "indirectTasks": [
+        { "taskId": "IDT-301", "taskDescription": "Break room cleanup", "timePosted": 0.25 },
+        { "taskId": "IDT-302", "taskDescription": "New hire orientation support", "timePosted": 1.5 }
+      ]
+    },
+    {
+      "employeeId": "EMP-104",
+      "timeCodeSummary": {
+        "todaysTimesheet": 7.5,
+        "capacityHours": 8.0,
+        "nwaHours": 0.0,
+        "hoursAvailable": 0.5,
+        "assignedHours": 7.5
+      },
+      "locations": [
+        { "locationId": "LOC-02", "locationName": "Building B", "isDefault": true },
+        { "locationId": "LOC-03", "locationName": "Warehouse", "isDefault": false }
+      ],
+      "workOrders": [
+        {
+          "workOrderId": "WO-2024-006",
+          "description": "Generator Overhaul - Building B",
+          "status": "In Progress",
+          "priority": "Critical",
+          "tasks": [
+            {
+              "taskId": "TSK-401",
+              "taskDescription": "Drain and replace engine oil",
+              "estimatedHours": 1.0,
+              "chargedHours": 1.0,
+              "remainingHours": 0.0,
+              "status": "Completed"
+            },
+            {
+              "taskId": "TSK-402",
+              "taskDescription": "Replace spark plugs and air filter",
+              "estimatedHours": 1.5,
+              "chargedHours": 1.5,
+              "remainingHours": 0.0,
+              "status": "Completed"
+            },
+            {
+              "taskId": "TSK-403",
+              "taskDescription": "Test load capacity and voltage output",
+              "estimatedHours": 2.0,
+              "chargedHours": 1.0,
+              "remainingHours": 1.0,
+              "status": "In Progress"
+            }
+          ]
+        },
+        {
+          "workOrderId": "WO-2024-007",
+          "description": "Electrical Wiring Inspection - Warehouse",
+          "status": "Scheduled",
+          "priority": "High",
+          "tasks": [
+            {
+              "taskId": "TSK-404",
+              "taskDescription": "Inspect main distribution panel",
+              "estimatedHours": 1.5,
+              "chargedHours": 0.0,
+              "remainingHours": 1.5,
+              "status": "Not Started"
+            },
+            {
+              "taskId": "TSK-405",
+              "taskDescription": "Test ground fault circuits",
+              "estimatedHours": 1.0,
+              "chargedHours": 0.0,
+              "remainingHours": 1.0,
+              "status": "Not Started"
+            }
+          ]
+        },
+        {
+          "workOrderId": "WO-2024-008",
+          "description": "Dock Door Motor Repair - Warehouse",
+          "status": "On Hold",
+          "priority": "Medium",
+          "tasks": [
+            {
+              "taskId": "TSK-406",
+              "taskDescription": "Diagnose motor failure",
+              "estimatedHours": 1.0,
+              "chargedHours": 0.5,
+              "remainingHours": 0.5,
+              "status": "In Progress"
+            }
+          ]
+        }
+      ],
+      "appointments": [
+        {
+          "id": "APT-004",
+          "title": "Quarterly Performance Review",
+          "start": "2024-12-13T10:00:00",
+          "end": "2024-12-13T11:00:00",
+          "color": "#ea4335"
+        },
+        {
+          "id": "APT-005",
+          "title": "Equipment Calibration Training",
+          "start": "2024-12-15T09:00:00",
+          "end": "2024-12-15T12:00:00",
+          "color": "#4285f4"
+        },
+        {
+          "id": "APT-006",
+          "title": "Warehouse Safety Walk",
+          "start": "2024-12-18T14:00:00",
+          "end": "2024-12-18T15:30:00",
+          "color": "#34a853"
+        }
+      ],
+      "nonWorkActivities": [
+        {
+          "id": "NWA-401",
+          "type": "Meeting",
+          "start": "2024-12-11T14:00:00",
+          "end": "2024-12-11T15:00:00",
+          "hours": 1.0
+        },
+        {
+          "id": "NWA-402",
+          "type": "Sick Leave",
+          "start": "2024-12-18T08:00:00",
+          "end": "2024-12-18T17:00:00",
+          "hours": 8.0
+        }
+      ],
+      "indirectTasks": []
+    },
+    {
+      "employeeId": "EMP-105",
+      "timeCodeSummary": {
+        "todaysTimesheet": 5.0,
+        "capacityHours": 8.0,
+        "nwaHours": 2.0,
+        "hoursAvailable": 1.0,
+        "assignedHours": 7.0
+      },
+      "locations": [
+        { "locationId": "LOC-03", "locationName": "Warehouse", "isDefault": true },
+        { "locationId": "LOC-01", "locationName": "Building A", "isDefault": false }
+      ],
+      "workOrders": [
+        {
+          "workOrderId": "WO-2024-009",
+          "description": "Pipe Welding - Warehouse Sprinkler System",
+          "status": "In Progress",
+          "priority": "High",
+          "tasks": [
+            {
+              "taskId": "TSK-501",
+              "taskDescription": "Cut and prep pipe sections",
+              "estimatedHours": 2.0,
+              "chargedHours": 2.0,
+              "remainingHours": 0.0,
+              "status": "Completed"
+            },
+            {
+              "taskId": "TSK-502",
+              "taskDescription": "Weld pipe joints",
+              "estimatedHours": 3.0,
+              "chargedHours": 1.5,
+              "remainingHours": 1.5,
+              "status": "In Progress"
+            },
+            {
+              "taskId": "TSK-503",
+              "taskDescription": "Pressure test welded sections",
+              "estimatedHours": 1.0,
+              "chargedHours": 0.0,
+              "remainingHours": 1.0,
+              "status": "Not Started"
+            }
+          ]
+        },
+        {
+          "workOrderId": "WO-2024-010",
+          "description": "HVAC Ductwork Repair - Building A",
+          "status": "Scheduled",
+          "priority": "Low",
+          "tasks": [
+            {
+              "taskId": "TSK-504",
+              "taskDescription": "Seal duct joints and insulate",
+              "estimatedHours": 2.5,
+              "chargedHours": 0.0,
+              "remainingHours": 2.5,
+              "status": "Not Started"
+            }
+          ]
+        }
+      ],
+      "appointments": [
+        {
+          "id": "APT-007",
+          "title": "Welding Certification Renewal",
+          "start": "2024-12-16T08:00:00",
+          "end": "2024-12-16T12:00:00",
+          "color": "#fbbc04"
+        },
+        {
+          "id": "APT-008",
+          "title": "Fire Suppression System Review",
+          "start": "2024-12-19T13:00:00",
+          "end": "2024-12-19T14:00:00",
+          "color": "#ea4335"
+        }
+      ],
+      "nonWorkActivities": [
+        {
+          "id": "NWA-501",
+          "type": "Training",
+          "start": "2024-12-10T13:00:00",
+          "end": "2024-12-10T16:00:00",
+          "hours": 3.0
+        },
+        {
+          "id": "NWA-502",
+          "type": "Meeting",
+          "start": "2024-12-17T08:00:00",
+          "end": "2024-12-17T09:00:00",
+          "hours": 1.0
+        }
+      ],
+      "indirectTasks": [
+        { "taskId": "IDT-501", "taskDescription": "Equipment calibration log entry", "timePosted": 0.5 }
+      ]
+    },
+    {
+      "employeeId": "EMP-106",
+      "timeCodeSummary": {
+        "todaysTimesheet": 3.0,
+        "capacityHours": 8.0,
+        "nwaHours": 0.0,
+        "hoursAvailable": 5.0,
+        "assignedHours": 3.0
+      },
+      "locations": [
+        { "locationId": "LOC-01", "locationName": "Building A", "isDefault": true },
+        { "locationId": "LOC-03", "locationName": "Warehouse", "isDefault": false }
+      ],
+      "workOrders": [],
+      "appointments": [
+        {
+          "id": "APT-009",
+          "title": "New Employee Orientation Support",
+          "start": "2024-12-10T10:00:00",
+          "end": "2024-12-10T12:00:00",
+          "color": "#4285f4"
+        }
+      ],
+      "nonWorkActivities": [
+        {
+          "id": "NWA-601",
+          "type": "Vacation",
+          "start": "2024-12-11T08:00:00",
+          "end": "2024-12-11T17:00:00",
+          "hours": 8.0
+        },
+        {
+          "id": "NWA-602",
+          "type": "Sick Leave",
+          "start": "2024-12-17T08:00:00",
+          "end": "2024-12-17T12:00:00",
+          "hours": 4.0
+        }
+      ],
+      "indirectTasks": []
+    },
+    {
+      "employeeId": "EMP-107",
+      "timeCodeSummary": {
+        "todaysTimesheet": 8.0,
+        "capacityHours": 8.0,
+        "nwaHours": 0.5,
+        "hoursAvailable": 0.0,
+        "assignedHours": 7.5
+      },
+      "locations": [
+        { "locationId": "LOC-03", "locationName": "Warehouse", "isDefault": true }
+      ],
+      "workOrders": [
+        {
+          "workOrderId": "WO-2024-011",
+          "description": "Emergency Lighting Replacement - Warehouse",
+          "status": "In Progress",
+          "priority": "High",
+          "tasks": [
+            {
+              "taskId": "TSK-701",
+              "taskDescription": "Remove old emergency light fixtures",
+              "estimatedHours": 2.0,
+              "chargedHours": 2.0,
+              "remainingHours": 0.0,
+              "status": "Completed"
+            },
+            {
+              "taskId": "TSK-702",
+              "taskDescription": "Install new LED emergency lights",
+              "estimatedHours": 3.0,
+              "chargedHours": 2.5,
+              "remainingHours": 0.5,
+              "status": "In Progress"
+            },
+            {
+              "taskId": "TSK-703",
+              "taskDescription": "Test battery backup and illumination",
+              "estimatedHours": 1.0,
+              "chargedHours": 0.0,
+              "remainingHours": 1.0,
+              "status": "Not Started"
+            }
+          ]
+        }
+      ],
+      "appointments": [
+        {
+          "id": "APT-010",
+          "title": "HVAC Controls Training",
+          "start": "2024-12-14T09:00:00",
+          "end": "2024-12-14T11:30:00",
+          "color": "#34a853"
+        },
+        {
+          "id": "APT-011",
+          "title": "Monthly Safety Meeting",
+          "start": "2024-12-20T15:00:00",
+          "end": "2024-12-20T16:00:00",
+          "color": "#ea4335"
+        }
+      ],
+      "nonWorkActivities": [
+        {
+          "id": "NWA-701",
+          "type": "Meeting",
+          "start": "2024-12-10T15:00:00",
+          "end": "2024-12-10T16:00:00",
+          "hours": 1.0
+        },
+        {
+          "id": "NWA-702",
+          "type": "Training",
+          "start": "2024-12-17T13:00:00",
+          "end": "2024-12-17T16:00:00",
+          "hours": 3.0
+        }
+      ],
+      "indirectTasks": []
+    },
+    {
+      "employeeId": "EMP-108",
+      "timeCodeSummary": {
+        "todaysTimesheet": 5.5,
+        "capacityHours": 8.0,
+        "nwaHours": 1.5,
+        "hoursAvailable": 1.0,
+        "assignedHours": 7.0
+      },
+      "locations": [
+        { "locationId": "LOC-02", "locationName": "Building B", "isDefault": true },
+        { "locationId": "LOC-01", "locationName": "Building A", "isDefault": false },
+        { "locationId": "LOC-03", "locationName": "Warehouse", "isDefault": false }
+      ],
+      "workOrders": [
+        {
+          "workOrderId": "WO-2024-012",
+          "description": "Boiler Inspection and Repair - Building B",
+          "status": "In Progress",
+          "priority": "Critical",
+          "tasks": [
+            {
+              "taskId": "TSK-801",
+              "taskDescription": "Inspect boiler tubes and seals",
+              "estimatedHours": 2.0,
+              "chargedHours": 1.5,
+              "remainingHours": 0.5,
+              "status": "In Progress"
+            },
+            {
+              "taskId": "TSK-802",
+              "taskDescription": "Replace pressure relief valve",
+              "estimatedHours": 1.5,
+              "chargedHours": 0.0,
+              "remainingHours": 1.5,
+              "status": "Not Started"
+            }
+          ]
+        },
+        {
+          "workOrderId": "WO-2024-013",
+          "description": "Welding - Handrail Fabrication Building A",
+          "status": "Scheduled",
+          "priority": "Low",
+          "tasks": [
+            {
+              "taskId": "TSK-803",
+              "taskDescription": "Fabricate handrail sections",
+              "estimatedHours": 4.0,
+              "chargedHours": 0.0,
+              "remainingHours": 4.0,
+              "status": "Not Started"
+            },
+            {
+              "taskId": "TSK-804",
+              "taskDescription": "Weld and install handrails",
+              "estimatedHours": 3.0,
+              "chargedHours": 0.0,
+              "remainingHours": 3.0,
+              "status": "Not Started"
+            }
+          ]
+        }
+      ],
+      "appointments": [
+        {
+          "id": "APT-012",
+          "title": "Cross-Training: HVAC Fundamentals",
+          "start": "2024-12-11T13:00:00",
+          "end": "2024-12-11T15:00:00",
+          "color": "#4285f4"
+        },
+        {
+          "id": "APT-013",
+          "title": "Boiler Certification Exam",
+          "start": "2024-12-17T09:00:00",
+          "end": "2024-12-17T12:00:00",
+          "color": "#fbbc04"
+        },
+        {
+          "id": "APT-014",
+          "title": "Crew A Weekly Planning",
+          "start": "2024-12-20T08:00:00",
+          "end": "2024-12-20T09:00:00",
+          "color": "#34a853"
+        }
+      ],
+      "nonWorkActivities": [
+        {
+          "id": "NWA-801",
+          "type": "Sick Leave",
+          "start": "2024-12-11T08:00:00",
+          "end": "2024-12-11T12:00:00",
+          "hours": 4.0
+        },
+        {
+          "id": "NWA-802",
+          "type": "Vacation",
+          "start": "2024-12-17T08:00:00",
+          "end": "2024-12-17T17:00:00",
+          "hours": 8.0
+        }
+      ],
+      "indirectTasks": [
+        { "taskId": "IDT-801", "taskDescription": "Warehouse walkthrough inspection", "timePosted": 0.5 },
+        { "taskId": "IDT-802", "taskDescription": "Toolbox talk facilitation", "timePosted": 0.25 }
+      ]
+    }
+  ]
+}

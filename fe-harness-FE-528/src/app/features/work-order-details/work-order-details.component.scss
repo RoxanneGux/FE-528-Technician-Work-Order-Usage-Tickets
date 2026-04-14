@@ -1,0 +1,110 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  min-height: 100%;
+  box-sizing: border-box;
+}
+
+// Three info cards in a row
+.cards-row {
+  display: flex;
+  gap: 12px;
+  align-items: stretch;
+  overflow: hidden;
+
+  > app-details-card {
+    flex: 1 1 0;
+    min-width: 0;
+    overflow: hidden;
+  }
+}
+
+// Cards section — 24px gap below before costs
+.cards-section {
+  margin-bottom: 24px;
+}
+
+// Costs section spacing
+.costs-section {
+  margin-top: 24px;
+}
+
+.costs-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--system-line-divider-stroke-line-color, #cfd2d3);
+  margin-bottom: 12px;
+  color: var(--system-text-text-primary, #1d252c);
+}
+
+// Costs box — header + data inside one bordered container
+.costs-box {
+  padding: 16px;
+  background: var(--system-surfaces-surfaces-raised, #fff);
+  border: 1px solid var(--system-line-divider-stroke-line-color, #cfd2d3);
+  border-radius: 4px;
+}
+
+.costs-data {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+}
+
+.cost-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 120px;
+}
+
+.cost-label {
+  text-transform: uppercase;
+  color: var(--system-text-text-secondary, #5b6670);
+}
+
+.cost-value {
+  color: var(--system-text-text-primary, #1d252c);
+}
+
+// Actions card rows
+.action-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 0;
+  cursor: pointer;
+  color: var(--system-text-text-primary, #1d252c);
+
+  &:hover {
+    color: var(--system-links-link-hover-longpress, #004a7f);
+  }
+}
+
+.action-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--system-status-status-info, #0062a6);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
+  margin-left: auto;
+}
+
+// Expansion panel spacing
+section + section {
+  margin-top: 16px;
+}
+
+.wo-sticky-footer {
+  position: sticky;
+  bottom: 0;
+  z-index: 10;
+}

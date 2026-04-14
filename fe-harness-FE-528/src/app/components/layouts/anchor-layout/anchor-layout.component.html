@@ -1,0 +1,26 @@
+<div class="anchor-layout px-2 px-md-3 px-lg-4">
+  <div class="anchor-layout__container">
+    <nav class="anchor-layout__sidebar d-none d-md-block">
+      <ul class="list-unstyled m-0 p-0">
+        @for (link of anchorLinks(); track link.fragment) {
+          <li>
+            <a class="anchor-layout__link d-flex align-items-center gap-2 px-3 py-2"
+               (click)="scrollTo(link.fragment)"
+               role="button">
+              @if (link.icon) {
+                <span class="anchor-layout__icon" [class]="link.iconColor || ''">{{ link.icon }}</span>
+              }
+              <span>{{ link.name }}</span>
+              @if (link.count !== undefined) {
+                <span class="anchor-layout__count ms-auto badge bg-secondary">{{ link.count }}</span>
+              }
+            </a>
+          </li>
+        }
+      </ul>
+    </nav>
+    <div class="anchor-layout__content">
+      <ng-content></ng-content>
+    </div>
+  </div>
+</div>

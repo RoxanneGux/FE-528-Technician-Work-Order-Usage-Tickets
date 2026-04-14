@@ -1,0 +1,276 @@
+<app-anchor-layout [anchorLinks]="anchorLinks()">
+
+  <!-- ═══ 1. Details Cards Row ═══ -->
+  <section id="work-order-details" class="cards-section">
+    <div class="cards-row">
+      <!-- WO Info Card -->
+      <app-details-card
+        [icon]="'assignment'"
+        [iconColor]="'green'"
+        [title]="'Work Order Info'"
+        [dataRows]="woInfoRows()">
+      </app-details-card>
+
+      <!-- Asset Info Card -->
+      <app-details-card
+        [icon]="'build'"
+        [iconColor]="'orange'"
+        [title]="'Asset Info'"
+        [dataRows]="assetInfoRows()">
+      </app-details-card>
+
+      <!-- Actions Card -->
+      <app-details-card
+        [icon]="'touch_app'"
+        [iconColor]="'blue'"
+        [title]="'Actions'"
+        [dataRows]="[]">
+        <div class="d-flex flex-column gap-1">
+          <div class="action-row">
+            <aw-icon [iconName]="'attach_file'" [iconSize]="20"></aw-icon>
+            <span class="aw-b-1">Attachments</span>
+            @if (mockData.workOrder().attachmentsCount > 0) {
+              <span class="action-badge">{{ mockData.workOrder().attachmentsCount }}</span>
+            }
+          </div>
+          <div class="action-row">
+            <aw-icon [iconName]="'note'" [iconSize]="20"></aw-icon>
+            <span class="aw-b-1">Notes</span>
+            @if (mockData.workOrder().notesCount > 0) {
+              <span class="action-badge">{{ mockData.workOrder().notesCount }}</span>
+            }
+          </div>
+          <div class="action-row">
+            <aw-icon [iconName]="'comment'" [iconSize]="20"></aw-icon>
+            <span class="aw-b-1">Comments</span>
+          </div>
+          <div class="action-row">
+            <aw-icon [iconName]="'mail'" [iconSize]="20"></aw-icon>
+            <span class="aw-b-1">Work Order Message</span>
+            @if (mockData.workOrder().commentsCount > 0) {
+              <span class="action-badge">{{ mockData.workOrder().commentsCount }}</span>
+            }
+          </div>
+          <div class="action-row">
+            <aw-icon [iconName]="'message'" [iconSize]="20"></aw-icon>
+            <span class="aw-b-1">Asset Messages</span>
+          </div>
+          <div class="action-row">
+            <aw-icon [iconName]="'science'" [iconSize]="20"></aw-icon>
+            <span class="aw-b-1">Test Results</span>
+          </div>
+        </div>
+      </app-details-card>
+    </div>
+  </section>
+
+  <!-- ═══ 2. Costs Section ═══ -->
+  <section class="costs-section mb-4">
+    <div class="costs-box">
+      <div class="costs-header">
+        <aw-icon [iconName]="'credit_card'" [iconSize]="20"></aw-icon>
+        <span class="aw-st-1-semi-bold">Costs</span>
+      </div>
+      <div class="costs-data">
+        <div class="cost-item">
+          <span class="cost-label aw-c-1">LABOR HOURS</span>
+          <span class="cost-value aw-b-1">{{ costs().laborTotal | number:'1.2-2' }}</span>
+        </div>
+        <div class="cost-item">
+          <span class="cost-label aw-c-1">LABOR COST</span>
+          <span class="cost-value aw-b-1">${{ costs().laborTotal | number:'1.2-2' }}</span>
+        </div>
+        <div class="cost-item">
+          <span class="cost-label aw-c-1">PARTS COST</span>
+          <span class="cost-value aw-b-1">${{ costs().partsTotal | number:'1.2-2' }}</span>
+        </div>
+        <div class="cost-item">
+          <span class="cost-label aw-c-1">COMMERCIAL COST</span>
+          <span class="cost-value aw-b-1">${{ costs().commercialTotal | number:'1.2-2' }}</span>
+        </div>
+        <div class="cost-item">
+          <span class="cost-label aw-c-1">TOTAL COST</span>
+          <span class="cost-value aw-b-1-medium">${{ costs().grandTotal | number:'1.2-2' }}</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ 3. Currently Working ═══ -->
+  <section id="currently-working" class="mb-4">
+    <aw-expansion-panel
+      class="d-block"
+      [title]="'Currently Working: ' + currentAssignments().length"
+      [expanded]="true"
+      [showExpander]="true">
+      <div class="p-3">
+        <div class="mb-2" style="padding-left: 16px;">
+          <button AwButton [buttonType]="'primary'" (click)="onAddEmployee()">
+            <aw-icon [iconName]="'person_add'" [iconSize]="20" [iconColor]="'#fff'"></aw-icon>
+            <span>Add Employee</span>
+          </button>
+        </div>
+        <div class="table-responsive d-block">
+          <aw-table
+            [columnsDefinition]="currentlyWorkingColumns"
+            [tableData]="currentlyWorkingData()">
+          </aw-table>
+        </div>
+      </div>
+    </aw-expansion-panel>
+  </section>
+
+  <!-- ═══ 4. Tasks ═══ -->
+  <section id="tasks" class="mb-4">
+    <aw-expansion-panel
+      class="d-block"
+      [title]="'Tasks: ' + tasks().length"
+      [expanded]="true"
+      [showExpander]="true">
+      <div class="p-3">
+        <div class="table-responsive d-block">
+          <aw-table
+            [columnsDefinition]="taskColumns"
+            [tableData]="taskData()">
+          </aw-table>
+        </div>
+        <div class="mt-2">
+          <button AwButton [buttonType]="'primary'">
+            <span>Add New Task</span>
+          </button>
+        </div>
+      </div>
+    </aw-expansion-panel>
+  </section>
+
+  <!-- ═══ 5. Service Requests ═══ -->
+  <section id="service-requests" class="mb-4">
+    <aw-expansion-panel
+      class="d-block"
+      [title]="'Service Requests / Defects: ' + serviceRequests().length"
+      [expanded]="true"
+      [showExpander]="true">
+      <div class="p-3">
+        <div class="mb-2">
+          <button AwButton [buttonType]="'primary'">
+            <span>Add / Manage</span>
+          </button>
+        </div>
+        <div class="table-responsive d-block">
+          <aw-table
+            [columnsDefinition]="serviceRequestColumns"
+            [tableData]="serviceRequestData()">
+          </aw-table>
+        </div>
+      </div>
+    </aw-expansion-panel>
+  </section>
+
+  <!-- ═══ 6. Postings ═══ -->
+  <section id="postings" class="mb-4">
+    <aw-expansion-panel
+      class="d-block"
+      [title]="'Postings'"
+      [expanded]="true"
+      [showExpander]="true">
+      <div class="p-3 d-flex flex-column gap-3">
+        <!-- Labor Postings -->
+        <aw-expansion-panel
+          class="d-block"
+          [title]="'Labor Postings: ' + laborPostingData().length"
+          [expanded]="true"
+          [showExpander]="true">
+          <div class="p-3">
+            @if (laborPostingData().length > 0) {
+              <div class="table-responsive d-block">
+                <aw-table
+                  [columnsDefinition]="laborPostingColumns"
+                  [tableData]="laborPostingData()">
+                </aw-table>
+              </div>
+            } @else {
+              <p class="aw-b-1">No labor postings</p>
+            }
+          </div>
+        </aw-expansion-panel>
+
+        <!-- Parts Postings -->
+        <aw-expansion-panel
+          class="d-block"
+          [title]="'Part Postings: ' + partsPostingData().length"
+          [expanded]="true"
+          [showExpander]="true">
+          <div class="p-3">
+            @if (partsPostingData().length > 0) {
+              <div class="table-responsive d-block">
+                <aw-table
+                  [columnsDefinition]="partsPostingColumns"
+                  [tableData]="partsPostingData()">
+                </aw-table>
+              </div>
+            } @else {
+              <p class="aw-b-1">No part postings</p>
+            }
+          </div>
+        </aw-expansion-panel>
+
+        <!-- Commercial Postings -->
+        <aw-expansion-panel
+          class="d-block"
+          [title]="'Commercial Postings: ' + commercialPostingData().length"
+          [expanded]="true"
+          [showExpander]="true">
+          <div class="p-3">
+            @if (commercialPostingData().length > 0) {
+              <div class="table-responsive d-block">
+                <aw-table
+                  [columnsDefinition]="commercialPostingColumns"
+                  [tableData]="commercialPostingData()">
+                </aw-table>
+              </div>
+            } @else {
+              <p class="aw-b-1">No commercial postings</p>
+            }
+          </div>
+        </aw-expansion-panel>
+      </div>
+    </aw-expansion-panel>
+  </section>
+
+  <!-- ═══ 7. Work Delay ═══ -->
+  <section id="work-delay" class="mb-4">
+    <aw-expansion-panel
+      class="d-block"
+      [title]="'Work Delay'"
+      [expanded]="true"
+      [showExpander]="true">
+      <div class="p-3">
+        <div class="row align-items-end g-3">
+          <div class="col-md-4">
+            <label class="form-label small fw-semibold">Delay Code</label>
+            <aw-select-menu
+              [ariaLabel]="'Delay Code'"
+              [singleSelectListItems]="delayCodeOptions()"
+              [enableListReset]="true"
+              [(ngModel)]="selectedDelayCode">
+            </aw-select-menu>
+          </div>
+          <div class="col-md-4 d-flex gap-2">
+            <button AwButton [buttonType]="'primary'" (click)="onStartDelay()">
+              <span>Start Delay</span>
+            </button>
+            <button AwButton [buttonType]="'secondary'" (click)="onStopDelay()">
+              <span>Stop Delay</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </aw-expansion-panel>
+  </section>
+
+</app-anchor-layout>
+
+<!-- ═══ Sticky Footer Action Bar ═══ -->
+<div class="wo-sticky-footer">
+  <aw-action-bar [actionsLeft]="actionsLeft" [actionsRight]="actionsRight" [moreActions]="moreActions"></aw-action-bar>
+</div>

@@ -1,0 +1,217 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  background: var(--system-surfaces-surfaces-lower, #e6e8e9);
+}
+
+:host :ng-deep {
+  .desktop-table-container {
+    box-shadow: none !important;
+  }
+
+  .no-content {
+    padding-bottom: 16px !important;
+  }
+
+  aw-select-menu,
+  aw-form-field {
+    max-width: 100%;
+  }
+}
+
+.employee-details-wrapper {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px 24px 0;
+}
+
+.content-container {
+  max-width: 2000px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+}
+
+// Metric cards row — flex-wrap for responsive layout
+.metric-cards-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  padding: 16px 0 24px;
+}
+
+// Skills chips inside metric card
+.skills-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+// Work filter bar — constrained to match expansion panel max-width (1400px), centered
+.work-filter-bar {
+  display: flex;
+  align-items: flex-end;
+  gap: 24px;
+  padding: 8px 0;
+  margin: 0 auto 8px;
+  max-width: 1400px;
+  background: var(--component-table-actionbar-background, #f5f5f5);
+  border-top: 1px solid var(--component-table-header-stroke, #7b868c);
+}
+
+.work-filter-fields {
+  display: flex;
+  flex: 1;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 16px;
+  padding: 0 16px;
+}
+
+.work-filter-field {
+  flex: 1;
+  min-width: 180px;
+}
+
+.work-filter-actions {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+  padding-right: 16px;
+}
+
+// Scheduler container — centered
+.scheduler-container {
+  padding: 16px 0;
+  max-width: 1400px;
+  margin: 0 auto;
+
+  // Hide the date picker button — its CDK overlay doesn't position correctly
+  // inside a panel overlay. Left/right arrows work fine for navigation.
+  ::ng-deep .date-picker-container {
+    display: none !important;
+  }
+
+  // Increase gap between prev/next arrow buttons from 8px to 16px
+  ::ng-deep .calendar-navigation {
+    gap: 16px !important;
+  }
+}
+
+// Section spacing
+.current-work-section {
+  padding-bottom: 24px;
+
+  // Align subheading, filter bar, and expanders to same max-width
+  > aw-divider,
+  > .work-filter-bar,
+  > aw-expansion-panel,
+  > p {
+    max-width: 1400px;
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
+  }
+
+  > aw-expansion-panel + aw-expansion-panel {
+    margin-top: 16px;
+  }
+}
+
+.appointments-section {
+  padding-top: 24px;
+
+  // Align subheading and scheduler to same max-width
+  > aw-divider {
+    max-width: 1400px;
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
+  }
+}
+
+// Detail rows for Task and Asset Group By views
+.detail-rows {
+  background: var(--system-surfaces-surfaces-background, white);
+}
+
+.detail-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 48px;
+  padding: 0 16px;
+  background: var(--system-surfaces-surfaces-background, white);
+  border-bottom: 1px solid var(--component-side-drawer-stroke, #cfd2d3);
+}
+
+.detail-label {
+  color: var(--system-text-text-secondary, #5b6670);
+}
+
+.detail-value {
+  color: var(--system-text-text-primary, #1d252c);
+  text-align: right;
+}
+
+.detail-value-link {
+  color: var(--system-links-link-active, #0062a6);
+  text-decoration: underline;
+  text-align: right;
+}
+
+// Asset view: sub-section header with icon
+.detail-section-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 40px;
+  padding: 0 16px;
+  background: var(--system-surfaces-surfaces-lower, #e6e8e9);
+  border-bottom: 1px solid var(--component-side-drawer-stroke, #cfd2d3);
+}
+
+// Asset view: nested work order rows
+.detail-row-nested {
+  padding-left: 24px;
+}
+
+.nested-wo-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+// Drawer content wrapper
+.drawer-content {
+  padding: 8px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+// Drawer event card — separates individual events within a group
+.drawer-event-card {
+  border-bottom: 1px solid var(--system-line-divider-stroke-line-color, #cfd2d3);
+  margin-bottom: 4px;
+
+  &:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+  }
+}
+
+// Empty state message for days with no events
+.no-events-message {
+  text-align: center;
+  color: var(--system-text-text-secondary, #5b6670);
+}
+
+// Sticky footer
+.aw-sticky-footer {
+  flex-shrink: 0;
+  background: var(--system-surfaces-surfaces-lower, #e6e8e9);
+  border-top: 1px solid var(--system-line-divider-stroke-line-color, #cfd2d3);
+}

@@ -1,0 +1,188 @@
+{
+  "workOrder": {
+    "locationId": "MAIN",
+    "year": 2024,
+    "number": 10542,
+    "status": "Open",
+    "jobType": "CM",
+    "jobTypeDescription": "Corrective Maintenance",
+    "assetNumber": "EQ-4821",
+    "equipmentId": "PUMP-003",
+    "stationLocation": "Building A - Floor 2",
+    "assetType": "Centrifugal Pump",
+    "serviceStatus": "In Service",
+    "openedDateTime": "2024-11-15T08:30:00",
+    "dueDateTime": "2024-12-01T17:00:00",
+    "contactName": "Jane Smith",
+    "contactPhone": "(555) 123-4567",
+    "operatorName": "Mike Johnson",
+    "operatorPhone": "(555) 987-6543",
+    "attachmentsCount": 3,
+    "notesCount": 5,
+    "commentsCount": 2
+  },
+  "costs": {
+    "laborTotal": 1250.00,
+    "partsTotal": 875.50,
+    "commercialTotal": 450.00,
+    "grandTotal": 2575.50
+  },
+  "tasks": [
+    {
+      "taskId": "TSK-001",
+      "taskDescription": "Inspect pump bearings and seals",
+      "estimatedHours": 2.0,
+      "chargedHours": 1.5,
+      "remainingHours": 0.5,
+      "status": "In Progress",
+      "hasPMChecklist": true
+    },
+    {
+      "taskId": "TSK-002",
+      "taskDescription": "Replace worn impeller",
+      "estimatedHours": 4.0,
+      "chargedHours": 0,
+      "remainingHours": 4.0,
+      "status": "Not Started",
+      "hasPMChecklist": false
+    },
+    {
+      "taskId": "TSK-003",
+      "taskDescription": "Realign motor coupling",
+      "estimatedHours": 1.5,
+      "chargedHours": 1.5,
+      "remainingHours": 0,
+      "status": "Complete",
+      "hasPMChecklist": false,
+      "serviceRequestId": "SR-001"
+    },
+    {
+      "taskId": "TSK-004",
+      "taskDescription": "Test pump performance after repair",
+      "estimatedHours": 1.0,
+      "chargedHours": 0,
+      "remainingHours": 1.0,
+      "status": "Not Started",
+      "hasPMChecklist": true
+    }
+  ],
+  "serviceRequests": [
+    {
+      "serviceRequestId": "SR-001",
+      "description": "Pump vibration exceeds threshold",
+      "priority": "High",
+      "status": "Open",
+      "tasks": [
+        {
+          "taskId": "TSK-003",
+          "taskDescription": "Realign motor coupling",
+          "estimatedHours": 1.5,
+          "chargedHours": 1.5,
+          "remainingHours": 0,
+          "status": "Complete",
+          "hasPMChecklist": false,
+          "serviceRequestId": "SR-001"
+        }
+      ]
+    },
+    {
+      "serviceRequestId": "SR-002",
+      "description": "Seal leak detected during inspection",
+      "priority": "Medium",
+      "status": "Open",
+      "tasks": []
+    },
+    {
+      "serviceRequestId": "SR-003",
+      "description": "Routine bearing replacement due",
+      "priority": "Low",
+      "status": "Closed",
+      "tasks": []
+    }
+  ],
+  "postings": {
+    "labor": [
+      {
+        "postingId": "LP-001",
+        "employeeName": "Robert Chen",
+        "taskId": "TSK-001",
+        "hours": 1.5,
+        "date": "2024-11-18",
+        "timeCode": "REG"
+      },
+      {
+        "postingId": "LP-002",
+        "employeeName": "Sarah Williams",
+        "taskId": "TSK-003",
+        "hours": 1.5,
+        "date": "2024-11-17",
+        "timeCode": "REG"
+      },
+      {
+        "postingId": "LP-003",
+        "employeeName": "Robert Chen",
+        "taskId": "TSK-001",
+        "hours": 0.5,
+        "date": "2024-11-19",
+        "timeCode": "OT"
+      }
+    ],
+    "parts": [
+      {
+        "postingId": "PP-001",
+        "partNumber": "BRG-2210",
+        "description": "SKF Deep Groove Ball Bearing",
+        "quantity": 2,
+        "unitCost": 125.00,
+        "totalCost": 250.00
+      },
+      {
+        "postingId": "PP-002",
+        "partNumber": "SEAL-440",
+        "description": "Mechanical Shaft Seal",
+        "quantity": 1,
+        "unitCost": 375.50,
+        "totalCost": 375.50
+      },
+      {
+        "postingId": "PP-003",
+        "partNumber": "IMP-660",
+        "description": "Stainless Steel Impeller",
+        "quantity": 1,
+        "unitCost": 250.00,
+        "totalCost": 250.00
+      }
+    ],
+    "commercial": [
+      {
+        "postingId": "CP-001",
+        "vendor": "Precision Alignment Services",
+        "description": "Laser alignment of motor-pump coupling",
+        "amount": 450.00,
+        "date": "2024-11-17"
+      }
+    ]
+  },
+  "currentAssignments": [
+    {
+      "employeeId": "EMP-101",
+      "employeeName": "Robert Chen",
+      "taskId": "TSK-001",
+      "taskDescription": "Inspect pump bearings and seals",
+      "startTime": "2024-11-19T07:00:00"
+    },
+    {
+      "employeeId": "EMP-104",
+      "employeeName": "David Park",
+      "taskId": "TSK-002",
+      "taskDescription": "Replace worn impeller",
+      "startTime": "2024-11-19T08:30:00"
+    }
+  ],
+  "delayCodes": [
+    { "delayCodeId": "DLY-01", "description": "Waiting for Parts" },
+    { "delayCodeId": "DLY-02", "description": "Equipment Unavailable" },
+    { "delayCodeId": "DLY-03", "description": "Weather Delay" },
+    { "delayCodeId": "DLY-04", "description": "Awaiting Approval" }
+  ]
+}

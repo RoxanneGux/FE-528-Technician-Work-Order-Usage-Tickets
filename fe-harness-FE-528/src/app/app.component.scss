@@ -1,0 +1,21 @@
+.theme-toggle-fab {
+  position: fixed;
+  bottom: 80px;
+  right: 24px;
+  z-index: 9999;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--system-surfaces-surfaces-raised, #fff);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+  color: var(--system-text-text-primary, #1d252c);
+
+  &:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  }
+}

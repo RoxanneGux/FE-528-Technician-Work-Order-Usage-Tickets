@@ -1,0 +1,23 @@
+<div class="details-card">
+  <div class="details-card__header d-flex align-items-center gap-2 mb-3">
+    <div class="details-card__icon-circle" [class.details-card__icon-circle--green]="iconColor() === 'green'"
+         [class.details-card__icon-circle--orange]="iconColor() === 'orange'"
+         [class.details-card__icon-circle--blue]="iconColor() === 'blue'">
+      <aw-icon [iconName]="icon()" [iconSize]="20"></aw-icon>
+    </div>
+    <span class="details-card__title fw-semibold">{{ title() }}</span>
+  </div>
+
+  @if (dataRows().length > 0) {
+    <div class="details-card__grid">
+      @for (row of dataRows(); track row.label) {
+        <div class="details-card__cell">
+          <div class="details-card__label text-uppercase">{{ row.label }}</div>
+          <div class="details-card__value fw-medium">{{ row.value || '—' }}</div>
+        </div>
+      }
+    </div>
+  }
+
+  <ng-content></ng-content>
+</div>

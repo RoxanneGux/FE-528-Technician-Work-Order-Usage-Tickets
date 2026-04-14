@@ -1,0 +1,38 @@
+.anchor-layout {
+  &__container {
+    display: flex;
+    gap: 1rem;
+    max-width: 2000px;
+    margin: auto;
+  }
+
+  &__sidebar {
+    flex-shrink: 0;
+    width: 220px;
+    position: sticky;
+    top: 65px;
+    align-self: flex-start;
+  }
+
+  &__content {
+    flex: 1;
+    min-width: 0;
+    padding-right: 24px;
+  }
+
+  &__link {
+    cursor: pointer;
+    text-decoration: none;
+    color: var(--system-text-text-primary, inherit);
+    border-radius: 0.25rem;
+    font-size: 0.875rem;
+
+    &:hover {
+      background-color: var(--system-surfaces-surfaces-raised, rgba(0, 0, 0, 0.04));
+    }
+  }
+
+  &__count {
+    font-size: 0.75rem;
+  }
+}
