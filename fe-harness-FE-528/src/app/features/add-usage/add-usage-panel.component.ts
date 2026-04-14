@@ -27,6 +27,9 @@ import {
 } from '@assetworks-llc/aw-component-lib';
 
 import { MockDataService } from '../../services/mock-data.service';
+import { DialogService } from '../../services/dialog.service';
+import { UsageAssetSearchDialogComponent } from './asset-search-dialog.component';
+import { UsageTaskSearchDialogComponent } from './task-search-dialog.component';
 import {
   DISPLAY_MODE_FIELDS,
   UsageDisplayMode,
@@ -65,6 +68,7 @@ export class AddUsagePanelComponent {
   public readonly close = output<UsageEntryResult | null>();
 
   private readonly _mockData = inject(MockDataService);
+  private readonly _dialogService = inject(DialogService);
 
   /** Set by PanelService via Object.assign. Controls which fields are visible. */
   public displayMode: UsageDisplayMode = 'all';
@@ -85,12 +89,12 @@ export class AddUsagePanelComponent {
 
   /** Operator dropdown options. */
   public readonly operatorOptions = computed<SingleSelectOption[]>(() =>
-    this._mockData.operators().map(op => ({ label: op.name, value: op.id })),
+    this._mockData.operators().map(op => ({ label: op.name, description: op.id, value: op.id })),
   );
 
   /** Department dropdown options. */
   public readonly departmentOptions = computed<SingleSelectOption[]>(() =>
-    this._mockData.departments().map(dept => ({ label: dept.name, value: dept.id })),
+    this._mockData.departments().map(dept => ({ label: dept.name, description: dept.id, value: dept.id })),
   );
 
   /** Task dropdown options. */
@@ -100,7 +104,7 @@ export class AddUsagePanelComponent {
 
   /** Account dropdown options. */
   public readonly accountOptions = computed<SingleSelectOption[]>(() =>
-    this._mockData.accounts().map(a => ({ label: a.name, value: a.id })),
+    this._mockData.accounts().map(a => ({ label: a.name, description: a.id, value: a.id })),
   );
 
   /** Meter validation dropdown options. */
@@ -110,7 +114,7 @@ export class AddUsagePanelComponent {
 
   /** Financial project code dropdown options. */
   public readonly financialProjectCodeOptions = computed<SingleSelectOption[]>(() =>
-    this._mockData.financialProjectCodes().map(f => ({ label: f.name, value: f.id })),
+    this._mockData.financialProjectCodes().map(f => ({ label: f.name, description: f.id, value: f.id })),
   );
 
   /** Mock meter data for hint text display. */
@@ -192,6 +196,24 @@ export class AddUsagePanelComponent {
   /** Close panel without returning data. */
   public onCancel(): void {
     this.close.emit(null);
+  }
+
+  /** Open asset search dialog and populate the asset field on selection. */
+  public onAssetSearch(): void {
+    this._dialogService.open(UsageAssetSearchDialogComponent, {}, (result) => {
+      if (result) {
+        this.singleEntryForm.get('asset')?.setValue(result.assetId || result.AssetId);
+      }
+    });
+  }
+
+  /** Open task search dialog and populate the task field on selection. */
+  public onTaskSearch(): void {
+    this._dialogService.open(UsageTaskSearchDialogComponent, {}, (result) => {
+      if (result) {
+        this.singleEntryForm.get('task')?.setValue(result.taskId || result.TaskId);
+      }
+    });
   }
 
   /** Create a new FormGroup for a usage entry row with today's date as default. */

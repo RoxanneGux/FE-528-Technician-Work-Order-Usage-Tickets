@@ -17,6 +17,13 @@ $form-content-max-width: calc(#{$field-max-width} * 2 + 24px);
   aw-form-field {
     max-width: 100%;
   }
+
+  // Allow description subtitle to display in select menu items
+  .menu-label {
+    height: auto !important;
+    min-height: 32px;
+    white-space: normal !important;
+  }
 }
 
 .add-usage-wrapper {

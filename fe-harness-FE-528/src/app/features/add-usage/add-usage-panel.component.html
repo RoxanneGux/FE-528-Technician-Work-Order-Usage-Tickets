@@ -26,7 +26,7 @@
                 <aw-form-field>
                   <input AwInput formControlName="asset" aria-label="Asset" />
                 </aw-form-field>
-                <button AwButtonIconOnly [buttonType]="'primary'" ariaLabel="Search Asset">
+                <button AwButtonIconOnly [buttonType]="'primary'" ariaLabel="Search Asset" type="button" (click)="onAssetSearch()">
                   <aw-icon [iconName]="'search'" [iconColor]="''"></aw-icon>
                 </button>
               </div>
@@ -158,13 +158,13 @@
             @if (visibleFields().includes('meter1Validation')) {
               <div class="form-field">
                 <aw-form-field-label>Meter 1 Validation</aw-form-field-label>
-                <aw-select-menu [singleSelectListItems]="meterValidationOptions()" [enableListReset]="true" [enableSearch]="true" formControlName="meter1Validation" [ariaLabel]="'Meter 1 Validation'"></aw-select-menu>
+                <aw-select-menu [singleSelectListItems]="meterValidationOptions()" [enableListReset]="true" formControlName="meter1Validation" [ariaLabel]="'Meter 1 Validation'"></aw-select-menu>
               </div>
             }
             @if (visibleFields().includes('meter2Validation')) {
               <div class="form-field">
                 <aw-form-field-label>Meter 2 Validation</aw-form-field-label>
-                <aw-select-menu [singleSelectListItems]="meterValidationOptions()" [enableListReset]="true" [enableSearch]="true" formControlName="meter2Validation" [ariaLabel]="'Meter 2 Validation'"></aw-select-menu>
+                <aw-select-menu [singleSelectListItems]="meterValidationOptions()" [enableListReset]="true" formControlName="meter2Validation" [ariaLabel]="'Meter 2 Validation'"></aw-select-menu>
               </div>
             }
           </div>
@@ -255,10 +255,9 @@
                   <aw-form-field>
                     <input AwInput formControlName="task" aria-label="Task" />
                   </aw-form-field>
-                  <button AwButtonIconOnly [buttonType]="'primary'" ariaLabel="Search Task">
+                  <button AwButtonIconOnly [buttonType]="'primary'" ariaLabel="Search Task" type="button" (click)="onTaskSearch()">
                     <aw-icon [iconName]="'search'" [iconColor]="''"></aw-icon>
                   </button>
-                  <button AwButton [buttonType]="'outlined'"><span>Lookup</span></button>
                 </div>
               </div>
             }

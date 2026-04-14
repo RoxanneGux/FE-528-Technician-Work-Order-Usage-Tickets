@@ -371,9 +371,9 @@ const FALLBACK_DEPARTMENTS: MockDepartment[] = [
 ];
 
 const FALLBACK_METER_VALIDATIONS: MockMeterValidation[] = [
-  { id: 'VAL-01', name: 'Actual' },
-  { id: 'VAL-02', name: 'Estimated' },
-  { id: 'VAL-03', name: 'Rollover' },
+  { id: 'UPDATE_TICKET', name: 'Update the ticket record' },
+  { id: 'UPDATE_TRANSACTION', name: 'Update transaction only' },
+  { id: 'UPDATE_TRANSACTION_FAIL', name: 'Update transaction only on fail' },
 ];
 
 const FALLBACK_ACCOUNTS: MockAccount[] = [
