@@ -62,11 +62,11 @@
           <div class="form-row">
             @if (visibleFields().includes('startDateTime')) {
               <div class="form-field">
-                <aw-date-time-picker formControlName="startDateTime"
+                <aw-date-time-picker #startDateTimePicker formControlName="startDateTime"
                   [ariaLabel]="{date: 'Start Date', time: 'Start Time'}"
                   [placeholder]="{date: 'mm/dd/yyyy', time: 'hh:mm'}">
                   <aw-form-field-label>Start Date / Time</aw-form-field-label>
-                  <button AwButtonIconOnly [buttonType]="'primary'" ariaLabel="Open start date picker">
+                  <button aria-label="open start date time picker" type="button" AwButtonIconOnly [buttonType]="'primary'" (click)="startDateTimePicker.openDateTimePicker()">
                     <aw-icon [iconName]="'today'" [iconColor]="''"></aw-icon>
                   </button>
                 </aw-date-time-picker>
@@ -74,11 +74,11 @@
             }
             @if (visibleFields().includes('endDateTime')) {
               <div class="form-field">
-                <aw-date-time-picker formControlName="endDateTime"
+                <aw-date-time-picker #endDateTimePicker formControlName="endDateTime"
                   [ariaLabel]="{date: 'End Date', time: 'End Time'}"
                   [placeholder]="{date: 'mm/dd/yyyy', time: 'hh:mm'}">
                   <aw-form-field-label>End Date / Time</aw-form-field-label>
-                  <button AwButtonIconOnly [buttonType]="'primary'" ariaLabel="Open end date picker">
+                  <button aria-label="open end date time picker" type="button" AwButtonIconOnly [buttonType]="'primary'" (click)="endDateTimePicker.openDateTimePicker()">
                     <aw-icon [iconName]="'today'" [iconColor]="''"></aw-icon>
                   </button>
                 </aw-date-time-picker>
