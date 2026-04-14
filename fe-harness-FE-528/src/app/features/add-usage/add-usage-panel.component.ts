@@ -87,14 +87,14 @@ export class AddUsagePanelComponent {
     return DISPLAY_MODE_FIELDS[this.displayMode] ?? DISPLAY_MODE_FIELDS['all'];
   });
 
-  /** Operator dropdown options. */
+  /** Operator dropdown options — label shows (ID) Name for input display, additionalInfo shows ID in dropdown. */
   public readonly operatorOptions = computed<SingleSelectOption[]>(() =>
-    this._mockData.operators().map(op => ({ label: op.name, description: op.id, value: op.id })),
+    this._mockData.operators().map(op => ({ label: `(${op.id}) ${op.name}`, value: op.id })),
   );
 
   /** Department dropdown options. */
   public readonly departmentOptions = computed<SingleSelectOption[]>(() =>
-    this._mockData.departments().map(dept => ({ label: dept.name, description: dept.id, value: dept.id })),
+    this._mockData.departments().map(dept => ({ label: `(${dept.id}) ${dept.name}`, value: dept.id })),
   );
 
   /** Task dropdown options. */
@@ -104,7 +104,7 @@ export class AddUsagePanelComponent {
 
   /** Account dropdown options. */
   public readonly accountOptions = computed<SingleSelectOption[]>(() =>
-    this._mockData.accounts().map(a => ({ label: a.name, description: a.id, value: a.id })),
+    this._mockData.accounts().map(a => ({ label: `(${a.id}) ${a.name}`, value: a.id })),
   );
 
   /** Meter validation dropdown options. */
@@ -114,7 +114,7 @@ export class AddUsagePanelComponent {
 
   /** Financial project code dropdown options. */
   public readonly financialProjectCodeOptions = computed<SingleSelectOption[]>(() =>
-    this._mockData.financialProjectCodes().map(f => ({ label: f.name, description: f.id, value: f.id })),
+    this._mockData.financialProjectCodes().map(f => ({ label: `(${f.id}) ${f.name}`, value: f.id })),
   );
 
   /** Mock meter data for hint text display. */
