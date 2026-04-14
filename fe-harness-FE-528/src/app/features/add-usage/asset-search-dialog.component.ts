@@ -50,15 +50,17 @@ import { BaseDialogComponent } from '../../components/dialogs/base-dialog.compon
             [ariaLabel]="'Search assets'">
           </aw-search>
         </div>
-        <div class="d-flex align-items-center gap-2" style="padding: 16px;">
+        <div style="display: flex; align-items: center; gap: 8px; padding: 16px; flex-wrap: nowrap;">
           <aw-toggle [ariaLabel]="'Include inactive assets'"
                      [(ngModel)]="includeInactive">
           </aw-toggle>
-          <span class="aw-b-1">Include inactive assets</span>
-          <button class="ms-auto" AwButtonIconOnly [buttonType]="'secondary'"
-                  [disabled]="true" ariaLabel="Scan barcode">
-            <aw-icon [iconName]="'qr_code_scanner'"></aw-icon>
-          </button>
+          <span class="aw-b-1" style="flex-shrink: 0;">Include inactive assets</span>
+          <div style="margin-left: auto; flex-shrink: 0;">
+            <button AwButtonIconOnly [buttonType]="'secondary'"
+                    [disabled]="true" ariaLabel="Scan barcode">
+              <aw-icon [iconName]="'barcode-scan'"></aw-icon>
+            </button>
+          </div>
         </div>
         @if (searchQuery().length >= 2) {
           <div class="aw-c-1" style="padding: 0 16px 8px 16px; color: var(--system-text-text-secondary)">
@@ -132,7 +134,7 @@ export class UsageAssetSearchDialogComponent extends BaseDialogComponent {
   readonly dialogOptions = computed<DialogOptions>(() => ({
     variant: DialogVariants.TABLE,
     title: 'Search Assets',
-    primaryButtonLabel: 'Go',
+    primaryButtonLabel: 'Add Asset',
     secondaryButtonLabel: 'Cancel',
     enableSearch: false,
   }));
