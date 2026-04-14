@@ -1,8 +1,10 @@
 import { Component, computed, signal } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import {
   AwDialogComponent,
   AwIconComponent,
+  AwSearchComponent,
+  AwToggleComponent,
   DialogOptions,
   DialogVariants,
   TableCellInput,
@@ -11,19 +13,17 @@ import {
 import { BaseDialogComponent } from '../../components/dialogs/base-dialog.component';
 
 /**
- * Asset search dialog matching the FA-Suite asset-management pattern.
+ * Asset search dialog matching the FA-Suite technician home pattern.
  *
- * Uses aw-dialog TABLE variant with a custom search input in [table-top]
- * and client-side filtering over mock data.
- *
- * Emits `{ selectedAsset, action: 'go' | 'cancel' }` on close.
+ * Uses aw-search component for the search field. Table is empty initially —
+ * results appear after typing 2+ characters.
  */
 @Component({
   selector: 'app-usage-asset-search-dialog',
   standalone: true,
-  imports: [FormsModule, AwDialogComponent, AwIconComponent],
+  imports: [FormsModule, ReactiveFormsModule, AwDialogComponent, AwIconComponent, AwToggleComponent, AwSearchComponent],
   template: `
-    <aw-dialog class="dialog-xl"
+    <aw-dialog
       [ariaLabel]="'Asset Search Dialog'"
       [visible]="true"
       [dialogOptions]="dialogOptions()"
@@ -33,19 +33,19 @@ import { BaseDialogComponent } from '../../components/dialogs/base-dialog.compon
       (primaryAction)="onGo($event)"
       (secondaryAction)="onCancel()">
 
-      <div table-top class="search-controls py-3 px-3">
-        <div class="search-input-container position-relative">
-          <aw-icon [iconName]="'search'"
-                   [iconSize]="20"
-                   [iconColor]="'system-text-text-secondary'"
-                   class="search-icon position-absolute">
-          </aw-icon>
-          <input type="text"
-                 class="search-input aw-b-1 w-100 rounded"
-                 placeholder="Search for an asset using any of the data shown"
-                 [value]="searchQuery()"
-                 (input)="onSearchChange($any($event.target).value)"
-                 aria-label="Search assets">
+      <div table-top class="search-controls">
+        <div style="padding: 16px 16px 0 16px;">
+          <aw-search
+            [formControl]="searchControl"
+            [placeholder]="'Search for an asset using any of the data shown'"
+            [ariaLabel]="'Search assets'">
+          </aw-search>
+        </div>
+        <div class="d-flex align-items-center gap-2" style="padding: 16px;">
+          <aw-toggle [ariaLabel]="'Include inactive assets'"
+                     [(ngModel)]="includeInactive">
+          </aw-toggle>
+          <span class="aw-b-1">Include inactive assets</span>
         </div>
       </div>
     </aw-dialog>
@@ -55,42 +55,33 @@ import { BaseDialogComponent } from '../../components/dialogs/base-dialog.compon
       .search-controls {
         border-bottom: 1px solid var(--system-line-divider-stroke-line-color);
       }
-      .search-icon {
-        left: 12px;
-        top: 50%;
-        transform: translateY(-50%);
-        pointer-events: none;
-      }
-      .search-input {
-        padding: 8px 12px 8px 40px;
-        border: 1px solid var(--system-line-divider-stroke-line-color);
-        color: var(--system-text-text-primary);
-        background: var(--system-surfaces-surfaces-raised);
-        box-sizing: border-box;
-        &::placeholder { color: var(--system-text-text-secondary); }
-        &:focus { outline: 2px solid var(--system-links-link-active); outline-offset: -2px; }
-      }
     }
   `],
 })
 export class UsageAssetSearchDialogComponent extends BaseDialogComponent {
+  public readonly searchControl = new FormControl('');
   public readonly searchQuery = signal('');
+  public includeInactive = false;
 
   readonly allAssets = [
-    { EquipmentId: 'EQ-4821', EquipmentDescription: 'Centrifugal Pump', AssetType: 'Pump', AssetNumber: 'AST-001' },
-    { EquipmentId: 'EQ-5102', EquipmentDescription: 'Hydraulic Press', AssetType: 'Press', AssetNumber: 'AST-002' },
-    { EquipmentId: 'EQ-3340', EquipmentDescription: 'Air Compressor', AssetType: 'Compressor', AssetNumber: 'AST-003' },
-    { EquipmentId: 'EQ-7789', EquipmentDescription: 'Conveyor Belt Motor', AssetType: 'Motor', AssetNumber: 'AST-004' },
-    { EquipmentId: 'EQ-2215', EquipmentDescription: 'Generator Set', AssetType: 'Generator', AssetNumber: 'AST-005' },
-    { EquipmentId: 'R-12345', EquipmentDescription: 'Motor Pool Sedan', AssetType: 'Vehicle', AssetNumber: 'AST-006' },
-    { EquipmentId: 'FL-VAN-03', EquipmentDescription: 'Fleet Van 03', AssetType: 'Vehicle', AssetNumber: 'AST-007' },
-    { EquipmentId: 'TX-TRUCK-07', EquipmentDescription: 'Pickup Truck F-150', AssetType: 'Vehicle', AssetNumber: 'AST-008' },
+    { EquipmentId: 'EQ-4821', EquipmentDescription: 'Centrifugal Pump', AssetType: 'Pump', AssetNumber: 'AST-001', Active: true },
+    { EquipmentId: 'EQ-5102', EquipmentDescription: 'Hydraulic Press', AssetType: 'Press', AssetNumber: 'AST-002', Active: true },
+    { EquipmentId: 'EQ-3340', EquipmentDescription: 'Air Compressor', AssetType: 'Compressor', AssetNumber: 'AST-003', Active: false },
+    { EquipmentId: 'EQ-7789', EquipmentDescription: 'Conveyor Belt Motor', AssetType: 'Motor', AssetNumber: 'AST-004', Active: true },
+    { EquipmentId: 'EQ-2215', EquipmentDescription: 'Generator Set', AssetType: 'Generator', AssetNumber: 'AST-005', Active: true },
+    { EquipmentId: 'R-12345', EquipmentDescription: 'Motor Pool Sedan', AssetType: 'Vehicle', AssetNumber: 'AST-006', Active: true },
+    { EquipmentId: 'FL-VAN-03', EquipmentDescription: 'Fleet Van 03', AssetType: 'Vehicle', AssetNumber: 'AST-007', Active: true },
+    { EquipmentId: 'TX-TRUCK-07', EquipmentDescription: 'Pickup Truck F-150', AssetType: 'Vehicle', AssetNumber: 'AST-008', Active: false },
   ];
 
+  /** Empty until user types 2+ characters, matching FA-Suite behavior. */
   readonly filteredData = computed(() => {
     const query = this.searchQuery().toLowerCase().trim();
-    if (!query) return this.allAssets;
-    return this.allAssets.filter(asset =>
+    if (query.length < 2) return [];
+
+    let assets = this.includeInactive ? this.allAssets : this.allAssets.filter(a => a.Active);
+
+    return assets.filter(asset =>
       asset.EquipmentId.toLowerCase().includes(query) ||
       asset.EquipmentDescription.toLowerCase().includes(query) ||
       asset.AssetType.toLowerCase().includes(query) ||
@@ -100,10 +91,17 @@ export class UsageAssetSearchDialogComponent extends BaseDialogComponent {
 
   readonly columnsDefinition: TableCellInput[] = [
     {
+      type: TableCellTypes.Custom, key: 'image', label: 'Image', sort: false, align: 'left',
+      combineFields: ['EquipmentId'],
+      combineTemplate: () => ({
+        template: '<div style="width:40px;height:40px;background:var(--system-surfaces-surfaces-raised);border-radius:4px"></div>',
+      }),
+    },
+    {
       type: TableCellTypes.Custom, key: 'EquipmentId', label: 'Asset', sort: true, align: 'left',
       combineFields: ['EquipmentId', 'EquipmentDescription'],
       combineTemplate: (data: any[]) => ({
-        template: `<div><span class="aw-b-1">${data[0] || ''}</span><br><span class="aw-c-1" style="color: var(--system-text-text-secondary)">${data[1] || ''}</span></div>`,
+        template: `<div><span class="aw-b-1">${data[0] || ''}</span><br><span class="aw-c-1" style="color:var(--system-text-text-secondary)">${data[1] || ''}</span></div>`,
       }),
     },
     { type: TableCellTypes.Title, key: 'AssetType', label: 'Asset Type', sort: true },
@@ -118,8 +116,11 @@ export class UsageAssetSearchDialogComponent extends BaseDialogComponent {
     enableSearch: false,
   }));
 
-  public onSearchChange(query: string): void {
-    this.searchQuery.set(query);
+  constructor() {
+    super();
+    this.searchControl.valueChanges.subscribe(val => {
+      this.searchQuery.set(val || '');
+    });
   }
 
   public onGo(event: any): void {
