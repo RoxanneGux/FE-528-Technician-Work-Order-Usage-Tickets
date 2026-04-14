@@ -108,3 +108,16 @@ section + section {
   bottom: 0;
   z-index: 10;
 }
+
+.floating-display-mode {
+  position: fixed;
+  bottom: 80px;
+  right: 24px;
+  z-index: 20;
+  background: var(--system-surfaces-surfaces-raised, #fff);
+  border: 1px solid var(--system-line-divider-stroke-line-color, #cfd2d3);
+  border-radius: 8px;
+  padding: 12px 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  min-width: 240px;
+}

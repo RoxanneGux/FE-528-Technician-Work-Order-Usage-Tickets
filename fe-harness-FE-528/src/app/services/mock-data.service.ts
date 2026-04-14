@@ -1,5 +1,20 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import {
+  MockOperator,
+  MockDepartment,
+  MockAccount,
+  MockMeterValidation,
+  MockFinancialProjectCode,
+} from '../features/add-usage/usage-entry.interface';
+
+export type {
+  MockOperator,
+  MockDepartment,
+  MockAccount,
+  MockMeterValidation,
+  MockFinancialProjectCode,
+} from '../features/add-usage/usage-entry.interface';
 
 // ── Relative date helper ──
 
@@ -343,6 +358,36 @@ const FALLBACK_EMPLOYEES: EmployeeData = {
   ]
 };
 
+const FALLBACK_OPERATORS: MockOperator[] = [
+  { id: 'OP-001', name: 'John Miller' },
+  { id: 'OP-002', name: 'Patricia Davis' },
+  { id: 'OP-003', name: 'Thomas Wilson' },
+];
+
+const FALLBACK_DEPARTMENTS: MockDepartment[] = [
+  { id: 'DEPT-001', name: 'Maintenance' },
+  { id: 'DEPT-002', name: 'Operations' },
+  { id: 'DEPT-003', name: 'Engineering' },
+];
+
+const FALLBACK_METER_VALIDATIONS: MockMeterValidation[] = [
+  { id: 'VAL-01', name: 'Actual' },
+  { id: 'VAL-02', name: 'Estimated' },
+  { id: 'VAL-03', name: 'Rollover' },
+];
+
+const FALLBACK_ACCOUNTS: MockAccount[] = [
+  { id: 'ACC-001', name: 'General Maintenance' },
+  { id: 'ACC-002', name: 'Capital Projects' },
+  { id: 'ACC-003', name: 'Emergency Repairs' },
+];
+
+const FALLBACK_FINANCIAL_PROJECT_CODES: MockFinancialProjectCode[] = [
+  { id: 'FPC-001', name: 'FY2026 Infrastructure' },
+  { id: 'FPC-002', name: 'FY2026 Fleet Renewal' },
+  { id: 'FPC-003', name: 'FY2026 Facility Upgrades' },
+];
+
 // ── Service ──
 
 /**
@@ -368,6 +413,13 @@ export class MockDataService {
   public readonly advancedSearchEmployees = signal<MockAdvancedEmployee[]>(FALLBACK_EMPLOYEES.advancedSearchEmployees);
   public readonly filterOptions = signal<MockFilterOptions>(FALLBACK_EMPLOYEES.filterOptions);
   public readonly employeeDetails = signal<MockEmployeeDetail[]>(shiftEmployeeDates(FALLBACK_EMPLOYEES.employeeDetails));
+
+  // Usage data
+  public readonly operators = signal<MockOperator[]>(FALLBACK_OPERATORS);
+  public readonly departments = signal<MockDepartment[]>(FALLBACK_DEPARTMENTS);
+  public readonly meterValidations = signal<MockMeterValidation[]>(FALLBACK_METER_VALIDATIONS);
+  public readonly accounts = signal<MockAccount[]>(FALLBACK_ACCOUNTS);
+  public readonly financialProjectCodes = signal<MockFinancialProjectCode[]>(FALLBACK_FINANCIAL_PROJECT_CODES);
 
   constructor() {
     this.loadWorkOrderData();

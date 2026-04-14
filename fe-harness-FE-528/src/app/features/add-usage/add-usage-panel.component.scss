@@ -1,0 +1,161 @@
+// Form field max widths — aligned with fe-929-harness layout
+$field-max-width: 457px;
+$field-with-icon-max-width: 520px;
+$field-with-button-max-width: 560px;
+$form-content-max-width: calc(#{$field-max-width} * 2 + 24px);
+
+:host {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  background: var(--system-surfaces-surfaces-lower, #e6e8e9);
+}
+
+:host ::ng-deep {
+  aw-select-menu,
+  aw-form-field {
+    max-width: 100%;
+  }
+}
+
+.add-usage-wrapper {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px 24px 0;
+}
+
+.content-container {
+  max-width: 2000px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.entry-mode-toggle {
+  display: flex;
+  gap: 8px;
+  padding: 16px 0;
+}
+
+// ── Responsive two-column form layout ──
+
+.form-content {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  margin-top: 16px;
+  padding-bottom: 80px;
+  width: 100%;
+  max-width: $form-content-max-width;
+}
+
+.form-row {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+
+  @media (min-width: 768px) {
+    flex-direction: row;
+    gap: 24px;
+    align-items: flex-end;
+  }
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+  width: 100%;
+
+  @media (min-width: 768px) {
+    max-width: $field-max-width;
+  }
+
+  &--with-button {
+    @media (min-width: 768px) {
+      max-width: $field-with-button-max-width;
+    }
+  }
+}
+
+.field-with-icon {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+
+  aw-form-field {
+    flex: 1;
+    max-width: $field-max-width;
+    display: block;
+    width: 100%;
+    min-width: 0;
+  }
+}
+
+.field-with-button {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+
+  aw-form-field {
+    flex: 1;
+    max-width: $field-max-width;
+    display: block;
+    width: 100%;
+    min-width: 0;
+  }
+}
+
+::ng-deep .section-divider > * {
+  padding-top: 24px !important;
+  padding-bottom: 8px !important;
+}
+
+// ── Multi-entry table ──
+
+.multi-entry-section {
+  padding: 16px 0;
+}
+
+.multi-entry-table {
+  overflow-x: auto;
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+
+    th,
+    td {
+      padding: 8px 12px;
+      text-align: left;
+      vertical-align: middle;
+    }
+
+    th {
+      font-weight: 600;
+      font-size: 12px;
+      text-transform: uppercase;
+      color: var(--system-text-text-secondary, #5b6670);
+      border-bottom: 1px solid var(--system-line-divider-stroke-line-color, #cfd2d3);
+    }
+
+    td {
+      border-bottom: 1px solid var(--system-line-divider-stroke-line-color, #cfd2d3);
+    }
+  }
+}
+
+.add-row-bar {
+  padding: 8px 0;
+}
+
+// ── Sticky footer ──
+
+.aw-sticky-footer {
+  flex-shrink: 0;
+  background: var(--system-surfaces-surfaces-lower, #e6e8e9);
+  border-top: 1px solid var(--system-line-divider-stroke-line-color, #cfd2d3);
+}

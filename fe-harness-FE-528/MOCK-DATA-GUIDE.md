@@ -253,6 +253,31 @@ Each group title includes the type name and count (e.g., "Assignments (2)"). If 
 
 Times are formatted as "H:MM AM/PM" (e.g., "9:00 AM", "2:30 PM").
 
+## Operators (3)
+
+| ID | Name |
+|----|------|
+| OP-001 | John Miller |
+| OP-002 | Patricia Davis |
+| OP-003 | Thomas Wilson |
+
+## Departments (3)
+
+| ID | Name |
+|----|------|
+| DEPT-001 | Maintenance |
+| DEPT-002 | Operations |
+| DEPT-003 | Engineering |
+
+## Usage Display Modes
+
+| Mode Value | Label | Visible Fields |
+|------------|-------|----------------|
+| `meter` | Meter Values Only | Transaction Date, Hours Used, Operator |
+| `both` | Business Usage and Meter Values | Transaction Date, Hours Used, Operator, Department, Task |
+| `business` | Business Usage Only | Transaction Date, Department, Task |
+| `all` | All Values (incl. Misc Codes) | Transaction Date, Hours Used, Operator, Department, Task |
+
 ## Quick Scenarios
 
 | I want to... | How |
@@ -289,6 +314,12 @@ Times are formatted as "H:MM AM/PM" (e.g., "9:00 AM", "2:30 PM").
 | See empty day message | Click a day with no events → drawer shows "No events for this date" |
 | Select employee from details | Open Employee Details panel → click "Select" → employee is added to Employee Chooser's selected chips |
 | Cancel and return to chooser | Open Employee Details panel → click "Cancel" → returns to Employee Chooser without changes |
+| Open the Add Usage panel | Click "Add Usage" in the footer More actions menu → panel slides in |
+| Switch usage entry mode | Open Add Usage panel → click "Single Entry" or "Multi Entry" chip toggle |
+| Add a multi-entry row | Open Add Usage panel → switch to Multi Entry → click "+ Add" button |
+| Delete a multi-entry row | Open Add Usage panel → switch to Multi Entry → click delete icon on a row |
+| Change usage display mode | Use the floating "Usage Display Mode" selector in the bottom-right corner of the WO Details page |
+| See different field configurations | Change the display mode selector → open Add Usage panel → fields change based on mode |
 
 ### Side Drawer Filter Scenarios
 

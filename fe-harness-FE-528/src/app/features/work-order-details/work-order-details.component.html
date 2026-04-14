@@ -270,6 +270,17 @@
 
 </app-anchor-layout>
 
+<!-- Floating Usage Display Mode selector -->
+<div class="floating-display-mode">
+  <aw-form-field-label>Usage Display Mode</aw-form-field-label>
+  <aw-select-menu
+    [ariaLabel]="'Usage Display Mode'"
+    [singleSelectListItems]="displayModeOptions"
+    [enableListReset]="false"
+    [(ngModel)]="usageDisplayMode"
+  ></aw-select-menu>
+</div>
+
 <!-- ═══ Sticky Footer Action Bar ═══ -->
 <div class="wo-sticky-footer">
   <aw-action-bar [actionsLeft]="actionsLeft" [actionsRight]="actionsRight" [moreActions]="moreActions"></aw-action-bar>

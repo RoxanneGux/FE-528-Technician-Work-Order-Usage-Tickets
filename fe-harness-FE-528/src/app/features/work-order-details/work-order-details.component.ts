@@ -5,10 +5,10 @@ import {
   AwExpansionPanelComponent,
   AwTableComponent,
   AwActionBarComponent,
-  AwDividerComponent,
   AwIconComponent,
   AwButtonDirective,
   AwSelectMenuComponent,
+  AwFormFieldLabelComponent,
   TableCellInput,
   TableCellTypes,
   ActionBarLeft,
@@ -19,8 +19,10 @@ import { AnchorLayoutComponent } from '../../components/layouts/anchor-layout/an
 import { AnchorLink } from '../../components/layouts/anchor-layout/anchor-link.interface';
 import { DetailsCardComponent, DetailsCardDataRow } from '../../components/details-card/details-card.component';
 import { EmployeeChooserPanelComponent } from '../employee-chooser/employee-chooser-panel.component';
+import { AddUsagePanelComponent } from '../add-usage/add-usage-panel.component';
 import { PanelService } from '../../services/panel.service';
 import { MockDataService, MockCurrentAssignment } from '../../services/mock-data.service';
+import { USAGE_DISPLAY_MODE_OPTIONS, UsageDisplayMode } from '../add-usage/usage-entry.interface';
 
 /**
  * Work Order Details page component.
@@ -38,10 +40,10 @@ import { MockDataService, MockCurrentAssignment } from '../../services/mock-data
     AwExpansionPanelComponent,
     AwTableComponent,
     AwActionBarComponent,
-    AwDividerComponent,
     AwIconComponent,
     AwButtonDirective,
     AwSelectMenuComponent,
+    AwFormFieldLabelComponent,
   ],
   templateUrl: './work-order-details.component.html',
   styleUrl: './work-order-details.component.scss',
@@ -52,6 +54,12 @@ export class WorkOrderDetailsComponent {
 
   /** Selected delay code value for the Work Delay form. */
   public selectedDelayCode = '';
+
+  /** Current usage display mode setting. */
+  public usageDisplayMode: string = 'all';
+
+  /** Display mode options for the floating selector. */
+  public readonly displayModeOptions = USAGE_DISPLAY_MODE_OPTIONS;
 
   // ── Anchor links ──
 
@@ -198,7 +206,7 @@ export class WorkOrderDetailsComponent {
     { title: 'Add Labor', action: () => console.log('Action: Add Labor') },
     { title: 'Add Parts', action: () => console.log('Action: Add Parts') },
     { title: 'Add Commercial', action: () => console.log('Action: Add Commercial') },
-    { title: 'Add Usage', action: () => console.log('Action: Add Usage') },
+    { title: 'Add Usage', action: () => this.onAddUsage() },
   ];
 
   // ── Actions ──
@@ -233,6 +241,19 @@ export class WorkOrderDetailsComponent {
         console.log('Employee Chooser: Added employees to current assignments', result);
       }
     });
+  }
+
+  /** Open the Add Usage panel, passing the current display mode. */
+  onAddUsage(): void {
+    this._panelService.open(
+      AddUsagePanelComponent,
+      { displayMode: this.usageDisplayMode as UsageDisplayMode },
+      (result) => {
+        if (result) {
+          console.log('Add Usage result:', result);
+        }
+      }
+    );
   }
 
   onStartDelay(): void {

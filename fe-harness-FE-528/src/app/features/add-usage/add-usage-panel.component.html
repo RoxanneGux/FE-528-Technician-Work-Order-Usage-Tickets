@@ -1,0 +1,321 @@
+<div class="add-usage-wrapper">
+  <div class="content-container">
+    <!-- Title -->
+    <aw-divider [title]="'Add Usage'"></aw-divider>
+
+    <!-- Entry Mode Toggle -->
+    <div class="entry-mode-toggle">
+      <aw-chip [label]="'Single Entry'" [variant]="entryMode() === 'single' ? 'fill' : 'outline'" (click)="toggleEntryMode('single')"></aw-chip>
+      <aw-chip [label]="'Multi Entry'" [variant]="entryMode() === 'multi' ? 'fill' : 'outline'" (click)="toggleEntryMode('multi')"></aw-chip>
+    </div>
+
+    <!-- ═══════════════ Single Entry Form ═══════════════ -->
+    @if (entryMode() === 'single') {
+      <div class="form-content" [formGroup]="singleEntryForm">
+
+        <!-- Row 1: Asset + Transaction Date -->
+        <div class="form-row">
+          @if (visibleFields().includes('asset')) {
+            <div class="form-field">
+              <aw-form-field-label [required]="true">Asset</aw-form-field-label>
+              <div class="field-with-icon">
+                <aw-form-field>
+                  <input AwInput formControlName="asset" aria-label="Asset" />
+                </aw-form-field>
+                <button AwButtonIconOnly [buttonType]="'primary'" ariaLabel="Search Asset">
+                  <aw-icon [iconName]="'search'" [iconColor]="''"></aw-icon>
+                </button>
+              </div>
+            </div>
+          }
+          @if (visibleFields().includes('transactionDate')) {
+            <div class="form-field">
+              <aw-form-field>
+                <aw-form-field-label>Transaction Date</aw-form-field-label>
+                <aw-date-picker
+                  #transactionDatePicker
+                  formControlName="transactionDate"
+                  [placeholder]="'mm/dd/yyyy'">
+                </aw-date-picker>
+                <button ariaLabel="calendar" type="button" AwButtonIconOnly [buttonType]="'primary'" (click)="transactionDatePicker.openCalendar()">
+                  <aw-icon [iconName]="'today'" [iconColor]="''"></aw-icon>
+                </button>
+              </aw-form-field>
+            </div>
+          }
+        </div>
+
+        <!-- Row 2: Hours Used (left column only) -->
+        @if (visibleFields().includes('hoursUsed')) {
+          <div class="form-row">
+            <div class="form-field">
+              <aw-form-field-label [required]="true">Hours Used</aw-form-field-label>
+              <aw-form-field>
+                <input AwInput type="number" formControlName="hoursUsed" placeholder="0.00" aria-label="Hours Used" />
+              </aw-form-field>
+            </div>
+          </div>
+        }
+
+        <!-- Row 3: Start Date/Time + End Date/Time -->
+        @if (visibleFields().includes('startDateTime') || visibleFields().includes('endDateTime')) {
+          <div class="form-row">
+            @if (visibleFields().includes('startDateTime')) {
+              <div class="form-field">
+                <aw-date-time-picker formControlName="startDateTime"
+                  [ariaLabel]="{date: 'Start Date', time: 'Start Time'}"
+                  [placeholder]="{date: 'mm/dd/yyyy', time: 'hh:mm'}">
+                  <aw-form-field-label>Start Date / Time</aw-form-field-label>
+                  <button AwButtonIconOnly [buttonType]="'primary'" ariaLabel="Open start date picker">
+                    <aw-icon [iconName]="'today'" [iconColor]="''"></aw-icon>
+                  </button>
+                </aw-date-time-picker>
+              </div>
+            }
+            @if (visibleFields().includes('endDateTime')) {
+              <div class="form-field">
+                <aw-date-time-picker formControlName="endDateTime"
+                  [ariaLabel]="{date: 'End Date', time: 'End Time'}"
+                  [placeholder]="{date: 'mm/dd/yyyy', time: 'hh:mm'}">
+                  <aw-form-field-label>End Date / Time</aw-form-field-label>
+                  <button AwButtonIconOnly [buttonType]="'primary'" ariaLabel="Open end date picker">
+                    <aw-icon [iconName]="'today'" [iconColor]="''"></aw-icon>
+                  </button>
+                </aw-date-time-picker>
+              </div>
+            }
+          </div>
+        }
+
+        <!-- Section Divider: Meter Values -->
+        @if (visibleFields().includes('meter1Begin') || visibleFields().includes('meter2Begin')) {
+          <aw-divider class="section-divider"></aw-divider>
+        }
+
+        <!-- Row 4: Meter 1 Begin + Meter 2 Begin -->
+        @if (visibleFields().includes('meter1Begin') || visibleFields().includes('meter2Begin')) {
+          <div class="form-row">
+            @if (visibleFields().includes('meter1Begin')) {
+              <div class="form-field">
+                <aw-form-field-label>Meter 1 Begin</aw-form-field-label>
+                <aw-form-field>
+                  <input AwInput formControlName="meter1Begin" placeholder="" aria-label="Meter 1 Begin" />
+                </aw-form-field>
+              </div>
+            }
+            @if (visibleFields().includes('meter2Begin')) {
+              <div class="form-field">
+                <aw-form-field-label>Meter 2 Begin</aw-form-field-label>
+                <aw-form-field>
+                  <input AwInput formControlName="meter2Begin" placeholder="" aria-label="Meter 2 Begin" />
+                </aw-form-field>
+              </div>
+            }
+          </div>
+        }
+
+        <!-- Row 5: Meter 1 End + Meter 2 End -->
+        @if (visibleFields().includes('meter1End') || visibleFields().includes('meter2End')) {
+          <div class="form-row">
+            @if (visibleFields().includes('meter1End')) {
+              <div class="form-field">
+                <aw-form-field-label>Meter 1 End</aw-form-field-label>
+                <aw-form-field>
+                  <input AwInput formControlName="meter1End" placeholder="" aria-label="Meter 1 End" />
+                </aw-form-field>
+              </div>
+            }
+            @if (visibleFields().includes('meter2End')) {
+              <div class="form-field">
+                <aw-form-field-label>Meter 2 End</aw-form-field-label>
+                <aw-form-field>
+                  <input AwInput formControlName="meter2End" placeholder="" aria-label="Meter 2 End" />
+                </aw-form-field>
+              </div>
+            }
+          </div>
+        }
+
+        <!-- Row 6: Meter 1 Validation + Meter 2 Validation -->
+        @if (visibleFields().includes('meter1Validation') || visibleFields().includes('meter2Validation')) {
+          <div class="form-row">
+            @if (visibleFields().includes('meter1Validation')) {
+              <div class="form-field">
+                <aw-form-field-label>Meter 1 Validation</aw-form-field-label>
+                <aw-select-menu [singleSelectListItems]="meterValidationOptions()" [enableListReset]="true" [enableSearch]="true" formControlName="meter1Validation" [ariaLabel]="'Meter 1 Validation'"></aw-select-menu>
+              </div>
+            }
+            @if (visibleFields().includes('meter2Validation')) {
+              <div class="form-field">
+                <aw-form-field-label>Meter 2 Validation</aw-form-field-label>
+                <aw-select-menu [singleSelectListItems]="meterValidationOptions()" [enableListReset]="true" [enableSearch]="true" formControlName="meter2Validation" [ariaLabel]="'Meter 2 Validation'"></aw-select-menu>
+              </div>
+            }
+          </div>
+        }
+
+        <!-- Section Divider: Business Fields -->
+        @if (visibleFields().includes('account') || visibleFields().includes('department')) {
+          <aw-divider class="section-divider"></aw-divider>
+        }
+
+        <!-- Row 7: Account + Operator -->
+        @if (visibleFields().includes('account') || visibleFields().includes('operator')) {
+          <div class="form-row">
+            @if (visibleFields().includes('account')) {
+              <div class="form-field">
+                <aw-form-field-label>Account</aw-form-field-label>
+                <aw-select-menu [singleSelectListItems]="accountOptions()" [enableListReset]="true" [enableSearch]="true" formControlName="account" [ariaLabel]="'Account'"></aw-select-menu>
+              </div>
+            }
+            @if (visibleFields().includes('operator')) {
+              <div class="form-field">
+                <aw-form-field-label>Operator</aw-form-field-label>
+                <aw-select-menu [singleSelectListItems]="operatorOptions()" [enableListReset]="true" [enableSearch]="true" formControlName="operator" [ariaLabel]="'Operator'"></aw-select-menu>
+              </div>
+            }
+          </div>
+        }
+
+        <!-- Row 8: Department + Task -->
+        @if (visibleFields().includes('department') || visibleFields().includes('task')) {
+          <div class="form-row">
+            @if (visibleFields().includes('department')) {
+              <div class="form-field">
+                <aw-form-field-label [required]="true">Department</aw-form-field-label>
+                <aw-select-menu [singleSelectListItems]="departmentOptions()" [enableListReset]="true" [enableSearch]="true" formControlName="department" [ariaLabel]="'Department'"></aw-select-menu>
+              </div>
+            }
+            @if (visibleFields().includes('task')) {
+              <div class="form-field">
+                <aw-form-field-label>Task</aw-form-field-label>
+                <div class="field-with-icon">
+                  <aw-form-field>
+                    <input AwInput formControlName="task" aria-label="Task" />
+                  </aw-form-field>
+                  <button AwButtonIconOnly [buttonType]="'primary'" ariaLabel="Search Task">
+                    <aw-icon [iconName]="'search'" [iconColor]="''"></aw-icon>
+                  </button>
+                  <button AwButton [buttonType]="'outlined'"><span>Lookup</span></button>
+                </div>
+              </div>
+            }
+          </div>
+        }
+
+        <!-- Row 9: Financial Project Code (left column only) -->
+        @if (visibleFields().includes('financialProjectCode')) {
+          <div class="form-row">
+            <div class="form-field">
+              <aw-form-field-label>Financial Project Code</aw-form-field-label>
+              <aw-select-menu [singleSelectListItems]="financialProjectCodeOptions()" [enableListReset]="true" [enableSearch]="true" formControlName="financialProjectCode" [ariaLabel]="'Financial Project Code'"></aw-select-menu>
+            </div>
+          </div>
+        }
+
+        <!-- Misc Fields (all mode only) -->
+        @if (visibleFields().includes('misc1')) {
+          <div class="form-row">
+            <div class="form-field">
+              <aw-form-field-label>Misc 1</aw-form-field-label>
+              <aw-form-field>
+                <input AwInput formControlName="misc1" placeholder="" aria-label="Misc 1" />
+              </aw-form-field>
+            </div>
+            @if (visibleFields().includes('misc2')) {
+              <div class="form-field">
+                <aw-form-field-label>Misc 2</aw-form-field-label>
+                <aw-form-field>
+                  <input AwInput formControlName="misc2" placeholder="" aria-label="Misc 2" />
+                </aw-form-field>
+              </div>
+            }
+          </div>
+        }
+        @if (visibleFields().includes('misc3')) {
+          <div class="form-row">
+            <div class="form-field">
+              <aw-form-field-label>Misc 3</aw-form-field-label>
+              <aw-form-field>
+                <input AwInput formControlName="misc3" placeholder="" aria-label="Misc 3" />
+              </aw-form-field>
+            </div>
+            @if (visibleFields().includes('misc4')) {
+              <div class="form-field">
+                <aw-form-field-label>Misc 4</aw-form-field-label>
+                <aw-form-field>
+                  <input AwInput formControlName="misc4" placeholder="" aria-label="Misc 4" />
+                </aw-form-field>
+              </div>
+            }
+          </div>
+        }
+
+      </div>
+    }
+
+    <!-- ═══════════════ Multi Entry Table ═══════════════ -->
+    @if (entryMode() === 'multi') {
+      <div class="multi-entry-section">
+        <div class="multi-entry-table">
+          <table class="table">
+            <thead>
+              <tr>
+                @if (visibleFields().includes('transactionDate')) { <th>Transaction Date</th> }
+                @if (visibleFields().includes('hoursUsed')) { <th>Hours Used</th> }
+                @if (visibleFields().includes('operator')) { <th>Operator</th> }
+                @if (visibleFields().includes('department')) { <th>Department</th> }
+                @if (visibleFields().includes('task')) { <th>Task</th> }
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (row of multiEntryRows(); track $index) {
+                <tr [formGroup]="row">
+                  @if (visibleFields().includes('transactionDate')) {
+                    <td>
+                      <aw-form-field>
+                        <aw-date-picker #rowDatePicker formControlName="transactionDate" [placeholder]="'mm/dd/yyyy'"></aw-date-picker>
+                        <button ariaLabel="calendar" type="button" AwButtonIconOnly [buttonType]="'primary'" (click)="rowDatePicker.openCalendar()">
+                          <aw-icon [iconName]="'today'" [iconColor]="''"></aw-icon>
+                        </button>
+                      </aw-form-field>
+                    </td>
+                  }
+                  @if (visibleFields().includes('hoursUsed')) {
+                    <td><input AwInput type="number" formControlName="hoursUsed" placeholder="0.00" /></td>
+                  }
+                  @if (visibleFields().includes('operator')) {
+                    <td><aw-select-menu [singleSelectListItems]="operatorOptions()" [enableListReset]="true" [enableSearch]="true" formControlName="operator" [ariaLabel]="'Operator'"></aw-select-menu></td>
+                  }
+                  @if (visibleFields().includes('department')) {
+                    <td><aw-select-menu [singleSelectListItems]="departmentOptions()" [enableListReset]="true" [enableSearch]="true" formControlName="department" [ariaLabel]="'Department'"></aw-select-menu></td>
+                  }
+                  @if (visibleFields().includes('task')) {
+                    <td><input AwInput formControlName="task" placeholder="Task" aria-label="Task" /></td>
+                  }
+                  <td>
+                    <button AwButtonIconOnly [buttonType]="'secondary'" [ariaLabel]="'Delete row'" (click)="removeRow($index)">
+                      <aw-icon [iconName]="'delete'"></aw-icon>
+                    </button>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+        <div class="add-row-bar">
+          <button AwButton [buttonType]="'text'" (click)="addRow()">
+            <aw-icon [iconName]="'add'"></aw-icon>
+            <span>Add</span>
+          </button>
+        </div>
+      </div>
+    }
+  </div>
+</div>
+
+<!-- Footer action bar -->
+<div class="aw-sticky-footer">
+  <aw-action-bar [actionsLeft]="footerActionsLeft" [actionsRight]="footerActionsRight"></aw-action-bar>
+</div>
