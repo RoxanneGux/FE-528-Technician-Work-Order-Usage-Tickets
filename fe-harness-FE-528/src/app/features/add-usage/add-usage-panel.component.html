@@ -159,6 +159,36 @@
           <aw-divider class="section-divider"></aw-divider>
         }
 
+        <!-- Business Usage + Individual Usage + Total Usage -->
+        @if (visibleFields().includes('businessUsage')) {
+          <div class="form-row">
+            <div class="form-field">
+              <aw-form-field-label>Business Usage</aw-form-field-label>
+              <aw-form-field>
+                <input AwInput type="number" formControlName="businessUsage" placeholder="0.00" aria-label="Business Usage" />
+              </aw-form-field>
+            </div>
+            @if (visibleFields().includes('individualUsage')) {
+              <div class="form-field">
+                <aw-form-field-label>Individual Usage</aw-form-field-label>
+                <aw-form-field>
+                  <input AwInput type="number" formControlName="individualUsage" placeholder="0.00" aria-label="Individual Usage" />
+                </aw-form-field>
+              </div>
+            }
+          </div>
+          @if (visibleFields().includes('totalUsage')) {
+            <div class="form-row">
+              <div class="form-field">
+                <aw-form-field-label>Total Usage</aw-form-field-label>
+                <aw-form-field>
+                  <input AwInput [readOnly]="true" [value]="getTotalUsage(singleEntryForm)" aria-label="Total Usage" />
+                </aw-form-field>
+              </div>
+            </div>
+          }
+        }
+
         <!-- Row 7: Account + Operator -->
         @if (visibleFields().includes('account') || visibleFields().includes('operator')) {
           <div class="form-row">

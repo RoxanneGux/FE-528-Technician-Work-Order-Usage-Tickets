@@ -128,6 +128,13 @@ export class AddUsagePanelComponent {
     this.entryMode.set(mode);
   }
 
+  /** Compute total usage from business + individual usage values. */
+  public getTotalUsage(form: FormGroup): string {
+    const business = parseFloat(form.get('businessUsage')?.value) || 0;
+    const individual = parseFloat(form.get('individualUsage')?.value) || 0;
+    return (business + individual).toFixed(2);
+  }
+
   /** Append a new empty row to the multi-entry table. */
   public addRow(): void {
     this.multiEntryRows.update(rows => [...rows, this.createRowFormGroup()]);
@@ -173,6 +180,8 @@ export class AddUsagePanelComponent {
       department: new FormControl<string | null>(null),
       task: new FormControl<string | null>(null),
       financialProjectCode: new FormControl<string | null>(null),
+      businessUsage: new FormControl<number | null>(null),
+      individualUsage: new FormControl<number | null>(null),
       misc1: new FormControl<string | null>(null),
       misc2: new FormControl<string | null>(null),
       misc3: new FormControl<string | null>(null),
@@ -200,6 +209,8 @@ export class AddUsagePanelComponent {
       department: this.extractSelectValue(v.department),
       task: this.extractSelectValue(v.task),
       financialProjectCode: this.extractSelectValue(v.financialProjectCode),
+      businessUsage: v.businessUsage ?? null,
+      individualUsage: v.individualUsage ?? null,
       misc1: v.misc1 ?? null,
       misc2: v.misc2 ?? null,
       misc3: v.misc3 ?? null,

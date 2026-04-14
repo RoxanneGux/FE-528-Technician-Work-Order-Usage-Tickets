@@ -21,6 +21,9 @@ export type UsageField =
   | 'department'
   | 'task'
   | 'financialProjectCode'
+  | 'businessUsage'
+  | 'individualUsage'
+  | 'totalUsage'
   | 'misc1'
   | 'misc2'
   | 'misc3'
@@ -44,6 +47,9 @@ const METER_FIELDS: UsageField[] = [
 /** Fields visible in business display mode. */
 const BUSINESS_FIELDS: UsageField[] = [
   'transactionDate',
+  'businessUsage',
+  'individualUsage',
+  'totalUsage',
   'department',
   'task',
   'account',
@@ -90,6 +96,8 @@ export interface UsageEntry {
   department: string | null;
   task: string | null;
   financialProjectCode: string | null;
+  businessUsage: number | null;
+  individualUsage: number | null;
   misc1: string | null;
   misc2: string | null;
   misc3: string | null;
