@@ -14,7 +14,7 @@ import {
   AwActionBarComponent,
   AwButtonDirective,
   AwButtonIconOnlyDirective,
-  AwChipComponent,
+  AwButtonSegmentedComponent,
   AwDatePickerComponent,
   AwDateTimePickerComponent,
   AwDividerComponent,
@@ -47,7 +47,7 @@ import {
     AwActionBarComponent,
     AwButtonDirective,
     AwButtonIconOnlyDirective,
-    AwChipComponent,
+    AwButtonSegmentedComponent,
     AwDatePickerComponent,
     AwDateTimePickerComponent,
     AwDividerComponent,
@@ -113,6 +113,17 @@ export class AddUsagePanelComponent {
     this._mockData.financialProjectCodes().map(f => ({ label: f.name, value: f.id })),
   );
 
+  /** Mock meter data for hint text display. */
+  public readonly meter1Units = signal<string>('miles');
+  public readonly meter1Reading = signal<number>(45230);
+  public readonly meter2Units = signal<string>('hours');
+  public readonly meter2Reading = signal<number>(1250);
+  public readonly meter1Hint = computed(() => this.meter1Units() ? `Current: ${this.meter1Reading().toLocaleString()} ${this.meter1Units()}` : '');
+  public readonly meter2Hint = computed(() => this.meter2Units() ? `Current: ${this.meter2Reading().toLocaleString()} ${this.meter2Units()}` : '');
+
+  /** Entry mode segmented button labels. */
+  public readonly entryModeLabels = ['Single Entry', 'Multi Entry'];
+
   /** Footer action bar — Cancel on left. */
   public readonly footerActionsLeft: ActionBarLeft[] = [
     { textCallback: { title: 'Cancel', action: () => this.onCancel() } },
@@ -126,6 +137,28 @@ export class AddUsagePanelComponent {
   /** Switch between single and multi entry modes. */
   public toggleEntryMode(mode: 'single' | 'multi'): void {
     this.entryMode.set(mode);
+  }
+
+  /** Handle segmented button entry mode change. */
+  public onEntryModeChange(event: { event: MouseEvent | KeyboardEvent; index: number }): void {
+    this.entryMode.set(event.index === 0 ? 'single' : 'multi');
+  }
+
+  /** Increment a numeric form field value. */
+  public incrementField(form: FormGroup, fieldName: string, step: number = 1): void {
+    const ctrl = form.get(fieldName);
+    if (!ctrl) return;
+    const current = parseFloat(ctrl.value) || 0;
+    ctrl.setValue(parseFloat((current + step).toFixed(2)));
+  }
+
+  /** Decrement a numeric form field value, floored at 0. */
+  public decrementField(form: FormGroup, fieldName: string, step: number = 1): void {
+    const ctrl = form.get(fieldName);
+    if (!ctrl) return;
+    const current = parseFloat(ctrl.value) || 0;
+    const newVal = parseFloat((current - step).toFixed(2));
+    ctrl.setValue(newVal < 0 ? 0 : newVal);
   }
 
   /** Compute total usage from business + individual usage values. */

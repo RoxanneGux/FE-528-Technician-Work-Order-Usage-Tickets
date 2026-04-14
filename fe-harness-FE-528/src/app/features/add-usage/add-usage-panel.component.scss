@@ -152,6 +152,13 @@ $form-content-max-width: calc(#{$field-max-width} * 2 + 24px);
   padding: 8px 0;
 }
 
+.field-subtitle {
+  font-family: Roboto, sans-serif;
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--system-text-text-secondary, #5b6670);
+}
+
 // ── Sticky footer ──
 
 .aw-sticky-footer {

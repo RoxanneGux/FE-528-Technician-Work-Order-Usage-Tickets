@@ -5,8 +5,12 @@
 
     <!-- Entry Mode Toggle -->
     <div class="entry-mode-toggle">
-      <aw-chip [label]="'Single Entry'" [variant]="entryMode() === 'single' ? 'fill' : 'outline'" (click)="toggleEntryMode('single')"></aw-chip>
-      <aw-chip [label]="'Multi Entry'" [variant]="entryMode() === 'multi' ? 'fill' : 'outline'" (click)="toggleEntryMode('multi')"></aw-chip>
+      <aw-button-segmented
+        [values]="entryModeLabels"
+        [ariaLabel]="'Entry mode selector'"
+        [initialIndex]="0"
+        (selectedButton)="onEntryModeChange($event)">
+      </aw-button-segmented>
     </div>
 
     <!-- ═══════════════ Single Entry Form ═══════════════ -->
@@ -50,9 +54,17 @@
           <div class="form-row">
             <div class="form-field">
               <aw-form-field-label [required]="true">Hours Used</aw-form-field-label>
-              <aw-form-field>
-                <input AwInput type="number" formControlName="hoursUsed" placeholder="0.00" aria-label="Hours Used" />
-              </aw-form-field>
+              <div class="field-with-icon">
+                <aw-form-field>
+                  <input AwInput type="text" inputmode="decimal" formControlName="hoursUsed" placeholder="0.00" aria-label="Hours Used" />
+                </aw-form-field>
+                <button AwButtonIconOnly [buttonType]="'primary'" ariaLabel="Decrease hours" type="button" (click)="decrementField(singleEntryForm, 'hoursUsed')">
+                  <aw-icon [iconName]="'remove'" [iconColor]="''"></aw-icon>
+                </button>
+                <button AwButtonIconOnly [buttonType]="'primary'" ariaLabel="Increase hours" type="button" (click)="incrementField(singleEntryForm, 'hoursUsed')">
+                  <aw-icon [iconName]="'add'" [iconColor]="''"></aw-icon>
+                </button>
+              </div>
             </div>
           </div>
         }
@@ -98,6 +110,7 @@
             @if (visibleFields().includes('meter1Begin')) {
               <div class="form-field">
                 <aw-form-field-label>Meter 1 Begin</aw-form-field-label>
+                <span class="field-subtitle">{{ meter1Hint() }}</span>
                 <aw-form-field>
                   <input AwInput formControlName="meter1Begin" placeholder="" aria-label="Meter 1 Begin" />
                 </aw-form-field>
@@ -106,6 +119,7 @@
             @if (visibleFields().includes('meter2Begin')) {
               <div class="form-field">
                 <aw-form-field-label>Meter 2 Begin</aw-form-field-label>
+                <span class="field-subtitle">{{ meter2Hint() }}</span>
                 <aw-form-field>
                   <input AwInput formControlName="meter2Begin" placeholder="" aria-label="Meter 2 Begin" />
                 </aw-form-field>
@@ -120,6 +134,7 @@
             @if (visibleFields().includes('meter1End')) {
               <div class="form-field">
                 <aw-form-field-label>Meter 1 End</aw-form-field-label>
+                <span class="field-subtitle">{{ meter1Hint() }}</span>
                 <aw-form-field>
                   <input AwInput formControlName="meter1End" placeholder="" aria-label="Meter 1 End" />
                 </aw-form-field>
@@ -128,6 +143,7 @@
             @if (visibleFields().includes('meter2End')) {
               <div class="form-field">
                 <aw-form-field-label>Meter 2 End</aw-form-field-label>
+                <span class="field-subtitle">{{ meter2Hint() }}</span>
                 <aw-form-field>
                   <input AwInput formControlName="meter2End" placeholder="" aria-label="Meter 2 End" />
                 </aw-form-field>
@@ -164,16 +180,32 @@
           <div class="form-row">
             <div class="form-field">
               <aw-form-field-label>Business Usage</aw-form-field-label>
-              <aw-form-field>
-                <input AwInput type="number" formControlName="businessUsage" placeholder="0.00" aria-label="Business Usage" />
-              </aw-form-field>
+              <div class="field-with-icon">
+                <aw-form-field>
+                  <input AwInput type="text" inputmode="decimal" formControlName="businessUsage" placeholder="0.00" aria-label="Business Usage" />
+                </aw-form-field>
+                <button AwButtonIconOnly [buttonType]="'primary'" ariaLabel="Decrease business usage" type="button" (click)="decrementField(singleEntryForm, 'businessUsage')">
+                  <aw-icon [iconName]="'remove'" [iconColor]="''"></aw-icon>
+                </button>
+                <button AwButtonIconOnly [buttonType]="'primary'" ariaLabel="Increase business usage" type="button" (click)="incrementField(singleEntryForm, 'businessUsage')">
+                  <aw-icon [iconName]="'add'" [iconColor]="''"></aw-icon>
+                </button>
+              </div>
             </div>
             @if (visibleFields().includes('individualUsage')) {
               <div class="form-field">
                 <aw-form-field-label>Individual Usage</aw-form-field-label>
-                <aw-form-field>
-                  <input AwInput type="number" formControlName="individualUsage" placeholder="0.00" aria-label="Individual Usage" />
-                </aw-form-field>
+                <div class="field-with-icon">
+                  <aw-form-field>
+                    <input AwInput type="text" inputmode="decimal" formControlName="individualUsage" placeholder="0.00" aria-label="Individual Usage" />
+                  </aw-form-field>
+                  <button AwButtonIconOnly [buttonType]="'primary'" ariaLabel="Decrease individual usage" type="button" (click)="decrementField(singleEntryForm, 'individualUsage')">
+                    <aw-icon [iconName]="'remove'" [iconColor]="''"></aw-icon>
+                  </button>
+                  <button AwButtonIconOnly [buttonType]="'primary'" ariaLabel="Increase individual usage" type="button" (click)="incrementField(singleEntryForm, 'individualUsage')">
+                    <aw-icon [iconName]="'add'" [iconColor]="''"></aw-icon>
+                  </button>
+                </div>
               </div>
             }
           </div>
