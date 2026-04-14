@@ -198,6 +198,7 @@ export class WorkOrderDetailsComponent {
     { title: 'Add Labor', action: () => console.log('Action: Add Labor') },
     { title: 'Add Parts', action: () => console.log('Action: Add Parts') },
     { title: 'Add Commercial', action: () => console.log('Action: Add Commercial') },
+    { title: 'Add Usage', action: () => console.log('Action: Add Usage') },
   ];
 
   // ── Actions ──
