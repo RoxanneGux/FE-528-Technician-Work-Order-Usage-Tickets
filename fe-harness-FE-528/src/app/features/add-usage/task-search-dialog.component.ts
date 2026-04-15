@@ -126,10 +126,9 @@ export class TaskLayerButtonComponent {
 })
 export class UsageTaskSearchDialogComponent extends BaseDialogComponent {
   searchText = '';
-  taskTypeControl = new FormControl('');
+  taskTypeControl = new FormControl('Repair Group');
 
   taskTypeOptions: SingleSelectOption[] = [
-    { label: '', value: '' },
     { label: 'Repair Group', value: 'Repair Group' },
     { label: 'Repair Task', value: 'Repair Task' },
     { label: 'PM Service', value: 'PM Service' },
