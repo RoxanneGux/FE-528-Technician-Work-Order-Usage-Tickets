@@ -58,7 +58,7 @@
               <aw-form-field-label [required]="true">Hours Used</aw-form-field-label>
               <div class="field-with-icon">
                 <aw-form-field>
-                  <input AwInput type="text" inputmode="decimal" formControlName="hoursUsed" placeholder="0.00" aria-label="Hours Used" />
+                  <input AwInput type="text" inputmode="decimal" formControlName="hoursUsed" placeholder="0.00" aria-label="Hours Used" (keydown)="onMeterKeydown($event)" />
                 </aw-form-field>
                 <button AwButtonIconOnly [buttonType]="'primary'" ariaLabel="Decrease hours" type="button" (click)="decrementField(singleEntryForm, 'hoursUsed')">
                   <aw-icon [iconName]="'remove'" [iconColor]="''"></aw-icon>
@@ -410,7 +410,7 @@
                     </td>
                   }
                   @if (mawoVisibleFields().includes('hoursUsed')) {
-                    <td><input AwInput type="number" formControlName="hoursUsed" placeholder="0.00" /></td>
+                    <td><input AwInput type="text" inputmode="decimal" formControlName="hoursUsed" placeholder="0.00" (keydown)="onMeterKeydown($event)" /></td>
                   }
                   @if (mawoVisibleFields().includes('operator')) {
                     <td><aw-select-menu [singleSelectListItems]="operatorOptions()" [enableListReset]="true" [enableSearch]="true" formControlName="operator" [ariaLabel]="'Operator'"></aw-select-menu></td>
