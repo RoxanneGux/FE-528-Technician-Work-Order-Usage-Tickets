@@ -1,4 +1,4 @@
-# Mock Data Guide — fe-harness-FE-65232
+# Mock Data Guide — fe-harness-FE-528
 
 All data in this harness is mock. No API calls are made. This guide documents every piece of mock data available.
 
@@ -363,5 +363,34 @@ The Asset search dialog in the Add Usage panel shows assets after typing 2+ char
 |---|---|
 | Search for fleet assets | Type "van" or "truck" or "sedan" in the search field |
 | Search for linear assets | Type "road" or "bridge" in the search field |
-| See inactive assets | Toggle "Include inactive assets" ON, then search for "press" (EQ-5102 is inactive) |
-| Select an asset | Click a row, then click "Go" |
+| See inactive assets | Toggle "Include inactive assets" ON, then search for "hydraulic" or "press" (EQ-5102 is inactive) |
+| Select an asset | Click a row, then click "Add Asset" |
+
+## Task Lookup (Add Usage Panel)
+
+The Task lookup dialog shows tasks filtered by type. Defaults to Repair filter.
+
+### Tasks (9 total)
+
+| Task ID | Description | Task Type |
+|---|---|---|
+| TSK-101 | Oil Change | Repair Group |
+| TSK-102 | Brake Pad Replacement | Repair Group |
+| TSK-103 | Tire Rotation | Repair Task |
+| TSK-104 | Air Filter Replacement | Repair Task |
+| TSK-105 | Coolant Flush | PM Service |
+| TSK-106 | Transmission Service | Repair Group |
+| TSK-107 | Battery Replacement | Inspection |
+| TSK-108 | Spark Plug Replacement | Repair Task |
+| TSK-109 | Alignment Service | PM Service |
+
+### Task Lookup Scenarios
+
+| I want to... | How |
+|---|---|
+| See repair tasks | Default filter is Repair — shows Repair Group and Repair Task types |
+| See PM tasks | Change Task Type filter to "PM Service" |
+| See inspection tasks | Change Task Type filter to "Inspection" |
+| See all tasks | Clear the Task Type filter (select blank option) |
+| Search for a task | Type in the search field to filter by task ID, description, or type |
+| Select a task | Click a row, then click "Add" — field shows (Task ID) Description |

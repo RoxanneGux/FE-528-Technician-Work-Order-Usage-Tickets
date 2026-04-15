@@ -1,183 +1,336 @@
-import { Component, computed, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ViewEncapsulation, signal, input } from '@angular/core';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import {
+  AwBreadCrumbComponent,
+  AwButtonIconOnlyDirective,
   AwDialogComponent,
-  AwFormFieldComponent,
-  AwFormFieldLabelComponent,
   AwIconComponent,
-  AwInputDirective,
+  AwSearchComponent,
   AwSelectMenuComponent,
-  AwTableComponent,
+  AwFormFieldLabelComponent,
+  BreadCrumb,
   DialogOptions,
+  DialogVariants,
   SingleSelectOption,
   TableCellInput,
   TableCellTypes,
 } from '@assetworks-llc/aw-component-lib';
 import { BaseDialogComponent } from '../../components/dialogs/base-dialog.component';
 
+/** Drill-down arrow button for task hierarchy navigation. */
+@Component({
+  selector: 'app-task-layer-button',
+  standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [AwButtonIconOnlyDirective, AwIconComponent],
+  template: `
+    @if (hasChildren()) {
+      <button AwButtonIconOnly [buttonType]="'primary'" (click)="handleClick()">
+        <aw-icon [iconName]="'arrow_forward_ios'" [iconColor]="'aw-royal-blue'"></aw-icon>
+      </button>
+    }
+  `,
+})
+export class TaskLayerButtonComponent {
+  hasChildren = input<boolean>(false);
+  contractId = input<string>('');
+  onDrillDown = input<(id: string) => void>();
+  handleClick(): void { this.onDrillDown()?.(this.contractId()); }
+}
+
 /**
- * Task search dialog matching the FA-Suite shared task-lookup pattern.
- *
- * Uses aw-dialog STANDARD variant with [dialog-middle] content projection
- * containing a search input, task-type filter, and aw-table with checkbox selection.
- * Client-side filtering over mock data. Emits selected task IDs as a Set on primary action.
+ * Task lookup dialog with 3-level hierarchical drill-down.
+ * Matches the fe-929-harness add-task-dialog pattern but uses single select.
  */
 @Component({
   selector: 'app-usage-task-search-dialog',
   standalone: true,
   imports: [
-    FormsModule,
-    ReactiveFormsModule,
     AwDialogComponent,
-    AwFormFieldComponent,
-    AwFormFieldLabelComponent,
-    AwInputDirective,
+    AwBreadCrumbComponent,
+    AwSearchComponent,
     AwIconComponent,
     AwSelectMenuComponent,
-    AwTableComponent,
+    AwFormFieldLabelComponent,
+    FormsModule,
+    ReactiveFormsModule,
   ],
+  encapsulation: ViewEncapsulation.None,
   template: `
     <aw-dialog class="dialog-xl"
-      [ariaLabel]="'Task Lookup'"
+      [ariaLabel]="'Task Lookup Dialog'"
       [visible]="true"
       [dialogOptions]="dialogOptions"
-      (primaryAction)="chooseTask($event)"
-      (secondaryAction)="closeDialog()">
+      [columnsDefinition]="currentColumns()"
+      [tableData]="tableData()"
+      [tableHeight]="'400px'"
+      [enableSingleSelection]="true"
+      (primaryAction)="handleAdd($event)"
+      (secondaryAction)="handleCancel()">
 
-      <div dialog-middle>
-        <div class="table-action-bar d-flex gap-3 px-3 w-100 mb-2">
-          <aw-form-field class="table-action-bar align-self-end w-100">
-            <input AwInput
-                   aria-label="task lookup search"
-                   [readOnly]="false"
-                   [placeholder]="'Search'"
-                   type="text"
-                   (ngModelChange)="onSearchChange($event)"
-                   [ngModel]="searchQuery" />
+      <div table-top>
+        <div class="task-lookup-filters">
+          <aw-search
+            class="task-lookup-search"
+            [searchOptions]="[]"
+            [ariaLabel]="'Search tasks'"
+            [placeholder]="'Search'"
+            [ngModel]="searchText"
+            (ngModelChange)="onSearchChange($event)">
             <aw-icon [iconName]="'search'" position="prefix"></aw-icon>
-          </aw-form-field>
+          </aw-search>
 
-          <aw-select-menu class="table-action-bar"
+          <aw-select-menu
+            class="task-lookup-type-filter"
+            [ariaLabel]="'Task Type filter'"
+            [enableSearch]="false"
             [singleSelectListItems]="taskTypeOptions"
-            placeholder="Choose Task Type"
-            [ariaLabel]="'Task Type'"
             [formControl]="taskTypeControl">
             <aw-form-field-label>Task Type</aw-form-field-label>
           </aw-select-menu>
         </div>
 
-        <div class="table-responsive d-block">
-          <aw-table
-            [ariaLabel]="'task lookup table'"
-            [columnsDefinition]="tableColumnDef"
-            [tableData]="filteredData()"
-            [tableHeight]="'400px'"
-            (checkboxList)="onCheckboxChange($event)">
-          </aw-table>
-        </div>
+        @if (breadcrumbs().length > 0) {
+          <aw-bread-crumb class="task-lookup-breadcrumbs"
+            [ariaLabel]="'Task lookup breadcrumb'"
+            [breadcrumbs]="breadcrumbs()">
+          </aw-bread-crumb>
+        }
       </div>
+
     </aw-dialog>
   `,
   styles: [`
-    .table-action-bar {
-      background: var(--component-table-header-cell-fill);
+    .task-lookup-filters {
+      display: flex;
+      align-items: flex-end;
+      gap: 12px;
+      flex-wrap: wrap;
+      padding: 8px 12px;
+      width: 100%;
+      box-sizing: border-box;
+    }
+    .task-lookup-search {
+      flex: 1;
+      min-width: 260px;
+    }
+    .task-lookup-type-filter {
+      width: 200px;
+      flex-shrink: 0;
+    }
+    .task-lookup-breadcrumbs {
+      padding: 4px 12px 8px;
+      display: block;
     }
   `],
 })
 export class UsageTaskSearchDialogComponent extends BaseDialogComponent {
-  private _selectedTaskIds = new Set<string>();
+  searchText = '';
+  taskTypeControl = new FormControl('');
 
-  public searchQuery = '';
-  public readonly taskTypeControl = new FormControl('');
-
-  readonly allTasks = [
-    { task: { id: 'TSK-001', description: 'Inspect pump bearings and seals' }, taskType: 'Repair Task', checkbox: false },
-    { task: { id: 'TSK-002', description: 'Replace worn impeller' }, taskType: 'Repair Task', checkbox: false },
-    { task: { id: 'TSK-003', description: 'Realign motor coupling' }, taskType: 'Repair Task', checkbox: false },
-    { task: { id: 'TSK-004', description: 'Test pump performance' }, taskType: 'Repair Task', checkbox: false },
-    { task: { id: 'PM-001', description: 'Quarterly lubrication service' }, taskType: 'PM Service', checkbox: false },
-    { task: { id: 'PM-002', description: 'Annual bearing inspection' }, taskType: 'PM Service', checkbox: false },
-    { task: { id: 'INS-001', description: 'Safety valve inspection' }, taskType: 'Inspection', checkbox: false },
-    { task: { id: 'INS-002', description: 'Pressure vessel inspection' }, taskType: 'Inspection', checkbox: false },
-  ];
-
-  /** Track the task type filter value as a signal for reactivity in computed. */
-  private readonly _taskTypeValue = signal<string>('');
-
-  readonly filteredData = computed(() => {
-    const query = this.searchQuery.toLowerCase().trim();
-    const taskTypeFilter = this._taskTypeValue();
-
-    return this.allTasks.filter(row => {
-      const matchesSearch = !query ||
-        row.task.id.toLowerCase().includes(query) ||
-        row.task.description.toLowerCase().includes(query) ||
-        row.taskType.toLowerCase().includes(query);
-
-      const matchesType = !taskTypeFilter || row.taskType === taskTypeFilter;
-
-      return matchesSearch && matchesType;
-    }).map(row => ({
-      ...row,
-      checkbox: this._selectedTaskIds.has(row.task.id),
-    }));
-  });
-
-  readonly taskTypeOptions: SingleSelectOption[] = [
-    { label: 'Repair', value: 'Repair Task' },
+  taskTypeOptions: SingleSelectOption[] = [
+    { label: '', value: '' },
+    { label: 'Repair Group', value: 'Repair Group' },
+    { label: 'Repair Task', value: 'Repair Task' },
     { label: 'PM Service', value: 'PM Service' },
     { label: 'Inspection', value: 'Inspection' },
   ];
 
-  readonly tableColumnDef: TableCellInput[] = [
-    { type: TableCellTypes.Checkbox, key: 'checkbox' },
-    {
-      type: TableCellTypes.Custom, key: 'task', label: 'Task', align: 'left',
-      combineFields: ['task.description', 'task.id'],
-      combineTemplate: (values: string[]) => ({
-        template: `<span class="aw-b-1">${values[0]}</span><br><span class="aw-c-1" style="color: var(--system-text-text-secondary)">${values[1]}</span>`,
-      }),
-    },
-    { type: TableCellTypes.Title, key: 'taskType', label: 'Task Type', align: 'left' },
+  // ── Navigation state ──
+  private currentLevel: 'groups' | 'children' | 'subchildren' = 'groups';
+  private currentGroupId: string | null = null;
+  private currentGroupName: string | null = null;
+  private currentSubGroupId: string | null = null;
+  private currentSubGroupName: string | null = null;
+
+  // ── Mock data ──
+
+  private readonly repairGroups = [
+    { taskId: 'RG-001', taskDesc: 'Engine Repair', taskType: 'Repair Group', hasChildren: true },
+    { taskId: 'RG-002', taskDesc: 'Brake System', taskType: 'Repair Group', hasChildren: true },
+    { taskId: 'RG-003', taskDesc: 'Electrical', taskType: 'Repair Group', hasChildren: false },
+    { taskId: 'TSK-105', taskDesc: 'Coolant Flush', taskType: 'PM Service', hasChildren: false },
+    { taskId: 'TSK-107', taskDesc: 'Battery Replacement', taskType: 'Inspection', hasChildren: false },
+    { taskId: 'TSK-109', taskDesc: 'Alignment Service', taskType: 'PM Service', hasChildren: false },
   ];
 
-  readonly dialogOptions: DialogOptions = {
-    variant: 'standard' as const,
+  private readonly repairGroupChildren: Record<string, any[]> = {
+    'RG-001': [
+      { taskId: 'RG-001-A', taskDesc: 'Oil System', taskType: 'Repair Group', hasChildren: true },
+      { taskId: 'TSK-101', taskDesc: 'Oil Change', taskType: 'Repair Task', hasChildren: false },
+      { taskId: 'TSK-106', taskDesc: 'Transmission Service', taskType: 'Repair Task', hasChildren: false },
+    ],
+    'RG-002': [
+      { taskId: 'RG-002-A', taskDesc: 'Front Brakes', taskType: 'Repair Group', hasChildren: true },
+      { taskId: 'TSK-102', taskDesc: 'Brake Pad Replacement', taskType: 'Repair Task', hasChildren: false },
+      { taskId: 'TSK-103', taskDesc: 'Tire Rotation', taskType: 'Repair Task', hasChildren: false },
+    ],
+  };
+
+  private readonly subGroupChildren: Record<string, any[]> = {
+    'RG-001-A': [
+      { taskId: 'TSK-110', taskDesc: 'Oil Filter Replacement', taskType: 'Repair Task', hasChildren: false },
+      { taskId: 'TSK-111', taskDesc: 'Oil Pan Gasket', taskType: 'Repair Task', hasChildren: false },
+      { taskId: 'TSK-112', taskDesc: 'Oil Pump Service', taskType: 'Repair Task', hasChildren: false },
+    ],
+    'RG-002-A': [
+      { taskId: 'TSK-113', taskDesc: 'Front Brake Rotor', taskType: 'Repair Task', hasChildren: false },
+      { taskId: 'TSK-114', taskDesc: 'Front Caliper Service', taskType: 'Repair Task', hasChildren: false },
+    ],
+  };
+
+  // ── Column definitions ──
+
+  private readonly drillDownColumns: TableCellInput[] = [
+    {
+      align: 'left', type: TableCellTypes.Custom, key: 'taskDesc', label: 'Task', sort: true,
+      combineFields: ['taskDesc', 'taskId'],
+      combineTemplate: (v: any[]) => ({
+        template: `<div><span class="title">${v[0]}</span><br/><span class="sub-title">${v[1]}</span></div>`,
+      }),
+    },
+    { align: 'left', type: TableCellTypes.Title, key: 'taskType', label: 'Task Type', sort: true },
+    {
+      type: TableCellTypes.Custom, key: 'ActionMenu', align: 'right', label: ' ',
+      combineFields: ['taskId', 'hasChildren'],
+      combineTemplate: (v: any[]) => ({
+        component: TaskLayerButtonComponent,
+        componentData: { contractId: v[0], hasChildren: v[1], onDrillDown: (id: string) => this.drillDown(id) },
+      }),
+    },
+  ];
+
+  private readonly leafColumns: TableCellInput[] = [
+    {
+      align: 'left', type: TableCellTypes.Custom, key: 'taskDesc', label: 'Task', sort: true,
+      combineFields: ['taskDesc', 'taskId'],
+      combineTemplate: (v: any[]) => ({
+        template: `<div><span class="title">${v[0]}</span><br/><span class="sub-title">${v[1]}</span></div>`,
+      }),
+    },
+    { align: 'left', type: TableCellTypes.Title, key: 'taskType', label: 'Task Type', sort: true },
+  ];
+
+  // ── Signals ──
+  currentColumns = signal<TableCellInput[]>(this.drillDownColumns);
+  tableData = signal<any[]>([]);
+  breadcrumbs = signal<BreadCrumb[]>([]);
+
+  dialogOptions: DialogOptions = {
+    variant: DialogVariants.TABLE,
+    title: 'Task Lookup',
+    enableBackdropClick: true,
     enableSearch: false,
-    title: 'Choose Task',
-    primaryButtonLabel: 'Add Task',
+    primaryButtonLabel: 'Add',
     secondaryButtonLabel: 'Cancel',
   };
 
   constructor() {
     super();
-    this.taskTypeControl.valueChanges.subscribe((val: any) => {
-      const value = typeof val === 'object' && val !== null ? val.value : (val || '');
-      this._taskTypeValue.set(value);
-    });
+    this.taskTypeControl.valueChanges.subscribe(() => this.reloadCurrentLevel());
+    this.loadGroups();
   }
 
-  public onSearchChange(query: string): void {
-    this.searchQuery = query;
-    this._taskTypeValue.set(this._taskTypeValue());
-  }
+  // ── Navigation ──
 
-  public onCheckboxChange(event: any): void {
-    this._selectedTaskIds.clear();
-    if (event?.rows && Array.isArray(event.rows)) {
-      event.rows.forEach((row: any) => this._selectedTaskIds.add(row.task.id));
-    } else if (Array.isArray(event)) {
-      event.forEach((row: any) => this._selectedTaskIds.add(row.task.id));
+  drillDown(id: string): void {
+    this.searchText = '';
+    if (this.currentLevel === 'groups') {
+      const group = this.repairGroups.find(g => g.taskId === id);
+      if (group) this.loadChildren(id, group.taskDesc);
+    } else if (this.currentLevel === 'children') {
+      const children = this.repairGroupChildren[this.currentGroupId!] || [];
+      const subGroup = children.find((c: any) => c.taskId === id);
+      if (subGroup) this.loadSubChildren(id, subGroup.taskDesc);
     }
   }
 
-  public chooseTask(_event: any): void {
-    if (this._selectedTaskIds.size > 0) {
-      this.close.emit(this._selectedTaskIds);
-    }
+  navigateToRoot(): void { this.searchText = ''; this.loadGroups(); }
+
+  navigateToGroup(groupId: string): void {
+    this.searchText = '';
+    const group = this.repairGroups.find(g => g.taskId === groupId);
+    if (group) this.loadChildren(groupId, group.taskDesc);
   }
 
-  public closeDialog(): void {
+  // ── Data loading ──
+
+  private loadGroups(): void {
+    this.currentLevel = 'groups';
+    this.currentGroupId = null;
+    this.currentGroupName = null;
+    this.currentSubGroupId = null;
+    this.currentSubGroupName = null;
+    this.currentColumns.set(this.drillDownColumns);
+    this.tableData.set(this.applyFilters([...this.repairGroups]));
+    this.breadcrumbs.set([]);
+  }
+
+  private loadChildren(groupId: string, groupName: string): void {
+    this.currentLevel = 'children';
+    this.currentGroupId = groupId;
+    this.currentGroupName = groupName;
+    this.currentSubGroupId = null;
+    this.currentSubGroupName = null;
+    this.currentColumns.set(this.drillDownColumns);
+    this.tableData.set(this.applyFilters([...(this.repairGroupChildren[groupId] || [])]));
+    this.breadcrumbs.set([
+      { label: 'All Repair Groups', action: () => this.navigateToRoot() },
+      { label: groupName },
+    ]);
+  }
+
+  private loadSubChildren(subGroupId: string, subGroupName: string): void {
+    this.currentLevel = 'subchildren';
+    this.currentSubGroupId = subGroupId;
+    this.currentSubGroupName = subGroupName;
+    this.currentColumns.set(this.leafColumns);
+    this.tableData.set(this.applyFilters([...(this.subGroupChildren[subGroupId] || [])]));
+    this.breadcrumbs.set([
+      { label: 'All Repair Groups', action: () => this.navigateToRoot() },
+      { label: this.currentGroupName!, action: () => this.navigateToGroup(this.currentGroupId!) },
+      { label: subGroupName },
+    ]);
+  }
+
+  private reloadCurrentLevel(): void {
+    if (this.currentLevel === 'groups') this.loadGroups();
+    else if (this.currentLevel === 'children' && this.currentGroupId && this.currentGroupName)
+      this.loadChildren(this.currentGroupId, this.currentGroupName);
+    else if (this.currentLevel === 'subchildren' && this.currentSubGroupId && this.currentSubGroupName)
+      this.loadSubChildren(this.currentSubGroupId, this.currentSubGroupName);
+  }
+
+  // ── Filtering ──
+
+  private applyFilters(data: any[]): any[] {
+    const typeVal = this.taskTypeControl.value;
+    const selectedType = typeof typeVal === 'string' ? typeVal : (typeVal as any)?.label ?? '';
+    if (selectedType) {
+      data = data.filter((t: any) => t.taskType.toLowerCase().includes(selectedType.toLowerCase()));
+    }
+    if (this.searchText) {
+      const q = this.searchText.toLowerCase();
+      data = data.filter((t: any) =>
+        t.taskDesc.toLowerCase().includes(q) || t.taskId.toLowerCase().includes(q) || t.taskType.toLowerCase().includes(q),
+      );
+    }
+    return data;
+  }
+
+  onSearchChange(value: string): void {
+    this.searchText = value;
+    this.reloadCurrentLevel();
+  }
+
+  // ── Dialog actions ──
+
+  handleAdd(event: any): void {
+    const row = event?.row || event;
+    if (row) this.close.emit(row);
+  }
+
+  handleCancel(): void {
     this.close.emit(null);
   }
 }

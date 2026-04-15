@@ -52,7 +52,8 @@ import { BaseDialogComponent } from '../../components/dialogs/base-dialog.compon
         </div>
         <div style="display: flex; align-items: center; gap: 8px; padding: 16px; flex-wrap: nowrap;">
           <aw-toggle [ariaLabel]="'Include inactive assets'"
-                     [(ngModel)]="includeInactive">
+                     [ngModel]="includeInactive()"
+                     (ngModelChange)="includeInactive.set($event)">
           </aw-toggle>
           <span class="aw-b-1" style="flex-shrink: 0;">Include inactive assets</span>
           <div style="margin-left: auto; flex-shrink: 0;">
@@ -81,7 +82,7 @@ import { BaseDialogComponent } from '../../components/dialogs/base-dialog.compon
 export class UsageAssetSearchDialogComponent extends BaseDialogComponent {
   public readonly searchControl = new FormControl('');
   public readonly searchQuery = signal('');
-  public includeInactive = false;
+  public readonly includeInactive = signal(false);
 
   /** Mock assets — fleet + linear, matching FE-3999 data. */
   readonly allAssets = [
@@ -102,7 +103,7 @@ export class UsageAssetSearchDialogComponent extends BaseDialogComponent {
     const query = this.searchQuery().toLowerCase().trim();
     if (query.length < 2) return [];
 
-    const assets = this.includeInactive ? this.allAssets : this.allAssets.filter(a => a.Active);
+    const assets = this.includeInactive() ? this.allAssets : this.allAssets.filter(a => a.Active);
 
     return assets.filter(asset =>
       asset.EquipmentId.toLowerCase().includes(query) ||

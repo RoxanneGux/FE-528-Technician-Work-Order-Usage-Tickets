@@ -225,8 +225,8 @@ export class AddUsagePanelComponent {
   /** Handle task search dialog close. */
   public onTaskSearchClose(result: any): void {
     this.showTaskSearchDialog.set(false);
-    if (result && result instanceof Set) {
-      this.singleEntryForm.get('task')?.setValue(Array.from(result).join(', '));
+    if (result?.taskId) {
+      this.singleEntryForm.get('task')?.setValue(`(${result.taskId}) ${result.taskDesc}`);
     }
   }
 

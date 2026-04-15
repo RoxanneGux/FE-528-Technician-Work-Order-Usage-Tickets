@@ -68,3 +68,10 @@
 .cdk-overlay-container {
   z-index: 1200 !important;
 }
+
+
+/* Hug the drill-down arrow column in dialog tables (task-lookup) */
+.aw-dialog-table .mat-column-ActionMenu {
+  width: 1% !important;
+  white-space: nowrap !important;
+}
