@@ -403,7 +403,8 @@
       [ariaLabel]="'Time Format'"
       [singleSelectListItems]="timeFormatOptions"
       [enableListReset]="false"
-      [(ngModel)]="timeFormat"
+      [ngModel]="timeFormat"
+      (ngModelChange)="onTimeFormatChange($event)"
     ></aw-select-menu>
   </div>
 </div>

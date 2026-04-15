@@ -182,6 +182,12 @@ export class AddUsagePanelComponent implements AfterViewInit {
     this.entryMode.set(mode);
   }
 
+  /** Handle time format selector change — extract value from select option object. */
+  public onTimeFormatChange(event: any): void {
+    const value = typeof event === 'object' && event !== null ? event.value : event;
+    this.timeFormat = value === '24h' ? '24h' : '12h';
+  }
+
   /** Handle segmented button entry mode change. */
   public onEntryModeChange(event: { event: MouseEvent | KeyboardEvent; index: number }): void {
     this.entryMode.set(event.index === 0 ? 'single' : 'multi');
