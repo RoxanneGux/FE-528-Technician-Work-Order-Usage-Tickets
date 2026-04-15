@@ -388,6 +388,26 @@
   </div>
 </div>
 
+<!-- Floating settings panel -->
+<div class="floating-display-mode">
+  <aw-form-field-label>Usage Display Mode</aw-form-field-label>
+  <aw-select-menu
+    [ariaLabel]="'Usage Display Mode'"
+    [singleSelectListItems]="displayModeOptions"
+    [enableListReset]="false"
+    [(ngModel)]="displayMode"
+  ></aw-select-menu>
+  <div class="time-format-selector">
+    <aw-form-field-label>Time Format</aw-form-field-label>
+    <aw-select-menu
+      [ariaLabel]="'Time Format'"
+      [singleSelectListItems]="timeFormatOptions"
+      [enableListReset]="false"
+      [(ngModel)]="timeFormat"
+    ></aw-select-menu>
+  </div>
+</div>
+
 <!-- Footer action bar -->
 <div class="aw-sticky-footer">
   <aw-action-bar [actionsLeft]="footerActionsLeft" [actionsRight]="footerActionsRight"></aw-action-bar>

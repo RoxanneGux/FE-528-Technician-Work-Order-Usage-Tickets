@@ -8,7 +8,6 @@ import {
   AwIconComponent,
   AwButtonDirective,
   AwSelectMenuComponent,
-  AwFormFieldLabelComponent,
   TableCellInput,
   TableCellTypes,
   ActionBarLeft,
@@ -22,7 +21,6 @@ import { EmployeeChooserPanelComponent } from '../employee-chooser/employee-choo
 import { AddUsagePanelComponent } from '../add-usage/add-usage-panel.component';
 import { PanelService } from '../../services/panel.service';
 import { MockDataService, MockCurrentAssignment } from '../../services/mock-data.service';
-import { USAGE_DISPLAY_MODE_OPTIONS, TIME_FORMAT_OPTIONS, UsageDisplayMode } from '../add-usage/usage-entry.interface';
 
 /**
  * Work Order Details page component.
@@ -43,7 +41,6 @@ import { USAGE_DISPLAY_MODE_OPTIONS, TIME_FORMAT_OPTIONS, UsageDisplayMode } fro
     AwIconComponent,
     AwButtonDirective,
     AwSelectMenuComponent,
-    AwFormFieldLabelComponent,
   ],
   templateUrl: './work-order-details.component.html',
   styleUrl: './work-order-details.component.scss',
@@ -54,18 +51,6 @@ export class WorkOrderDetailsComponent {
 
   /** Selected delay code value for the Work Delay form. */
   public selectedDelayCode = '';
-
-  /** Current usage display mode setting. */
-  public usageDisplayMode: string = 'all';
-
-  /** Display mode options for the floating selector. */
-  public readonly displayModeOptions = USAGE_DISPLAY_MODE_OPTIONS;
-
-  /** Current time format setting for date-time pickers. */
-  public timeFormat: '12h' | '24h' = '12h';
-
-  /** Time format options for the floating selector. */
-  public readonly timeFormatOptions = TIME_FORMAT_OPTIONS;
 
   // ── Anchor links ──
 
@@ -249,11 +234,11 @@ export class WorkOrderDetailsComponent {
     });
   }
 
-  /** Open the Add Usage panel, passing the current display mode and time format. */
+  /** Open the Add Usage panel. */
   onAddUsage(): void {
     this._panelService.open(
       AddUsagePanelComponent,
-      { displayMode: this.usageDisplayMode as UsageDisplayMode, timeFormat: this.timeFormat },
+      {},
       (result) => {
         if (result) {
           console.log('Add Usage result:', result);

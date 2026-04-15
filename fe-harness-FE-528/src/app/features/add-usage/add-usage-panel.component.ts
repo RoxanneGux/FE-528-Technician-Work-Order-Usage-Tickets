@@ -9,7 +9,7 @@ import {
   signal,
   ViewChild,
 } from '@angular/core';
-import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { provideNativeDateAdapter } from '@angular/material/core';
 import {
   ActionBarLeft,
@@ -35,6 +35,8 @@ import { UsageAssetSearchDialogComponent } from './asset-search-dialog.component
 import { UsageTaskSearchDialogComponent } from './task-search-dialog.component';
 import {
   DISPLAY_MODE_FIELDS,
+  TIME_FORMAT_OPTIONS,
+  USAGE_DISPLAY_MODE_OPTIONS,
   UsageDisplayMode,
   UsageEntry,
   UsageEntryResult,
@@ -49,6 +51,7 @@ import {
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    FormsModule,
     ReactiveFormsModule,
     AwActionBarComponent,
     AwButtonDirective,
@@ -82,8 +85,14 @@ export class AddUsagePanelComponent implements AfterViewInit {
   /** Set by PanelService via Object.assign. Controls which fields are visible. */
   public displayMode: UsageDisplayMode = 'all';
 
-  /** Set by PanelService via Object.assign. Controls time format for date-time pickers. */
+  /** Controls time format for date-time pickers. */
   public timeFormat: '12h' | '24h' = '12h';
+
+  /** Display mode options for the floating selector. */
+  public readonly displayModeOptions = USAGE_DISPLAY_MODE_OPTIONS;
+
+  /** Time format options for the floating selector. */
+  public readonly timeFormatOptions = TIME_FORMAT_OPTIONS;
 
   /** Validation error for start date field. Null means no error. */
   public readonly startDateError = signal<string | null>(null);

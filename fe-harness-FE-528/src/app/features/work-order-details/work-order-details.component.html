@@ -270,26 +270,6 @@
 
 </app-anchor-layout>
 
-<!-- Floating Usage Display Mode selector -->
-<div class="floating-display-mode">
-  <aw-form-field-label>Usage Display Mode</aw-form-field-label>
-  <aw-select-menu
-    [ariaLabel]="'Usage Display Mode'"
-    [singleSelectListItems]="displayModeOptions"
-    [enableListReset]="false"
-    [(ngModel)]="usageDisplayMode"
-  ></aw-select-menu>
-  <div class="time-format-selector">
-    <aw-form-field-label>Time Format</aw-form-field-label>
-    <aw-select-menu
-      [ariaLabel]="'Time Format'"
-      [singleSelectListItems]="timeFormatOptions"
-      [enableListReset]="false"
-      [(ngModel)]="timeFormat"
-    ></aw-select-menu>
-  </div>
-</div>
-
 <!-- ═══ Sticky Footer Action Bar ═══ -->
 <div class="wo-sticky-footer">
   <aw-action-bar [actionsLeft]="actionsLeft" [actionsRight]="actionsRight" [moreActions]="moreActions"></aw-action-bar>
