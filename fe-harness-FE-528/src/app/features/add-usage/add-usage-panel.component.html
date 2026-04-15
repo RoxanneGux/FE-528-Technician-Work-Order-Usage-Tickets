@@ -362,8 +362,7 @@
                 <aw-select-menu
                   [singleSelectListItems]="childWOStatusOptions"
                   [enableListReset]="false"
-                  [selectedValue]="childWOStatusFilter()"
-                  [ngModel]="childWOStatusFilter()"
+                  [formControl]="childWOStatusFilterControl"
                   (ngModelChange)="onChildWOStatusFilterChange($event)"
                   [ariaLabel]="'Work Order Status'">
                 </aw-select-menu>

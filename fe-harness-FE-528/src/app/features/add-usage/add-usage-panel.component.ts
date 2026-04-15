@@ -141,7 +141,10 @@ export class AddUsagePanelComponent implements AfterViewInit {
   /** Search text for children work orders table. */
   public readonly childWOSearchText = signal<string>('');
 
-  /** Status filter for children work orders table — defaults to Open. */
+  /** Status filter FormControl for children work orders table — defaults to Open. */
+  public readonly childWOStatusFilterControl = new FormControl<string>('Open');
+
+  /** Reactive signal mirroring the status filter FormControl value. */
   public readonly childWOStatusFilter = signal<string>('Open');
 
   /** Status filter options for children work orders. */
@@ -309,7 +312,8 @@ export class AddUsagePanelComponent implements AfterViewInit {
   /** Handle children work orders status filter change — extract value from select option object. */
   public onChildWOStatusFilterChange(event: any): void {
     const value = typeof event === 'object' && event !== null ? event.value : event;
-    this.childWOStatusFilter.set(value ?? 'All');
+    const resolved = value ?? 'Open';
+    this.childWOStatusFilter.set(resolved);
   }
 
   /** Handle segmented button entry mode change. */
