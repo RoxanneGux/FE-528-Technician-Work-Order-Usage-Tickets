@@ -1,6 +1,7 @@
 import {
   AfterViewInit,
   ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
   computed,
   inject,
@@ -76,6 +77,7 @@ export class AddUsagePanelComponent implements AfterViewInit {
   public readonly close = output<UsageEntryResult | null>();
 
   private readonly _mockData = inject(MockDataService);
+  private readonly _cdr = inject(ChangeDetectorRef);
 
   /** Set by PanelService via Object.assign. Controls which fields are visible. */
   public displayMode: UsageDisplayMode = 'all';
@@ -415,11 +417,17 @@ export class AddUsagePanelComponent implements AfterViewInit {
     const timeInput = (picker as any).timeInput?.nativeElement;
     if (dateInput) {
       dateInput.addEventListener('keydown', (e: KeyboardEvent) => this.onDateKeydown(e));
-      dateInput.addEventListener('blur', (e: Event) => prefix === 'start' ? this.onStartDateBlur(e) : this.onEndDateBlur(e));
+      dateInput.addEventListener('blur', (e: Event) => {
+        prefix === 'start' ? this.onStartDateBlur(e) : this.onEndDateBlur(e);
+        this._cdr.markForCheck();
+      });
     }
     if (timeInput) {
       timeInput.addEventListener('keydown', (e: KeyboardEvent) => this.onTimeKeydown(e));
-      timeInput.addEventListener('blur', (e: Event) => prefix === 'start' ? this.onStartTimeBlur(e) : this.onEndTimeBlur(e));
+      timeInput.addEventListener('blur', (e: Event) => {
+        prefix === 'start' ? this.onStartTimeBlur(e) : this.onEndTimeBlur(e);
+        this._cdr.markForCheck();
+      });
     }
   }
 }
