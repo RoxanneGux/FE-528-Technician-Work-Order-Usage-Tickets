@@ -116,8 +116,8 @@
           <aw-divider class="section-divider"></aw-divider>
         }
 
-        <!-- Row 4: Meter 1 Begin + Meter 2 Begin -->
-        @if (visibleFields().includes('meter1Begin') || visibleFields().includes('meter2Begin')) {
+        <!-- Meter 1: Begin + End -->
+        @if (visibleFields().includes('meter1Begin') || visibleFields().includes('meter1End')) {
           <div class="form-row">
             @if (visibleFields().includes('meter1Begin')) {
               <div class="form-field">
@@ -128,27 +128,42 @@
                 </aw-form-field>
               </div>
             }
-            @if (visibleFields().includes('meter2Begin')) {
-              <div class="form-field">
-                <aw-form-field-label>Meter 2 Begin</aw-form-field-label>
-                <span class="field-subtitle">{{ meter2Hint() }}</span>
-                <aw-form-field>
-                  <input AwInput formControlName="meter2Begin" placeholder="" aria-label="Meter 2 Begin" inputmode="decimal" (keydown)="onMeterKeydown($event)" />
-                </aw-form-field>
-              </div>
-            }
-          </div>
-        }
-
-        <!-- Row 5: Meter 1 End + Meter 2 End -->
-        @if (visibleFields().includes('meter1End') || visibleFields().includes('meter2End')) {
-          <div class="form-row">
             @if (visibleFields().includes('meter1End')) {
               <div class="form-field">
                 <aw-form-field-label>Meter 1 End</aw-form-field-label>
                 <span class="field-subtitle">{{ meter1Hint() }}</span>
                 <aw-form-field>
                   <input AwInput formControlName="meter1End" placeholder="" aria-label="Meter 1 End" inputmode="decimal" (keydown)="onMeterKeydown($event)" />
+                </aw-form-field>
+              </div>
+            }
+          </div>
+        }
+
+        <!-- Meter 1 Validation -->
+        @if (visibleFields().includes('meter1Validation')) {
+          <div class="form-row">
+            <div class="form-field">
+              <aw-form-field-label>Meter 1 Validation</aw-form-field-label>
+              <aw-select-menu [singleSelectListItems]="meterValidationOptions()" [enableListReset]="true" [placeholder]="'Choose validation'" formControlName="meter1Validation" [ariaLabel]="'Meter 1 Validation'"></aw-select-menu>
+            </div>
+          </div>
+        }
+
+        <!-- Meter 2 divider -->
+        @if (visibleFields().includes('meter2Begin') || visibleFields().includes('meter2End')) {
+          <aw-divider class="section-divider"></aw-divider>
+        }
+
+        <!-- Meter 2: Begin + End -->
+        @if (visibleFields().includes('meter2Begin') || visibleFields().includes('meter2End')) {
+          <div class="form-row">
+            @if (visibleFields().includes('meter2Begin')) {
+              <div class="form-field">
+                <aw-form-field-label>Meter 2 Begin</aw-form-field-label>
+                <span class="field-subtitle">{{ meter2Hint() }}</span>
+                <aw-form-field>
+                  <input AwInput formControlName="meter2Begin" placeholder="" aria-label="Meter 2 Begin" inputmode="decimal" (keydown)="onMeterKeydown($event)" />
                 </aw-form-field>
               </div>
             }
@@ -164,21 +179,13 @@
           </div>
         }
 
-        <!-- Row 6: Meter 1 Validation + Meter 2 Validation -->
-        @if (visibleFields().includes('meter1Validation') || visibleFields().includes('meter2Validation')) {
+        <!-- Meter 2 Validation -->
+        @if (visibleFields().includes('meter2Validation')) {
           <div class="form-row">
-            @if (visibleFields().includes('meter1Validation')) {
-              <div class="form-field">
-                <aw-form-field-label>Meter 1 Validation</aw-form-field-label>
-                <aw-select-menu [singleSelectListItems]="meterValidationOptions()" [enableListReset]="true" [placeholder]="'Choose validation'" formControlName="meter1Validation" [ariaLabel]="'Meter 1 Validation'"></aw-select-menu>
-              </div>
-            }
-            @if (visibleFields().includes('meter2Validation')) {
-              <div class="form-field">
-                <aw-form-field-label>Meter 2 Validation</aw-form-field-label>
-                <aw-select-menu [singleSelectListItems]="meterValidationOptions()" [enableListReset]="true" [placeholder]="'Choose validation'" formControlName="meter2Validation" [ariaLabel]="'Meter 2 Validation'"></aw-select-menu>
-              </div>
-            }
+            <div class="form-field">
+              <aw-form-field-label>Meter 2 Validation</aw-form-field-label>
+              <aw-select-menu [singleSelectListItems]="meterValidationOptions()" [enableListReset]="true" [placeholder]="'Choose validation'" formControlName="meter2Validation" [ariaLabel]="'Meter 2 Validation'"></aw-select-menu>
+            </div>
           </div>
         }
 
