@@ -258,13 +258,27 @@
             @if (mawoVisibleFields().includes('account')) {
               <div class="form-field">
                 <aw-form-field-label>Account</aw-form-field-label>
-                <aw-select-menu [singleSelectListItems]="accountOptions()" [enableListReset]="true" [enableSearch]="true" formControlName="account" [ariaLabel]="'Account'"></aw-select-menu>
+                <div class="field-with-icon">
+                  <aw-form-field>
+                    <input AwInput formControlName="account" aria-label="Account" />
+                  </aw-form-field>
+                  <button AwButtonIconOnly [buttonType]="'primary'" ariaLabel="Search Account" type="button" (click)="onLookupPlaceholder('Account')">
+                    <aw-icon [iconName]="'search'" [iconColor]="''"></aw-icon>
+                  </button>
+                </div>
               </div>
             }
             @if (mawoVisibleFields().includes('operator')) {
               <div class="form-field">
                 <aw-form-field-label>Operator</aw-form-field-label>
-                <aw-select-menu [singleSelectListItems]="operatorOptions()" [enableListReset]="true" [enableSearch]="true" formControlName="operator" [ariaLabel]="'Operator'"></aw-select-menu>
+                <div class="field-with-icon">
+                  <aw-form-field>
+                    <input AwInput formControlName="operator" aria-label="Operator" />
+                  </aw-form-field>
+                  <button AwButtonIconOnly [buttonType]="'primary'" ariaLabel="Search Operator" type="button" (click)="onLookupPlaceholder('Operator')">
+                    <aw-icon [iconName]="'search'" [iconColor]="''"></aw-icon>
+                  </button>
+                </div>
               </div>
             }
           </div>
@@ -276,7 +290,14 @@
             @if (mawoVisibleFields().includes('department')) {
               <div class="form-field">
                 <aw-form-field-label [required]="true">Department</aw-form-field-label>
-                <aw-select-menu [singleSelectListItems]="departmentOptions()" [enableListReset]="true" [enableSearch]="true" formControlName="department" [ariaLabel]="'Department'"></aw-select-menu>
+                <div class="field-with-icon">
+                  <aw-form-field>
+                    <input AwInput formControlName="department" aria-label="Department" />
+                  </aw-form-field>
+                  <button AwButtonIconOnly [buttonType]="'primary'" ariaLabel="Search Department" type="button" (click)="onLookupPlaceholder('Department')">
+                    <aw-icon [iconName]="'search'" [iconColor]="''"></aw-icon>
+                  </button>
+                </div>
               </div>
             }
             @if (mawoVisibleFields().includes('task')) {
@@ -300,7 +321,14 @@
           <div class="form-row">
             <div class="form-field">
               <aw-form-field-label>Financial Project Code</aw-form-field-label>
-              <aw-select-menu [singleSelectListItems]="financialProjectCodeOptions()" [enableListReset]="true" [enableSearch]="true" formControlName="financialProjectCode" [ariaLabel]="'Financial Project Code'"></aw-select-menu>
+              <div class="field-with-icon">
+                <aw-form-field>
+                  <input AwInput formControlName="financialProjectCode" aria-label="Financial Project Code" />
+                </aw-form-field>
+                <button AwButtonIconOnly [buttonType]="'primary'" ariaLabel="Search Financial Project Code" type="button" (click)="onLookupPlaceholder('Financial Project Code')">
+                  <aw-icon [iconName]="'search'" [iconColor]="''"></aw-icon>
+                </button>
+              </div>
             </div>
           </div>
         }
@@ -413,10 +441,10 @@
                     <td><input AwInput type="text" inputmode="decimal" formControlName="hoursUsed" placeholder="0.00" (keydown)="onMeterKeydown($event)" /></td>
                   }
                   @if (mawoVisibleFields().includes('operator')) {
-                    <td><aw-select-menu [singleSelectListItems]="operatorOptions()" [enableListReset]="true" [enableSearch]="true" formControlName="operator" [ariaLabel]="'Operator'"></aw-select-menu></td>
+                    <td><input AwInput formControlName="operator" placeholder="Operator" aria-label="Operator" /></td>
                   }
                   @if (mawoVisibleFields().includes('department')) {
-                    <td><aw-select-menu [singleSelectListItems]="departmentOptions()" [enableListReset]="true" [enableSearch]="true" formControlName="department" [ariaLabel]="'Department'"></aw-select-menu></td>
+                    <td><input AwInput formControlName="department" placeholder="Department" aria-label="Department" /></td>
                   }
                   @if (mawoVisibleFields().includes('task')) {
                     <td><input AwInput formControlName="task" placeholder="Task" aria-label="Task" /></td>

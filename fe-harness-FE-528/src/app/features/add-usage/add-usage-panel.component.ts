@@ -469,6 +469,11 @@ export class AddUsagePanelComponent implements AfterViewInit {
     this.showAssetSearchDialog.set(true);
   }
 
+  /** Placeholder for lookup dialogs not yet implemented. */
+  public onLookupPlaceholder(fieldName: string): void {
+    alert(`This button would open an aw-dialog with a table inside for searching ${fieldName} records.`);
+  }
+
   /** Handle asset search dialog close. */
   public onAssetSearchClose(result: any): void {
     this.showAssetSearchDialog.set(false);
