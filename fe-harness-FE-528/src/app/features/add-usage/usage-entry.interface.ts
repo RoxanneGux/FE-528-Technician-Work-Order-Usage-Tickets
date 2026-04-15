@@ -32,10 +32,19 @@ export type UsageField =
   | 'misc3'
   | 'misc4';
 
-/** Fields visible in meter display mode. */
-const METER_FIELDS: UsageField[] = [
+/** Fields always visible regardless of display mode. */
+const ALWAYS_VISIBLE_FIELDS: UsageField[] = [
   'transactionDate',
   'hoursUsed',
+  'operator',
+  'account',
+  'department',
+  'task',
+  'financialProjectCode',
+];
+
+/** Meter-specific value fields. */
+const METER_VALUE_FIELDS: UsageField[] = [
   'startDateTime',
   'endDateTime',
   'meter1Begin',
@@ -44,25 +53,32 @@ const METER_FIELDS: UsageField[] = [
   'meter2End',
   'meter1Validation',
   'meter2Validation',
-  'operator',
+];
+
+/** Business-specific value fields. */
+const BUSINESS_VALUE_FIELDS: UsageField[] = [
+  'businessUsage',
+  'individualUsage',
+  'totalUsage',
+];
+
+/** Fields visible in meter display mode. */
+const METER_FIELDS: UsageField[] = [
+  ...ALWAYS_VISIBLE_FIELDS,
+  ...METER_VALUE_FIELDS,
 ];
 
 /** Fields visible in business display mode. */
 const BUSINESS_FIELDS: UsageField[] = [
-  'transactionDate',
-  'businessUsage',
-  'individualUsage',
-  'totalUsage',
-  'department',
-  'task',
-  'account',
-  'financialProjectCode',
+  ...ALWAYS_VISIBLE_FIELDS,
+  ...BUSINESS_VALUE_FIELDS,
 ];
 
 /** Fields visible in both (meter + business) display mode. */
 const BOTH_FIELDS: UsageField[] = [
-  ...METER_FIELDS,
-  ...BUSINESS_FIELDS.filter(f => !METER_FIELDS.includes(f)),
+  ...ALWAYS_VISIBLE_FIELDS,
+  ...METER_VALUE_FIELDS,
+  ...BUSINESS_VALUE_FIELDS,
 ];
 
 /** Maps each display mode to its visible fields. */
