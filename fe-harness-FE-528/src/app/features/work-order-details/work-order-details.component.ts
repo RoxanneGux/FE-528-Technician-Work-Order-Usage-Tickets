@@ -22,7 +22,7 @@ import { EmployeeChooserPanelComponent } from '../employee-chooser/employee-choo
 import { AddUsagePanelComponent } from '../add-usage/add-usage-panel.component';
 import { PanelService } from '../../services/panel.service';
 import { MockDataService, MockCurrentAssignment } from '../../services/mock-data.service';
-import { USAGE_DISPLAY_MODE_OPTIONS, UsageDisplayMode } from '../add-usage/usage-entry.interface';
+import { USAGE_DISPLAY_MODE_OPTIONS, TIME_FORMAT_OPTIONS, UsageDisplayMode } from '../add-usage/usage-entry.interface';
 
 /**
  * Work Order Details page component.
@@ -60,6 +60,12 @@ export class WorkOrderDetailsComponent {
 
   /** Display mode options for the floating selector. */
   public readonly displayModeOptions = USAGE_DISPLAY_MODE_OPTIONS;
+
+  /** Current time format setting for date-time pickers. */
+  public timeFormat: '12h' | '24h' = '12h';
+
+  /** Time format options for the floating selector. */
+  public readonly timeFormatOptions = TIME_FORMAT_OPTIONS;
 
   // ── Anchor links ──
 
@@ -243,11 +249,11 @@ export class WorkOrderDetailsComponent {
     });
   }
 
-  /** Open the Add Usage panel, passing the current display mode. */
+  /** Open the Add Usage panel, passing the current display mode and time format. */
   onAddUsage(): void {
     this._panelService.open(
       AddUsagePanelComponent,
-      { displayMode: this.usageDisplayMode as UsageDisplayMode },
+      { displayMode: this.usageDisplayMode as UsageDisplayMode, timeFormat: this.timeFormat },
       (result) => {
         if (result) {
           console.log('Add Usage result:', result);

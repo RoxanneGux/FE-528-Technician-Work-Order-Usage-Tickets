@@ -1,10 +1,12 @@
 import {
+  AfterViewInit,
   ChangeDetectionStrategy,
   Component,
   computed,
   inject,
   output,
   signal,
+  ViewChild,
 } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { provideNativeDateAdapter } from '@angular/material/core';
@@ -20,6 +22,7 @@ import {
   AwDividerComponent,
   AwFormFieldComponent,
   AwFormFieldLabelComponent,
+  AwFormMessageComponent,
   AwIconComponent,
   AwInputDirective,
   AwSelectMenuComponent,
@@ -55,6 +58,7 @@ import {
     AwDividerComponent,
     AwFormFieldComponent,
     AwFormFieldLabelComponent,
+    AwFormMessageComponent,
     AwIconComponent,
     AwInputDirective,
     AwSelectMenuComponent,
@@ -65,13 +69,37 @@ import {
   templateUrl: './add-usage-panel.component.html',
   styleUrl: './add-usage-panel.component.scss',
 })
-export class AddUsagePanelComponent {
+export class AddUsagePanelComponent implements AfterViewInit {
+  @ViewChild('startDateTimePicker') private _startDateTimePicker!: AwDateTimePickerComponent;
+  @ViewChild('endDateTimePicker') private _endDateTimePicker!: AwDateTimePickerComponent;
+
   public readonly close = output<UsageEntryResult | null>();
 
   private readonly _mockData = inject(MockDataService);
 
   /** Set by PanelService via Object.assign. Controls which fields are visible. */
   public displayMode: UsageDisplayMode = 'all';
+
+  /** Set by PanelService via Object.assign. Controls time format for date-time pickers. */
+  public timeFormat: '12h' | '24h' = '12h';
+
+  /** Validation error for start date field. Null means no error. */
+  public readonly startDateError = signal<string | null>(null);
+
+  /** Validation error for start time field. Null means no error. */
+  public readonly startTimeError = signal<string | null>(null);
+
+  /** Validation error for end date field. Null means no error. */
+  public readonly endDateError = signal<string | null>(null);
+
+  /** Validation error for end time field. Null means no error. */
+  public readonly endTimeError = signal<string | null>(null);
+
+  /** Attach keydown and blur listeners to internal date/time inputs after view initializes. */
+  ngAfterViewInit(): void {
+    this.attachInputListeners(this._startDateTimePicker, 'start');
+    this.attachInputListeners(this._endDateTimePicker, 'end');
+  }
 
   /** Active entry mode — single form or multi-row table. */
   public readonly entryMode = signal<'single' | 'multi'>('single');
@@ -184,6 +212,79 @@ export class AddUsagePanelComponent {
     if (!/^\d*\.?\d{0,2}$/.test(newValue)) {
       event.preventDefault();
     }
+  }
+
+  /** Restrict date input to digits and forward slash. */
+  public onDateKeydown(event: KeyboardEvent): void {
+    const navigationKeys = ['Backspace', 'Tab', 'ArrowLeft', 'ArrowRight', 'Delete', 'Home', 'End'];
+    if (navigationKeys.includes(event.key)) return;
+    if (/^[0-9/]$/.test(event.key)) return;
+    event.preventDefault();
+  }
+
+  /** Restrict time input based on active time format. */
+  public onTimeKeydown(event: KeyboardEvent): void {
+    const navigationKeys = ['Backspace', 'Tab', 'ArrowLeft', 'ArrowRight', 'Delete', 'Home', 'End'];
+    if (navigationKeys.includes(event.key)) return;
+    if (this.timeFormat === '24h') {
+      if (/^[0-9:]$/.test(event.key)) return;
+    } else {
+      if (/^[0-9:AaMmPp ]$/.test(event.key)) return;
+    }
+    event.preventDefault();
+  }
+
+  /** Validate date string on blur. Returns error message or null. */
+  public validateDate(value: string): string | null {
+    if (!value || value.trim() === '') return null;
+    if (!/^\d{2}\/\d{2}\/\d{4}$/.test(value)) return 'Invalid date format. Use MM/DD/YYYY';
+    const [monthStr, dayStr, yearStr] = value.split('/');
+    const month = parseInt(monthStr, 10);
+    const day = parseInt(dayStr, 10);
+    const year = parseInt(yearStr, 10);
+    if (month < 1 || month > 12) return 'Invalid date';
+    const daysInMonth = new Date(year, month, 0).getDate();
+    if (day < 1 || day > daysInMonth) return 'Invalid date';
+    return null;
+  }
+
+  /** Validate time string on blur based on format. Returns error message or null. */
+  public validateTime(value: string, format: '12h' | '24h'): string | null {
+    if (!value || value.trim() === '') return null;
+    if (format === '12h') {
+      if (!/^(0?[1-9]|1[0-2]):[0-5]\d\s?(AM|PM|am|pm)$/.test(value)) {
+        return 'Invalid time. Use HH:MM AM/PM (1-12)';
+      }
+    } else {
+      if (!/^([01]?\d|2[0-3]):[0-5]\d$/.test(value)) {
+        return 'Invalid time. Use HH:MM (0-23)';
+      }
+    }
+    return null;
+  }
+
+  /** Blur handler for start date input. */
+  public onStartDateBlur(event: Event): void {
+    const value = (event.target as HTMLInputElement).value;
+    this.startDateError.set(this.validateDate(value));
+  }
+
+  /** Blur handler for start time input. */
+  public onStartTimeBlur(event: Event): void {
+    const value = (event.target as HTMLInputElement).value;
+    this.startTimeError.set(this.validateTime(value, this.timeFormat));
+  }
+
+  /** Blur handler for end date input. */
+  public onEndDateBlur(event: Event): void {
+    const value = (event.target as HTMLInputElement).value;
+    this.endDateError.set(this.validateDate(value));
+  }
+
+  /** Blur handler for end time input. */
+  public onEndTimeBlur(event: Event): void {
+    const value = (event.target as HTMLInputElement).value;
+    this.endTimeError.set(this.validateTime(value, this.timeFormat));
   }
 
   /** Append a new empty row to the multi-entry table. */
@@ -305,5 +406,20 @@ export class AddUsagePanelComponent {
   private extractSelectValue(val: any): string | null {
     if (val == null) return null;
     return typeof val === 'object' && val !== null ? val.value : val;
+  }
+
+  /** Attach keydown and blur listeners to the internal date and time inputs of a date-time picker. */
+  private attachInputListeners(picker: AwDateTimePickerComponent, prefix: 'start' | 'end'): void {
+    if (!picker) return;
+    const dateInput = (picker as any).dateInput?.nativeElement;
+    const timeInput = (picker as any).timeInput?.nativeElement;
+    if (dateInput) {
+      dateInput.addEventListener('keydown', (e: KeyboardEvent) => this.onDateKeydown(e));
+      dateInput.addEventListener('blur', (e: Event) => prefix === 'start' ? this.onStartDateBlur(e) : this.onEndDateBlur(e));
+    }
+    if (timeInput) {
+      timeInput.addEventListener('keydown', (e: KeyboardEvent) => this.onTimeKeydown(e));
+      timeInput.addEventListener('blur', (e: Event) => prefix === 'start' ? this.onStartTimeBlur(e) : this.onEndTimeBlur(e));
+    }
   }
 }

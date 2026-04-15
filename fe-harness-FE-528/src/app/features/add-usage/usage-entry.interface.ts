@@ -78,6 +78,12 @@ export const USAGE_DISPLAY_MODE_OPTIONS: SingleSelectOption[] = [
   { label: 'All Values (incl. Misc Codes)', value: 'all' },
 ];
 
+/** Time format options for the floating selector. */
+export const TIME_FORMAT_OPTIONS: SingleSelectOption[] = [
+  { label: '12 Hour', value: '12h' },
+  { label: '24 Hour', value: '24h' },
+];
+
 /** A single usage record. */
 export interface UsageEntry {
   asset: string | null;

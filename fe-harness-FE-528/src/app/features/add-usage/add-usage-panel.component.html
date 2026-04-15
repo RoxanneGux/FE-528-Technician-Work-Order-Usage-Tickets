@@ -75,24 +75,36 @@
             @if (visibleFields().includes('startDateTime')) {
               <div class="form-field">
                 <aw-date-time-picker #startDateTimePicker formControlName="startDateTime"
+                  [timeFormat]="timeFormat"
                   [ariaLabel]="{date: 'Start Date', time: 'Start Time'}"
-                  [placeholder]="{date: 'mm/dd/yyyy', time: 'hh:mm'}">
+                  [placeholder]="{date: 'mm/dd/yyyy', time: timeFormat === '12h' ? 'hh:mm AM/PM' : 'hh:mm'}">
                   <aw-form-field-label>Start Date / Time</aw-form-field-label>
                   <button aria-label="open start date time picker" type="button" AwButtonIconOnly [buttonType]="'primary'" (click)="startDateTimePicker.openDateTimePicker()">
                     <aw-icon [iconName]="'today'" [iconColor]="''"></aw-icon>
                   </button>
+                  @if (startDateError() || startTimeError()) {
+                    <aw-form-message [type]="'error'">
+                      {{ startDateError() || startTimeError() }}
+                    </aw-form-message>
+                  }
                 </aw-date-time-picker>
               </div>
             }
             @if (visibleFields().includes('endDateTime')) {
               <div class="form-field">
                 <aw-date-time-picker #endDateTimePicker formControlName="endDateTime"
+                  [timeFormat]="timeFormat"
                   [ariaLabel]="{date: 'End Date', time: 'End Time'}"
-                  [placeholder]="{date: 'mm/dd/yyyy', time: 'hh:mm'}">
+                  [placeholder]="{date: 'mm/dd/yyyy', time: timeFormat === '12h' ? 'hh:mm AM/PM' : 'hh:mm'}">
                   <aw-form-field-label>End Date / Time</aw-form-field-label>
                   <button aria-label="open end date time picker" type="button" AwButtonIconOnly [buttonType]="'primary'" (click)="endDateTimePicker.openDateTimePicker()">
                     <aw-icon [iconName]="'today'" [iconColor]="''"></aw-icon>
                   </button>
+                  @if (endDateError() || endTimeError()) {
+                    <aw-form-message [type]="'error'">
+                      {{ endDateError() || endTimeError() }}
+                    </aw-form-message>
+                  }
                 </aw-date-time-picker>
               </div>
             }
