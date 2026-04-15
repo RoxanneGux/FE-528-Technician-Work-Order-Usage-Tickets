@@ -305,15 +305,17 @@
           </div>
         }
 
-        <!-- Misc Fields (all mode only) -->
-        @if (mawoVisibleFields().includes('misc1')) {
+        <!-- Misc Fields — each independently controlled -->
+        @if (mawoVisibleFields().includes('misc1') || mawoVisibleFields().includes('misc2')) {
           <div class="form-row">
-            <div class="form-field">
-              <aw-form-field-label>Misc 1</aw-form-field-label>
-              <aw-form-field>
-                <input AwInput formControlName="misc1" placeholder="" aria-label="Misc 1" />
-              </aw-form-field>
-            </div>
+            @if (mawoVisibleFields().includes('misc1')) {
+              <div class="form-field">
+                <aw-form-field-label>Misc 1</aw-form-field-label>
+                <aw-form-field>
+                  <input AwInput formControlName="misc1" placeholder="" aria-label="Misc 1" />
+                </aw-form-field>
+              </div>
+            }
             @if (mawoVisibleFields().includes('misc2')) {
               <div class="form-field">
                 <aw-form-field-label>Misc 2</aw-form-field-label>
@@ -324,14 +326,16 @@
             }
           </div>
         }
-        @if (mawoVisibleFields().includes('misc3')) {
+        @if (mawoVisibleFields().includes('misc3') || mawoVisibleFields().includes('misc4')) {
           <div class="form-row">
-            <div class="form-field">
-              <aw-form-field-label>Misc 3</aw-form-field-label>
-              <aw-form-field>
-                <input AwInput formControlName="misc3" placeholder="" aria-label="Misc 3" />
-              </aw-form-field>
-            </div>
+            @if (mawoVisibleFields().includes('misc3')) {
+              <div class="form-field">
+                <aw-form-field-label>Misc 3</aw-form-field-label>
+                <aw-form-field>
+                  <input AwInput formControlName="misc3" placeholder="" aria-label="Misc 3" />
+                </aw-form-field>
+              </div>
+            }
             @if (mawoVisibleFields().includes('misc4')) {
               <div class="form-field">
                 <aw-form-field-label>Misc 4</aw-form-field-label>
@@ -467,6 +471,25 @@
       [ngModel]="workOrderType()"
       (ngModelChange)="onWorkOrderTypeChange($event)"
     ></aw-select-menu>
+  </div>
+  <div class="misc-toggles-section">
+    <aw-form-field-label>Misc Fields</aw-form-field-label>
+    <div class="misc-toggle-row">
+      <label class="misc-toggle-label">Misc 1</label>
+      <aw-toggle [ariaLabel]="'Toggle Misc 1'" [ngModel]="showMisc1()" (ngModelChange)="showMisc1.set($event)"></aw-toggle>
+    </div>
+    <div class="misc-toggle-row">
+      <label class="misc-toggle-label">Misc 2</label>
+      <aw-toggle [ariaLabel]="'Toggle Misc 2'" [ngModel]="showMisc2()" (ngModelChange)="showMisc2.set($event)"></aw-toggle>
+    </div>
+    <div class="misc-toggle-row">
+      <label class="misc-toggle-label">Misc 3</label>
+      <aw-toggle [ariaLabel]="'Toggle Misc 3'" [ngModel]="showMisc3()" (ngModelChange)="showMisc3.set($event)"></aw-toggle>
+    </div>
+    <div class="misc-toggle-row">
+      <label class="misc-toggle-label">Misc 4</label>
+      <aw-toggle [ariaLabel]="'Toggle Misc 4'" [ngModel]="showMisc4()" (ngModelChange)="showMisc4.set($event)"></aw-toggle>
+    </div>
   </div>
 </div>
 

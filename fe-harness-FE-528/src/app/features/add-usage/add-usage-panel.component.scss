@@ -222,6 +222,24 @@ $form-content-max-width: calc(#{$field-max-width} * 2 + 24px);
   margin-top: 12px;
 }
 
+.misc-toggles-section {
+  margin-top: 12px;
+  border-top: 1px solid var(--system-line-divider-stroke-line-color, #cfd2d3);
+  padding-top: 12px;
+}
+
+.misc-toggle-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4px 0;
+}
+
+.misc-toggle-label {
+  font-size: 14px;
+  color: var(--system-text-text-primary, #1a1c1e);
+}
+
 // ── MAWO: Children Work Orders panel ──
 
 .sr-search-row {

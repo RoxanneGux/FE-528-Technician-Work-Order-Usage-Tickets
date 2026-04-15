@@ -115,15 +115,28 @@ export class AddUsagePanelComponent implements AfterViewInit {
   /** Whether the panel is in MAWO mode. */
   public readonly isMAWO = computed(() => this.workOrderType() === 'mawo');
 
-  /** Visible fields adjusted for MAWO mode — filters out MAWO-hidden fields. */
+  /** Visible fields adjusted for MAWO mode and misc field toggles. */
   public readonly mawoVisibleFields = computed(() => {
-    const base = this.visibleFields();
-    if (!this.isMAWO()) return base;
-    return base.filter(f => !MAWO_HIDDEN_FIELDS.includes(f));
+    let fields = this.visibleFields();
+    if (this.isMAWO()) {
+      fields = fields.filter(f => !MAWO_HIDDEN_FIELDS.includes(f));
+    }
+    // Apply individual misc field toggles
+    if (!this.showMisc1()) fields = fields.filter(f => f !== 'misc1');
+    if (!this.showMisc2()) fields = fields.filter(f => f !== 'misc2');
+    if (!this.showMisc3()) fields = fields.filter(f => f !== 'misc3');
+    if (!this.showMisc4()) fields = fields.filter(f => f !== 'misc4');
+    return fields;
   });
 
   /** Work order type options for the floating selector. */
   public readonly workOrderTypeOptions = WORK_ORDER_TYPE_OPTIONS;
+
+  /** Admin-configurable misc field visibility toggles. */
+  public readonly showMisc1 = signal(true);
+  public readonly showMisc2 = signal(true);
+  public readonly showMisc3 = signal(true);
+  public readonly showMisc4 = signal(true);
 
   /** Search text for children work orders table. */
   public readonly childWOSearchText = signal<string>('');
