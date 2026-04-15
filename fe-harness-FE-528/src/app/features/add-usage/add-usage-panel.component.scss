@@ -203,7 +203,7 @@ $form-content-max-width: calc(#{$field-max-width} * 2 + 24px);
 
 .floating-display-mode {
   position: fixed;
-  bottom: 80px;
+  bottom: 130px;
   right: 24px;
   z-index: 20;
   background: var(--system-surfaces-surfaces-raised, #fff);
