@@ -201,8 +201,8 @@
           </div>
         }
 
-        <!-- Section Divider: Business Fields -->
-        @if (mawoVisibleFields().includes('account') || mawoVisibleFields().includes('department')) {
+        <!-- Section Divider: between Meter and Business values (only when both visible) -->
+        @if (mawoVisibleFields().includes('meter1Begin') && mawoVisibleFields().includes('businessUsage')) {
           <aw-divider class="section-divider"></aw-divider>
         }
 
