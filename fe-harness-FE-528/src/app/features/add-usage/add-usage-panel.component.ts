@@ -21,25 +21,35 @@ import {
   AwDatePickerComponent,
   AwDateTimePickerComponent,
   AwDividerComponent,
+  AwExpansionPanelComponent,
   AwFormFieldComponent,
   AwFormFieldLabelComponent,
   AwFormMessageComponent,
   AwIconComponent,
   AwInputDirective,
+  AwSearchComponent,
   AwSelectMenuComponent,
+  AwTableComponent,
+  AwToggleComponent,
   SingleSelectOption,
+  TableCellInput,
+  TableCellTypes,
 } from '@assetworks-llc/aw-component-lib';
 
+import { TableTextSubtextComponent } from '../../components/table-text-subtext/table-text-subtext.component';
 import { MockDataService } from '../../services/mock-data.service';
 import { UsageAssetSearchDialogComponent } from './asset-search-dialog.component';
 import { UsageTaskSearchDialogComponent } from './task-search-dialog.component';
 import {
   DISPLAY_MODE_FIELDS,
+  MAWO_HIDDEN_FIELDS,
   TIME_FORMAT_OPTIONS,
   USAGE_DISPLAY_MODE_OPTIONS,
   UsageDisplayMode,
   UsageEntry,
   UsageEntryResult,
+  WORK_ORDER_TYPE_OPTIONS,
+  WorkOrderType,
 } from './usage-entry.interface';
 
 /**
@@ -65,7 +75,12 @@ import {
     AwFormMessageComponent,
     AwIconComponent,
     AwInputDirective,
+    AwSearchComponent,
     AwSelectMenuComponent,
+    AwTableComponent,
+    AwToggleComponent,
+    AwExpansionPanelComponent,
+    TableTextSubtextComponent,
     UsageAssetSearchDialogComponent,
     UsageTaskSearchDialogComponent,
   ],
@@ -82,8 +97,8 @@ export class AddUsagePanelComponent implements AfterViewInit {
   private readonly _mockData = inject(MockDataService);
   private readonly _cdr = inject(ChangeDetectorRef);
 
-  /** Set by PanelService via Object.assign. Controls which fields are visible. */
-  public displayMode: UsageDisplayMode = 'all';
+  /** Controls which fields are visible. */
+  public readonly displayMode = signal<UsageDisplayMode>('all');
 
   /** Controls time format for date-time pickers. */
   public timeFormat: '12h' | '24h' = '12h';
@@ -93,6 +108,77 @@ export class AddUsagePanelComponent implements AfterViewInit {
 
   /** Time format options for the floating selector. */
   public readonly timeFormatOptions = TIME_FORMAT_OPTIONS;
+
+  /** Current work order type — Standard or MAWO. */
+  public readonly workOrderType = signal<WorkOrderType>('standard');
+
+  /** Whether the panel is in MAWO mode. */
+  public readonly isMAWO = computed(() => this.workOrderType() === 'mawo');
+
+  /** Visible fields adjusted for MAWO mode — filters out MAWO-hidden fields. */
+  public readonly mawoVisibleFields = computed(() => {
+    const base = this.visibleFields();
+    if (!this.isMAWO()) return base;
+    return base.filter(f => !MAWO_HIDDEN_FIELDS.includes(f));
+  });
+
+  /** Work order type options for the floating selector. */
+  public readonly workOrderTypeOptions = WORK_ORDER_TYPE_OPTIONS;
+
+  /** Search text for children work orders table. */
+  public readonly childWOSearchText = signal<string>('');
+
+  /** Status filter for children work orders table — defaults to Open. */
+  public readonly childWOStatusFilter = signal<string>('Open');
+
+  /** Status filter options for children work orders. */
+  public readonly childWOStatusOptions: SingleSelectOption[] = [
+    { label: 'Open', value: 'Open' },
+    { label: 'All', value: 'All' },
+    { label: 'Work Finished', value: 'Work Finished' },
+  ];
+
+  /** Filtered children work orders based on search and status filter. */
+  public readonly filteredChildWorkOrders = computed(() => {
+    let children = this._mockData.mawoChildWorkOrders();
+    const status = this.childWOStatusFilter();
+    const search = this.childWOSearchText().toLowerCase().trim();
+
+    if (status !== 'All') {
+      children = children.filter(c => c.status === status);
+    }
+    if (search) {
+      children = children.filter(c =>
+        c.assetId.toLowerCase().includes(search) ||
+        c.assetDescription.toLowerCase().includes(search) ||
+        c.workOrderId.toLowerCase().includes(search) ||
+        c.title.toLowerCase().includes(search)
+      );
+    }
+    return children;
+  });
+
+  /** Column definitions for the children work orders table. */
+  public readonly childWOColumns: TableCellInput[] = [
+    { type: TableCellTypes.Checkbox, key: 'selected', label: '' },
+    {
+      sort: true, align: 'left', type: TableCellTypes.Custom, key: 'assetId', label: 'Asset',
+      combineFields: ['assetId', 'assetDescription'],
+      combineTemplate: (values: any[]) => ({
+        component: TableTextSubtextComponent,
+        componentData: { text: values[0], subText: values[1] }
+      })
+    },
+    {
+      sort: true, align: 'left', type: TableCellTypes.Custom, key: 'workOrderId', label: 'Work Order',
+      combineFields: ['workOrderId', 'title'],
+      combineTemplate: (values: any[]) => ({
+        component: TableTextSubtextComponent,
+        componentData: { text: values[0], subText: values[1] }
+      })
+    },
+    { sort: true, align: 'left', type: TableCellTypes.Title, key: 'status', label: 'Status' },
+  ];
 
   /** Validation error for start date field. Null means no error. */
   public readonly startDateError = signal<string | null>(null);
@@ -123,7 +209,7 @@ export class AddUsagePanelComponent implements AfterViewInit {
 
   /** Derived visible fields based on the current display mode. */
   public readonly visibleFields = computed(() => {
-    return DISPLAY_MODE_FIELDS[this.displayMode] ?? DISPLAY_MODE_FIELDS['all'];
+    return DISPLAY_MODE_FIELDS[this.displayMode()] ?? DISPLAY_MODE_FIELDS['all'];
   });
 
   /** Operator dropdown options — label shows (ID) Name for input display, additionalInfo shows ID in dropdown. */
@@ -182,10 +268,35 @@ export class AddUsagePanelComponent implements AfterViewInit {
     this.entryMode.set(mode);
   }
 
+  /** Handle display mode selector change — extract value from select option object. */
+  public onDisplayModeChange(event: any): void {
+    const value = typeof event === 'object' && event !== null ? event.value : event;
+    const valid: UsageDisplayMode[] = ['meter', 'business', 'both', 'all'];
+    this.displayMode.set(valid.includes(value) ? value : 'all');
+  }
+
   /** Handle time format selector change — extract value from select option object. */
   public onTimeFormatChange(event: any): void {
     const value = typeof event === 'object' && event !== null ? event.value : event;
     this.timeFormat = value === '24h' ? '24h' : '12h';
+  }
+
+  /** Handle work order type selector change — extract value from select option object. */
+  public onWorkOrderTypeChange(event: any): void {
+    const value = typeof event === 'object' && event !== null ? event.value : event;
+    this.workOrderType.set(value === 'mawo' ? 'mawo' : 'standard');
+  }
+
+  /** Handle children work orders search input. */
+  public onChildWOSearch(event: any): void {
+    const text = typeof event === 'string' ? event : (event?.searchText ?? event?.value ?? '');
+    this.childWOSearchText.set(text);
+  }
+
+  /** Handle children work orders status filter change — extract value from select option object. */
+  public onChildWOStatusFilterChange(event: any): void {
+    const value = typeof event === 'object' && event !== null ? event.value : event;
+    this.childWOStatusFilter.set(value ?? 'All');
   }
 
   /** Handle segmented button entry mode change. */
@@ -387,6 +498,7 @@ export class AddUsagePanelComponent implements AfterViewInit {
       misc2: new FormControl<string | null>(null),
       misc3: new FormControl<string | null>(null),
       misc4: new FormControl<string | null>(null),
+      reversal: new FormControl<boolean>(false),
     });
   }
 
@@ -416,6 +528,7 @@ export class AddUsagePanelComponent implements AfterViewInit {
       misc2: v.misc2 ?? null,
       misc3: v.misc3 ?? null,
       misc4: v.misc4 ?? null,
+      reversal: v.reversal ?? false,
     };
   }
 

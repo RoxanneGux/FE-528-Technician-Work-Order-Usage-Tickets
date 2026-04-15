@@ -1,5 +1,8 @@
 import { SingleSelectOption } from '@assetworks-llc/aw-component-lib';
 
+/** Controls whether the Add Usage panel operates in Standard or MAWO mode. */
+export type WorkOrderType = 'standard' | 'mawo';
+
 /** Controls which fields are visible in the Add Usage panel. */
 export type UsageDisplayMode = 'meter' | 'business' | 'both' | 'all';
 
@@ -84,6 +87,21 @@ export const TIME_FORMAT_OPTIONS: SingleSelectOption[] = [
   { label: '24 Hour', value: '24h' },
 ];
 
+/** Work order type options for the floating settings panel selector. */
+export const WORK_ORDER_TYPE_OPTIONS: SingleSelectOption[] = [
+  { label: 'Standard', value: 'standard' },
+  { label: 'MAWO', value: 'mawo' },
+];
+
+/** Fields hidden when in MAWO mode, regardless of display mode. */
+export const MAWO_HIDDEN_FIELDS: UsageField[] = [
+  'startDateTime',
+  'endDateTime',
+  'department',
+  'task',
+  'financialProjectCode',
+];
+
 /** A single usage record. */
 export interface UsageEntry {
   asset: string | null;
@@ -108,6 +126,7 @@ export interface UsageEntry {
   misc2: string | null;
   misc3: string | null;
   misc4: string | null;
+  reversal: boolean;
 }
 
 /** Payload emitted when the panel closes with data. */
@@ -144,4 +163,21 @@ export interface MockMeterValidation {
 export interface MockFinancialProjectCode {
   id: string;
   name: string;
+}
+
+/** A child work order belonging to a MAWO parent. */
+export interface MockMAWOChildWorkOrder {
+  workOrderId: string;
+  title: string;
+  assetId: string;
+  assetDescription: string;
+  status: 'Open' | 'Work Finished';
+  selected: boolean;
+}
+
+/** MAWO parent work order with its children. */
+export interface MockMAWOParent {
+  parentWorkOrderId: string;
+  parentTitle: string;
+  children: MockMAWOChildWorkOrder[];
 }

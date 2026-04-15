@@ -1,4 +1,4 @@
-import { Injectable, inject, signal } from '@angular/core';
+import { Injectable, inject, signal, computed } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import {
   MockOperator,
@@ -6,6 +6,8 @@ import {
   MockAccount,
   MockMeterValidation,
   MockFinancialProjectCode,
+  MockMAWOParent,
+  MockMAWOChildWorkOrder,
 } from '../features/add-usage/usage-entry.interface';
 
 export type {
@@ -14,6 +16,8 @@ export type {
   MockAccount,
   MockMeterValidation,
   MockFinancialProjectCode,
+  MockMAWOParent,
+  MockMAWOChildWorkOrder,
 } from '../features/add-usage/usage-entry.interface';
 
 // ── Relative date helper ──
@@ -420,6 +424,24 @@ export class MockDataService {
   public readonly meterValidations = signal<MockMeterValidation[]>(FALLBACK_METER_VALIDATIONS);
   public readonly accounts = signal<MockAccount[]>(FALLBACK_ACCOUNTS);
   public readonly financialProjectCodes = signal<MockFinancialProjectCode[]>(FALLBACK_FINANCIAL_PROJECT_CODES);
+
+  // MAWO data
+  /** MAWO parent work order with 6 child work orders. */
+  public readonly mawoParent = signal<MockMAWOParent>({
+    parentWorkOrderId: 'MAWO-2024-001',
+    parentTitle: 'Multi-Asset Fleet Maintenance — Q4 2024',
+    children: [
+      { workOrderId: 'CWO-001', title: 'Engine oil change and filter', assetId: 'R-12345', assetDescription: 'MOTOR POOL SEDAN', status: 'Open', selected: false },
+      { workOrderId: 'CWO-002', title: 'Brake inspection and pad replacement', assetId: 'QA-FLEET-002', assetDescription: 'QA FLEET TRUCK 002', status: 'Open', selected: false },
+      { workOrderId: 'CWO-003', title: 'Transmission fluid flush', assetId: 'QA-C-001', assetDescription: 'CARGO VAN 2500', status: 'Work Finished', selected: false },
+      { workOrderId: 'CWO-004', title: 'Coolant system service', assetId: 'FL-VAN-03', assetDescription: 'FLEET VAN 03', status: 'Open', selected: false },
+      { workOrderId: 'CWO-005', title: 'Tire rotation and alignment', assetId: 'TX-TRUCK-07', assetDescription: 'PICKUP TRUCK F-150', status: 'Work Finished', selected: false },
+      { workOrderId: 'CWO-006', title: 'Battery load test and replacement', assetId: 'EQ-4821', assetDescription: 'CENTRIFUGAL PUMP', status: 'Open', selected: false },
+    ]
+  });
+
+  /** Convenience accessor for child work orders. */
+  public readonly mawoChildWorkOrders = computed(() => this.mawoParent().children);
 
   constructor() {
     this.loadWorkOrderData();

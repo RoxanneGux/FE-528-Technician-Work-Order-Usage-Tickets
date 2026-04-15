@@ -394,3 +394,32 @@ The Task lookup dialog shows tasks filtered by type. Defaults to Repair filter.
 | See all tasks | Clear the Task Type filter (select blank option) |
 | Search for a task | Type in the search field to filter by task ID, description, or type |
 | Select a task | Click a row, then click "Add" — field shows (Task ID) Description |
+
+
+## MAWO Parent Work Order
+
+| Field | Value |
+|-------|-------|
+| Parent Work Order ID | MAWO-2024-001 |
+| Parent Title | Multi-Asset Fleet Maintenance — Q4 2024 |
+
+### Children Work Orders (6 total)
+
+| Work Order ID | Title | Asset ID | Asset Description | Status |
+|---------------|-------|----------|-------------------|--------|
+| CWO-001 | Engine oil change and filter | R-12345 | MOTOR POOL SEDAN | Open |
+| CWO-002 | Brake inspection and pad replacement | QA-FLEET-002 | QA FLEET TRUCK 002 | Open |
+| CWO-003 | Transmission fluid flush | QA-C-001 | CARGO VAN 2500 | Work Finished |
+| CWO-004 | Coolant system service | FL-VAN-03 | FLEET VAN 03 | Open |
+| CWO-005 | Tire rotation and alignment | TX-TRUCK-07 | PICKUP TRUCK F-150 | Work Finished |
+| CWO-006 | Battery load test and replacement | EQ-4821 | CENTRIFUGAL PUMP | Open |
+
+### MAWO Quick Scenarios
+
+| I want to... | How |
+|--------------|-----|
+| Switch to MAWO mode | Use the "Work Order Type" selector in the floating settings panel → select "MAWO" |
+| See children work orders | Switch to MAWO mode → open Add Usage panel → Children Work Orders expansion panel shows all 6 child WOs |
+| Filter children by status | In the Children Work Orders panel, use the status dropdown to select "Open" (4 results) or "Work Finished" (2 results) |
+| Search children work orders | In the Children Work Orders panel, type in the search field to filter by asset ID, asset description, work order ID, or title |
+| Toggle reversal | Switch to MAWO mode → open Add Usage panel → use the Reversal checkbox next to Hours Used |

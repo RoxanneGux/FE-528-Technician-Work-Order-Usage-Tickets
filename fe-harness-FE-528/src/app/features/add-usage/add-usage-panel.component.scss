@@ -217,3 +217,34 @@ $form-content-max-width: calc(#{$field-max-width} * 2 + 24px);
 .time-format-selector {
   margin-top: 12px;
 }
+
+.work-order-type-selector {
+  margin-top: 12px;
+}
+
+// ── MAWO: Children Work Orders panel ──
+
+.sr-search-row {
+  display: flex;
+  gap: 12px;
+  align-items: flex-end;
+  padding: 12px 16px;
+}
+
+.sr-search-input {
+  flex: 1;
+}
+
+.sr-filter-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.sr-table-container {
+  width: 100%;
+}
+
+.reversal-toggle {
+  justify-content: flex-end;
+}
