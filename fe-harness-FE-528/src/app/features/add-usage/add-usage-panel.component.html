@@ -252,6 +252,11 @@
           }
         }
 
+        <!-- Section Divider: Lookup Fields -->
+        @if (mawoVisibleFields().includes('account') || mawoVisibleFields().includes('operator') || mawoVisibleFields().includes('department') || mawoVisibleFields().includes('task') || mawoVisibleFields().includes('financialProjectCode')) {
+          <aw-divider class="section-divider"></aw-divider>
+        }
+
         <!-- Row 7: Account + Operator -->
         @if (mawoVisibleFields().includes('account') || mawoVisibleFields().includes('operator')) {
           <div class="form-row">
@@ -332,6 +337,11 @@
             </div>
             <div class="form-field"></div>
           </div>
+        }
+
+        <!-- Section Divider: Misc Fields -->
+        @if (mawoVisibleFields().includes('misc1') || mawoVisibleFields().includes('misc2') || mawoVisibleFields().includes('misc3') || mawoVisibleFields().includes('misc4')) {
+          <aw-divider class="section-divider"></aw-divider>
         }
 
         <!-- Misc Fields — each independently controlled -->
