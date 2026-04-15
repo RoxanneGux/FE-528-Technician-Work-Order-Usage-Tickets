@@ -108,8 +108,11 @@ export class AddUsagePanelComponent implements AfterViewInit {
 
   /** Attach keydown and blur listeners to internal date/time inputs after view initializes. */
   ngAfterViewInit(): void {
-    this.attachInputListeners(this._startDateTimePicker, 'start');
-    this.attachInputListeners(this._endDateTimePicker, 'end');
+    // Defer to next microtask to ensure @ViewChild refs inside @if blocks are resolved
+    setTimeout(() => {
+      this.attachInputListeners(this._startDateTimePicker, 'start');
+      this.attachInputListeners(this._endDateTimePicker, 'end');
+    });
   }
 
   /** Active entry mode — single form or multi-row table. */
