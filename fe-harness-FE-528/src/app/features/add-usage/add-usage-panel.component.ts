@@ -108,11 +108,8 @@ export class AddUsagePanelComponent implements AfterViewInit {
 
   /** Attach keydown and blur listeners to internal date/time inputs after view initializes. */
   ngAfterViewInit(): void {
-    // Defer to next microtask to ensure @ViewChild refs inside @if blocks are resolved
-    setTimeout(() => {
-      this.attachInputListeners(this._startDateTimePicker, 'start');
-      this.attachInputListeners(this._endDateTimePicker, 'end');
-    });
+    this.attachInputListeners(this._startDateTimePicker, 'start');
+    this.attachInputListeners(this._endDateTimePicker, 'end');
   }
 
   /** Active entry mode — single form or multi-row table. */
@@ -436,14 +433,40 @@ export class AddUsagePanelComponent implements AfterViewInit {
     if (dateInput) {
       dateInput.addEventListener('keydown', (e: KeyboardEvent) => this.onDateKeydown(e));
       dateInput.addEventListener('blur', (e: Event) => {
-        prefix === 'start' ? this.onStartDateBlur(e) : this.onEndDateBlur(e);
+        const input = (e.target as HTMLInputElement);
+        const value = input.value.trim();
+        if (value) {
+          const error = this.validateDate(value);
+          if (error) {
+            // Clear garbage input — reset to CCL's committed display value
+            input.value = (picker as any).getDateDisplayValue?.() ?? '';
+          }
+          if (prefix === 'start') this.startDateError.set(error);
+          else this.endDateError.set(error);
+        } else {
+          if (prefix === 'start') this.startDateError.set(null);
+          else this.endDateError.set(null);
+        }
         this._cdr.markForCheck();
       });
     }
     if (timeInput) {
       timeInput.addEventListener('keydown', (e: KeyboardEvent) => this.onTimeKeydown(e));
       timeInput.addEventListener('blur', (e: Event) => {
-        prefix === 'start' ? this.onStartTimeBlur(e) : this.onEndTimeBlur(e);
+        const input = (e.target as HTMLInputElement);
+        const value = input.value.trim();
+        if (value) {
+          const error = this.validateTime(value, this.timeFormat);
+          if (error) {
+            // Clear garbage input — reset to CCL's committed display value
+            input.value = (picker as any).getTimeDisplayValue?.() ?? '';
+          }
+          if (prefix === 'start') this.startTimeError.set(error);
+          else this.endTimeError.set(error);
+        } else {
+          if (prefix === 'start') this.startTimeError.set(null);
+          else this.endTimeError.set(null);
+        }
         this._cdr.markForCheck();
       });
     }
