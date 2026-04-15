@@ -112,7 +112,7 @@
                 <aw-form-field-label>Meter 1 Begin</aw-form-field-label>
                 <span class="field-subtitle">{{ meter1Hint() }}</span>
                 <aw-form-field>
-                  <input AwInput formControlName="meter1Begin" placeholder="" aria-label="Meter 1 Begin" />
+                  <input AwInput formControlName="meter1Begin" placeholder="" aria-label="Meter 1 Begin" inputmode="decimal" (keydown)="onMeterKeydown($event)" />
                 </aw-form-field>
               </div>
             }
@@ -121,7 +121,7 @@
                 <aw-form-field-label>Meter 2 Begin</aw-form-field-label>
                 <span class="field-subtitle">{{ meter2Hint() }}</span>
                 <aw-form-field>
-                  <input AwInput formControlName="meter2Begin" placeholder="" aria-label="Meter 2 Begin" />
+                  <input AwInput formControlName="meter2Begin" placeholder="" aria-label="Meter 2 Begin" inputmode="decimal" (keydown)="onMeterKeydown($event)" />
                 </aw-form-field>
               </div>
             }
@@ -136,7 +136,7 @@
                 <aw-form-field-label>Meter 1 End</aw-form-field-label>
                 <span class="field-subtitle">{{ meter1Hint() }}</span>
                 <aw-form-field>
-                  <input AwInput formControlName="meter1End" placeholder="" aria-label="Meter 1 End" />
+                  <input AwInput formControlName="meter1End" placeholder="" aria-label="Meter 1 End" inputmode="decimal" (keydown)="onMeterKeydown($event)" />
                 </aw-form-field>
               </div>
             }
@@ -145,7 +145,7 @@
                 <aw-form-field-label>Meter 2 End</aw-form-field-label>
                 <span class="field-subtitle">{{ meter2Hint() }}</span>
                 <aw-form-field>
-                  <input AwInput formControlName="meter2End" placeholder="" aria-label="Meter 2 End" />
+                  <input AwInput formControlName="meter2End" placeholder="" aria-label="Meter 2 End" inputmode="decimal" (keydown)="onMeterKeydown($event)" />
                 </aw-form-field>
               </div>
             }
@@ -158,13 +158,13 @@
             @if (visibleFields().includes('meter1Validation')) {
               <div class="form-field">
                 <aw-form-field-label>Meter 1 Validation</aw-form-field-label>
-                <aw-select-menu [singleSelectListItems]="meterValidationOptions()" [enableListReset]="true" formControlName="meter1Validation" [ariaLabel]="'Meter 1 Validation'"></aw-select-menu>
+                <aw-select-menu [singleSelectListItems]="meterValidationOptions()" [enableListReset]="true" [placeholder]="'Choose validation'" formControlName="meter1Validation" [ariaLabel]="'Meter 1 Validation'"></aw-select-menu>
               </div>
             }
             @if (visibleFields().includes('meter2Validation')) {
               <div class="form-field">
                 <aw-form-field-label>Meter 2 Validation</aw-form-field-label>
-                <aw-select-menu [singleSelectListItems]="meterValidationOptions()" [enableListReset]="true" formControlName="meter2Validation" [ariaLabel]="'Meter 2 Validation'"></aw-select-menu>
+                <aw-select-menu [singleSelectListItems]="meterValidationOptions()" [enableListReset]="true" [placeholder]="'Choose validation'" formControlName="meter2Validation" [ariaLabel]="'Meter 2 Validation'"></aw-select-menu>
               </div>
             }
           </div>

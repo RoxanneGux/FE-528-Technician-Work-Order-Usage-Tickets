@@ -52,9 +52,11 @@ $form-content-max-width: calc(#{$field-max-width} * 2 + 24px);
   flex-direction: column;
   gap: 24px;
   margin-top: 16px;
-  padding-bottom: 80px;
+  padding: 16px 24px 80px 24px;
   width: 100%;
   max-width: $form-content-max-width;
+  background: var(--system-surfaces-surfaces-background);
+  border-radius: 4px;
 }
 
 .form-row {

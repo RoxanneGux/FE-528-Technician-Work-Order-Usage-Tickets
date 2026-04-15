@@ -172,6 +172,20 @@ export class AddUsagePanelComponent {
     return (business + individual).toFixed(2);
   }
 
+  /** Restrict input to numbers and one decimal point, max 2 decimal places. */
+  public onMeterKeydown(event: KeyboardEvent): void {
+    const allowed = ['Backspace', 'Tab', 'ArrowLeft', 'ArrowRight', 'Delete', 'Home', 'End'];
+    if (allowed.includes(event.key)) return;
+    const input = event.target as HTMLInputElement;
+    const value = input.value;
+    const selStart = input.selectionStart ?? value.length;
+    const selEnd = input.selectionEnd ?? value.length;
+    const newValue = value.substring(0, selStart) + event.key + value.substring(selEnd);
+    if (!/^\d*\.?\d{0,2}$/.test(newValue)) {
+      event.preventDefault();
+    }
+  }
+
   /** Append a new empty row to the multi-entry table. */
   public addRow(): void {
     this.multiEntryRows.update(rows => [...rows, this.createRowFormGroup()]);
