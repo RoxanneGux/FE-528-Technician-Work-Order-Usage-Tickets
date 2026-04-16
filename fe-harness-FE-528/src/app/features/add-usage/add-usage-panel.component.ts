@@ -102,6 +102,7 @@ import {
 export class AddUsagePanelComponent implements AfterViewInit {
   @ViewChild('startDateTimePicker') private _startDateTimePicker!: AwDateTimePickerComponent;
   @ViewChild('endDateTimePicker') private _endDateTimePicker!: AwDateTimePickerComponent;
+  @ViewChild('transactionDatePicker') private _transactionDatePicker!: AwDatePickerComponent;
 
   public readonly close = output<UsageEntryResult | null>();
 
@@ -234,6 +235,7 @@ export class AddUsagePanelComponent implements AfterViewInit {
   ngAfterViewInit(): void {
     this.attachInputListeners(this._startDateTimePicker, 'start');
     this.attachInputListeners(this._endDateTimePicker, 'end');
+    this.attachTransactionDateListeners();
   }
 
   /** Active entry mode — single form or multi-row table. */
@@ -1303,6 +1305,28 @@ export class AddUsagePanelComponent implements AfterViewInit {
   private extractSelectValue(val: any): string | null {
     if (val == null) return null;
     return typeof val === 'object' && val !== null ? val.value : val;
+  }
+
+  /** Attach keydown and blur listeners to the transaction date picker's internal input. */
+  private attachTransactionDateListeners(): void {
+    if (!this._transactionDatePicker) return;
+    const input = (this._transactionDatePicker as any).triggerInput?.nativeElement;
+    if (!input) return;
+    input.addEventListener('keydown', (e: KeyboardEvent) => this.onDateKeydown(e));
+    input.addEventListener('blur', () => {
+      const value = input.value.trim();
+      if (value) {
+        const error = this.validateDate(value);
+        if (error) {
+          input.value = '';
+          this.singleEntryForm.get('transactionDate')?.setValue(null);
+          (this._transactionDatePicker as any).showClearIcon?.set(false);
+          this._cdr.detectChanges();
+          // Override CCL's format pattern placeholder after it re-renders
+          setTimeout(() => { input.placeholder = 'mm/dd/yyyy'; });
+        }
+      }
+    });
   }
 
   /** Attach keydown and blur listeners to the internal date and time inputs of a date-time picker. */

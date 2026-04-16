@@ -51,6 +51,15 @@ $form-content-max-width: calc(#{$field-max-width} * 2 + 24px);
   display: flex;
   gap: 8px;
   padding: 16px 0;
+  position: sticky;
+  left: 0;
+  z-index: 2;
+}
+
+.sticky-header {
+  position: sticky;
+  left: 0;
+  z-index: 2;
 }
 
 // ── Responsive two-column form layout ──
@@ -145,6 +154,11 @@ $form-content-max-width: calc(#{$field-max-width} * 2 + 24px);
   padding-bottom: 8px !important;
 }
 
+// Force date picker placeholder to lowercase (CCL capitalizes it)
+:host ::ng-deep aw-date-picker input::placeholder {
+  text-transform: lowercase !important;
+}
+
 // ── Multi-entry table (aw-table redesign) ──
 
 .multi-entry-section {
@@ -158,6 +172,8 @@ $form-content-max-width: calc(#{$field-max-width} * 2 + 24px);
 
 .add-row-bar {
   padding: 8px 0;
+  position: sticky;
+  left: 0;
 }
 
 // Cell width constraints via ::ng-deep for aw-table internal cells

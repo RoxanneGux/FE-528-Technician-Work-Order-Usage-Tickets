@@ -1,7 +1,9 @@
 <div class="add-usage-wrapper">
   <div class="content-container">
     <!-- Title -->
-    <aw-divider [title]="'Add Usage'"></aw-divider>
+    <div class="sticky-header">
+      <aw-divider [title]="'Add Usage'"></aw-divider>
+    </div>
 
     <!-- Entry Mode Toggle -->
     @if (!isMAWO()) {
@@ -41,7 +43,8 @@
                 <aw-date-picker
                   #transactionDatePicker
                   formControlName="transactionDate"
-                  [placeholder]="'mm/dd/yyyy'">
+                  [placeholder]="'mm/dd/yyyy'"
+                  >
                 </aw-date-picker>
                 <button ariaLabel="calendar" type="button" AwButtonIconOnly [buttonType]="'primary'" (click)="transactionDatePicker.openCalendar()">
                   <aw-icon [iconName]="'today'" [iconColor]="''"></aw-icon>
