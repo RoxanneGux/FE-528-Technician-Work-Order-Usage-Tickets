@@ -163,10 +163,16 @@ $form-content-max-width: calc(#{$field-max-width} * 2 + 24px);
     max-width: 536px;
   }
 
-  // Asset Description cell - allow text wrapping
-  .aw-table-cell:nth-child(2) {
+  // Asset Description cell - allow text wrapping instead of truncation
+  .aw-table-cell:nth-child(2),
+  .aw-table-cell:nth-child(2) * {
     white-space: normal !important;
-    word-wrap: break-word;
+    word-wrap: break-word !important;
+    overflow: visible !important;
+    text-overflow: unset !important;
+    -webkit-line-clamp: unset !important;
+    -webkit-box-orient: unset !important;
+    display: block !important;
   }
 
   // Date-time picker cells (Start Date/Time, End Date/Time)

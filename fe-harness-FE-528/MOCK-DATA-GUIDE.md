@@ -342,7 +342,7 @@ Times are formatted as "H:MM AM/PM" (e.g., "9:00 AM", "2:30 PM").
 
 The Asset search dialog in the Add Usage panel shows assets after typing 2+ characters. Includes fleet and linear assets.
 
-### Assets (10 total)
+### Assets (11 total)
 
 | Equipment ID | Description | Asset Type | Asset Number | Active |
 |---|---|---|---|---|
@@ -356,6 +356,7 @@ The Asset search dialog in the Add Usage panel shows assets after typing 2+ char
 | EQ-5102 | HYDRAULIC PRESS | Press | EQ-5102 | No |
 | ROAD07 | HIGHWAY 07 - MAIN CORRIDOR | Linear | ROAD07 | Yes |
 | UX-BRIDGE-LINEAR | UX TEST BRIDGE - LINEAR ASSET | Linear | UX-BRIDGE-LINEAR | Yes |
+| GEN-9900 | CATERPILLAR 3516B STANDBY DIESEL GENERATOR SET 2000KW EMERGENCY BACKUP POWER UNIT | Generator | GEN-9900 | Yes |
 
 ### Asset Search Scenarios
 

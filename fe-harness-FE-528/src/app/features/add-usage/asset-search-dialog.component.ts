@@ -96,6 +96,7 @@ export class UsageAssetSearchDialogComponent extends BaseDialogComponent {
     { EquipmentId: 'EQ-5102', EquipmentDescription: 'HYDRAULIC PRESS', AssetType: 'Press', AssetNumber: 'EQ-5102', Active: false },
     { EquipmentId: 'ROAD07', EquipmentDescription: 'HIGHWAY 07 - MAIN CORRIDOR', AssetType: 'Linear', AssetNumber: 'ROAD07', Active: true },
     { EquipmentId: 'UX-BRIDGE-LINEAR', EquipmentDescription: 'UX TEST BRIDGE - LINEAR ASSET', AssetType: 'Linear', AssetNumber: 'UX-BRIDGE-LINEAR', Active: true },
+    { EquipmentId: 'GEN-9900', EquipmentDescription: 'CATERPILLAR 3516B STANDBY DIESEL GENERATOR SET 2000KW EMERGENCY BACKUP POWER UNIT', AssetType: 'Generator', AssetNumber: 'GEN-9900', Active: true },
   ];
 
   /** Empty until user types 2+ characters, matching FA-Suite behavior. */
