@@ -474,7 +474,7 @@
         <aw-form-field-label>Work Order Type</aw-form-field-label>
         <aw-select-menu
           [ariaLabel]="'Work Order Type'"
-          [singleSelectListItems]="workOrderTypeOptions"
+          [singleSelectListItems]="activeWorkOrderTypeOptions()"
           [enableListReset]="false"
           [ngModel]="workOrderType()"
           (ngModelChange)="onWorkOrderTypeChange($event)"

@@ -144,6 +144,14 @@ export class AddUsagePanelComponent implements AfterViewInit {
   /** Work order type options for the floating selector. */
   public readonly workOrderTypeOptions = WORK_ORDER_TYPE_OPTIONS;
 
+  /** Filtered work order type options — only Standard in multi-entry mode. */
+  public readonly activeWorkOrderTypeOptions = computed(() => {
+    if (this.entryMode() === 'multi') {
+      return this.workOrderTypeOptions.filter(o => o.value === 'standard');
+    }
+    return this.workOrderTypeOptions;
+  });
+
   /** Admin-configurable misc field visibility toggles. */
   public readonly showMisc1 = signal(true);
   public readonly showMisc2 = signal(true);
@@ -395,7 +403,12 @@ export class AddUsagePanelComponent implements AfterViewInit {
 
   /** Handle segmented button entry mode change. */
   public onEntryModeChange(event: { event: MouseEvent | KeyboardEvent; index: number }): void {
-    this.entryMode.set(event.index === 0 ? 'single' : 'multi');
+    const mode = event.index === 0 ? 'single' : 'multi';
+    this.entryMode.set(mode);
+    // MAWO not supported in multi-entry — reset to standard
+    if (mode === 'multi') {
+      this.workOrderType.set('standard');
+    }
   }
 
   /** Increment a numeric form field value. */
