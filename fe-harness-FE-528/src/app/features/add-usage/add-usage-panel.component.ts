@@ -32,11 +32,16 @@ import {
   AwTableComponent,
   AwToggleComponent,
   SingleSelectOption,
+  TableActionMenu,
   TableCellInput,
   TableCellTypes,
 } from '@assetworks-llc/aw-component-lib';
 
 import { TableTextSubtextComponent } from '../../components/table-text-subtext/table-text-subtext.component';
+import { TableInputCellComponent } from '../../components/table-input-cell/table-input-cell.component';
+import { TableDateCellComponent } from '../../components/table-date-cell/table-date-cell.component';
+import { TableDateTimeCellComponent } from '../../components/table-date-time-cell/table-date-time-cell.component';
+import { TableSelectCellComponent } from '../../components/table-select-cell/table-select-cell.component';
 import { MockDataService } from '../../services/mock-data.service';
 import { UsageAssetSearchDialogComponent } from './asset-search-dialog.component';
 import { UsageTaskSearchDialogComponent } from './task-search-dialog.component';
@@ -81,6 +86,10 @@ import {
     AwToggleComponent,
     AwExpansionPanelComponent,
     TableTextSubtextComponent,
+    TableInputCellComponent,
+    TableDateCellComponent,
+    TableDateTimeCellComponent,
+    TableSelectCellComponent,
     UsageAssetSearchDialogComponent,
     UsageTaskSearchDialogComponent,
   ],
@@ -96,6 +105,9 @@ export class AddUsagePanelComponent implements AfterViewInit {
 
   private readonly _mockData = inject(MockDataService);
   private readonly _cdr = inject(ChangeDetectorRef);
+
+  /** Active row index for multi-entry dialogs. */
+  private _activeMultiRowIndex: number | null = null;
 
   /** Controls which fields are visible. */
   public readonly displayMode = signal<UsageDisplayMode>('all');
@@ -223,6 +235,63 @@ export class AddUsagePanelComponent implements AfterViewInit {
   /** Array of FormGroups for multi-entry rows, initialized with one row. */
   public readonly multiEntryRows = signal<FormGroup[]>([this.createRowFormGroup()]);
 
+  /** Flat row objects for aw-table [tableData] binding. */
+  public readonly multiEntryTableData = computed(() => {
+    return this.multiEntryRows().map((row, index) => {
+      const raw = row.getRawValue();
+      const business = parseFloat(raw.businessUsage) || 0;
+      const individual = parseFloat(raw.individualUsage) || 0;
+      const totalUsage = (business + individual).toFixed(2);
+      return { ...raw, _rowIndex: index, totalUsage };
+    });
+  });
+
+  /** Reactive column definitions for the multi-entry aw-table. */
+  public readonly multiEntryColumns = computed<TableCellInput[]>(() => {
+    const visibleFields = this.mawoVisibleFields();
+    const columns: TableCellInput[] = [];
+
+    // Asset column — always visible
+    columns.push({
+      type: TableCellTypes.Custom,
+      key: 'asset',
+      label: 'Asset',
+      align: 'left',
+      combineFields: ['asset', '_rowIndex'],
+      combineTemplate: (data: any[]) => ({
+        component: TableInputCellComponent,
+        componentData: {
+          value: data[0] || '',
+          placeholder: 'Asset',
+          readOnly: false,
+          inputMode: 'text',
+          ariaLabel: 'Asset',
+          showSearchButton: true,
+          onChange: (value: string) => this.onMultiCellChange(data[1], 'asset', value),
+          onSearch: () => this.onMultiAssetSearch(data[1]),
+          onKeydownHandler: null,
+        },
+      }),
+    });
+
+    // Asset Description column — always visible, read-only
+    columns.push({
+      type: TableCellTypes.Title,
+      key: 'assetDescription',
+      label: 'Asset Description',
+      align: 'left',
+    });
+
+    // Dynamic columns based on visible fields
+    for (const field of visibleFields) {
+      if (field === 'asset') continue; // Already handled above
+      const col = this.buildColumnDef(field);
+      if (col) columns.push(col);
+    }
+
+    return columns;
+  });
+
   /** Derived visible fields based on the current display mode. */
   public readonly visibleFields = computed(() => {
     return DISPLAY_MODE_FIELDS[this.displayMode()] ?? DISPLAY_MODE_FIELDS['all'];
@@ -278,6 +347,14 @@ export class AddUsagePanelComponent implements AfterViewInit {
   public readonly footerActionsRight: ActionBarRight[] = [
     { buttonCallback: { label: 'Add', buttonType: 'outlined', action: () => this.onAdd() } },
   ];
+
+  /** Returns action menu items for a multi-entry row. */
+  public getMultiEntryRowActions = (rowData: any): TableActionMenu[] => {
+    return [
+      { title: 'Clear', action: () => this.onMultiAction(rowData._rowIndex, 'clear') },
+      { title: 'Get Components', action: () => this.onMultiAction(rowData._rowIndex, 'getComponents') },
+    ];
+  };
 
   /** Switch between single and multi entry modes. */
   public toggleEntryMode(mode: 'single' | 'multi'): void {
@@ -478,7 +555,12 @@ export class AddUsagePanelComponent implements AfterViewInit {
   public onAssetSearchClose(result: any): void {
     this.showAssetSearchDialog.set(false);
     if (result?.action === 'go' && result.selectedAsset) {
-      this.singleEntryForm.get('asset')?.setValue(`(${result.selectedAsset.EquipmentId}) ${result.selectedAsset.EquipmentDescription}`);
+      const targetForm = this._activeMultiRowIndex !== null
+        ? this.multiEntryRows()[this._activeMultiRowIndex]
+        : this.singleEntryForm;
+      targetForm?.get('asset')?.setValue(result.selectedAsset.EquipmentId);
+      targetForm?.get('assetDescription')?.setValue(result.selectedAsset.EquipmentDescription);
+      this._activeMultiRowIndex = null;
     }
   }
 
@@ -491,7 +573,533 @@ export class AddUsagePanelComponent implements AfterViewInit {
   public onTaskSearchClose(result: any): void {
     this.showTaskSearchDialog.set(false);
     if (result?.taskId) {
-      this.singleEntryForm.get('task')?.setValue(`(${result.taskId}) ${result.taskDesc}`);
+      const targetForm = this._activeMultiRowIndex !== null
+        ? this.multiEntryRows()[this._activeMultiRowIndex]
+        : this.singleEntryForm;
+      targetForm?.get('task')?.setValue(`(${result.taskId}) ${result.taskDescription}`);
+      this._activeMultiRowIndex = null;
+    }
+  }
+
+  /** Handle asset search for a multi-entry row. */
+  public onMultiAssetSearch(rowIndex: number): void {
+    this._activeMultiRowIndex = rowIndex;
+    this.showAssetSearchDialog.set(true);
+  }
+
+  /** Handle task search for a multi-entry row. */
+  public onMultiTaskSearch(rowIndex: number): void {
+    this._activeMultiRowIndex = rowIndex;
+    this.showTaskSearchDialog.set(true);
+  }
+
+  /** Handle lookup placeholder for a multi-entry row. */
+  public onMultiLookup(rowIndex: number, fieldName: string): void {
+    this.onLookupPlaceholder(fieldName);
+  }
+
+  /** Handle cell value change for a multi-entry row. */
+  public onMultiCellChange(rowIndex: number, fieldName: string, value: any): void {
+    const row = this.multiEntryRows()[rowIndex];
+    if (row) {
+      row.get(fieldName)?.setValue(value);
+      // Trigger signal update to recalculate computed values (like totalUsage)
+      this.multiEntryRows.set([...this.multiEntryRows()]);
+    }
+  }
+
+  /** Handle action menu selection for a multi-entry row. */
+  public onMultiAction(rowIndex: number, action: string): void {
+    if (action === 'clear') {
+      const row = this.multiEntryRows()[rowIndex];
+      if (row) {
+        const defaults = this.createRowFormGroup();
+        Object.keys(defaults.controls).forEach(key => {
+          row.get(key)?.setValue(defaults.get(key)?.value);
+        });
+      }
+    }
+    // 'getComponents' — placeholder for future implementation
+  }
+
+  /** Map field name to TableCellInput definition for multi-entry columns. */
+  private buildColumnDef(field: string): TableCellInput | null {
+    const rowIndexField = '_rowIndex';
+
+    switch (field) {
+      case 'transactionDate':
+        return {
+          type: TableCellTypes.Custom,
+          key: 'transactionDate',
+          label: 'Transaction Date',
+          align: 'left',
+          combineFields: ['transactionDate', rowIndexField],
+          combineTemplate: (data: any[]) => ({
+            component: TableDateCellComponent,
+            componentData: {
+              formControl: this.multiEntryRows()[data[1]]?.get('transactionDate'),
+            },
+          }),
+        };
+
+      case 'hoursUsed':
+        return {
+          type: TableCellTypes.Custom,
+          key: 'hoursUsed',
+          label: 'Hours Used',
+          align: 'left',
+          combineFields: ['hoursUsed', rowIndexField],
+          combineTemplate: (data: any[]) => ({
+            component: TableInputCellComponent,
+            componentData: {
+              value: data[0] || '',
+              placeholder: '0.00',
+              readOnly: false,
+              inputMode: 'decimal',
+              ariaLabel: 'Hours Used',
+              showSearchButton: false,
+              onChange: (value: string) => this.onMultiCellChange(data[1], 'hoursUsed', value),
+              onSearch: null,
+              onKeydownHandler: (event: KeyboardEvent) => this.onMeterKeydown(event),
+            },
+          }),
+        };
+
+      case 'startDateTime':
+        return {
+          type: TableCellTypes.Custom,
+          key: 'startDateTime',
+          label: 'Start Date/Time',
+          align: 'left',
+          combineFields: ['startDateTime', rowIndexField],
+          combineTemplate: (data: any[]) => ({
+            component: TableDateTimeCellComponent,
+            componentData: {
+              formControl: this.multiEntryRows()[data[1]]?.get('startDateTime'),
+              timeFormat: this.timeFormat,
+              ariaLabel: 'Start',
+            },
+          }),
+        };
+
+      case 'endDateTime':
+        return {
+          type: TableCellTypes.Custom,
+          key: 'endDateTime',
+          label: 'End Date/Time',
+          align: 'left',
+          combineFields: ['endDateTime', rowIndexField],
+          combineTemplate: (data: any[]) => ({
+            component: TableDateTimeCellComponent,
+            componentData: {
+              formControl: this.multiEntryRows()[data[1]]?.get('endDateTime'),
+              timeFormat: this.timeFormat,
+              ariaLabel: 'End',
+            },
+          }),
+        };
+
+      case 'meter1Begin':
+        return {
+          type: TableCellTypes.Custom,
+          key: 'meter1Begin',
+          label: 'Meter 1 Begin',
+          align: 'left',
+          combineFields: ['meter1Begin', rowIndexField],
+          combineTemplate: (data: any[]) => ({
+            component: TableInputCellComponent,
+            componentData: {
+              value: data[0] || '',
+              placeholder: '$00.00',
+              readOnly: false,
+              inputMode: 'decimal',
+              ariaLabel: 'Meter 1 Begin',
+              showSearchButton: false,
+              onChange: (value: string) => this.onMultiCellChange(data[1], 'meter1Begin', value),
+              onSearch: null,
+              onKeydownHandler: (event: KeyboardEvent) => this.onMeterKeydown(event),
+            },
+          }),
+        };
+
+      case 'meter1End':
+        return {
+          type: TableCellTypes.Custom,
+          key: 'meter1End',
+          label: 'Meter 1 End',
+          align: 'left',
+          combineFields: ['meter1End', rowIndexField],
+          combineTemplate: (data: any[]) => ({
+            component: TableInputCellComponent,
+            componentData: {
+              value: data[0] || '',
+              placeholder: '$00.00',
+              readOnly: false,
+              inputMode: 'decimal',
+              ariaLabel: 'Meter 1 End',
+              showSearchButton: false,
+              onChange: (value: string) => this.onMultiCellChange(data[1], 'meter1End', value),
+              onSearch: null,
+              onKeydownHandler: (event: KeyboardEvent) => this.onMeterKeydown(event),
+            },
+          }),
+        };
+
+      case 'meter1Validation':
+        return {
+          type: TableCellTypes.Custom,
+          key: 'meter1Validation',
+          label: 'Meter 1 Validation',
+          align: 'left',
+          combineFields: ['meter1Validation', rowIndexField],
+          combineTemplate: (data: any[]) => ({
+            component: TableSelectCellComponent,
+            componentData: {
+              formControl: this.multiEntryRows()[data[1]]?.get('meter1Validation'),
+              options: this.meterValidationOptions(),
+              placeholder: 'Choose Validation',
+              ariaLabel: 'Meter 1 Validation',
+            },
+          }),
+        };
+
+      case 'meter2Begin':
+        return {
+          type: TableCellTypes.Custom,
+          key: 'meter2Begin',
+          label: 'Meter 2 Begin',
+          align: 'left',
+          combineFields: ['meter2Begin', rowIndexField],
+          combineTemplate: (data: any[]) => ({
+            component: TableInputCellComponent,
+            componentData: {
+              value: data[0] || '',
+              placeholder: '$00.00',
+              readOnly: false,
+              inputMode: 'decimal',
+              ariaLabel: 'Meter 2 Begin',
+              showSearchButton: false,
+              onChange: (value: string) => this.onMultiCellChange(data[1], 'meter2Begin', value),
+              onSearch: null,
+              onKeydownHandler: (event: KeyboardEvent) => this.onMeterKeydown(event),
+            },
+          }),
+        };
+
+      case 'meter2End':
+        return {
+          type: TableCellTypes.Custom,
+          key: 'meter2End',
+          label: 'Meter 2 End',
+          align: 'left',
+          combineFields: ['meter2End', rowIndexField],
+          combineTemplate: (data: any[]) => ({
+            component: TableInputCellComponent,
+            componentData: {
+              value: data[0] || '',
+              placeholder: '$00.00',
+              readOnly: false,
+              inputMode: 'decimal',
+              ariaLabel: 'Meter 2 End',
+              showSearchButton: false,
+              onChange: (value: string) => this.onMultiCellChange(data[1], 'meter2End', value),
+              onSearch: null,
+              onKeydownHandler: (event: KeyboardEvent) => this.onMeterKeydown(event),
+            },
+          }),
+        };
+
+      case 'meter2Validation':
+        return {
+          type: TableCellTypes.Custom,
+          key: 'meter2Validation',
+          label: 'Meter 2 Validation',
+          align: 'left',
+          combineFields: ['meter2Validation', rowIndexField],
+          combineTemplate: (data: any[]) => ({
+            component: TableSelectCellComponent,
+            componentData: {
+              formControl: this.multiEntryRows()[data[1]]?.get('meter2Validation'),
+              options: this.meterValidationOptions(),
+              placeholder: 'Choose Validation',
+              ariaLabel: 'Meter 2 Validation',
+            },
+          }),
+        };
+
+      case 'businessUsage':
+        return {
+          type: TableCellTypes.Custom,
+          key: 'businessUsage',
+          label: 'Business Usage',
+          align: 'left',
+          combineFields: ['businessUsage', rowIndexField],
+          combineTemplate: (data: any[]) => ({
+            component: TableInputCellComponent,
+            componentData: {
+              value: data[0] || '',
+              placeholder: '0.00',
+              readOnly: false,
+              inputMode: 'decimal',
+              ariaLabel: 'Business Usage',
+              showSearchButton: false,
+              onChange: (value: string) => this.onMultiCellChange(data[1], 'businessUsage', value),
+              onSearch: null,
+              onKeydownHandler: (event: KeyboardEvent) => this.onMeterKeydown(event),
+            },
+          }),
+        };
+
+      case 'individualUsage':
+        return {
+          type: TableCellTypes.Custom,
+          key: 'individualUsage',
+          label: 'Individual Usage',
+          align: 'left',
+          combineFields: ['individualUsage', rowIndexField],
+          combineTemplate: (data: any[]) => ({
+            component: TableInputCellComponent,
+            componentData: {
+              value: data[0] || '',
+              placeholder: '0.00',
+              readOnly: false,
+              inputMode: 'decimal',
+              ariaLabel: 'Individual Usage',
+              showSearchButton: false,
+              onChange: (value: string) => this.onMultiCellChange(data[1], 'individualUsage', value),
+              onSearch: null,
+              onKeydownHandler: (event: KeyboardEvent) => this.onMeterKeydown(event),
+            },
+          }),
+        };
+
+      case 'totalUsage':
+        return {
+          type: TableCellTypes.Custom,
+          key: 'totalUsage',
+          label: 'Total Usage',
+          align: 'left',
+          combineFields: ['businessUsage', 'individualUsage', '_rowIndex'],
+          combineTemplate: (data: any[]) => {
+            const business = parseFloat(data[0]) || 0;
+            const individual = parseFloat(data[1]) || 0;
+            const total = (business + individual).toFixed(2);
+            return {
+              component: TableTextSubtextComponent,
+              componentData: { text: total, subText: '' },
+            };
+          },
+        };
+
+      case 'account':
+        return {
+          type: TableCellTypes.Custom,
+          key: 'account',
+          label: 'Account',
+          align: 'left',
+          combineFields: ['account', rowIndexField],
+          combineTemplate: (data: any[]) => ({
+            component: TableInputCellComponent,
+            componentData: {
+              value: data[0] || '',
+              placeholder: 'Account',
+              readOnly: false,
+              inputMode: 'text',
+              ariaLabel: 'Account',
+              showSearchButton: true,
+              onChange: (value: string) => this.onMultiCellChange(data[1], 'account', value),
+              onSearch: () => this.onMultiLookup(data[1], 'account'),
+              onKeydownHandler: null,
+            },
+          }),
+        };
+
+      case 'operator':
+        return {
+          type: TableCellTypes.Custom,
+          key: 'operator',
+          label: 'Operator',
+          align: 'left',
+          combineFields: ['operator', rowIndexField],
+          combineTemplate: (data: any[]) => ({
+            component: TableInputCellComponent,
+            componentData: {
+              value: data[0] || '',
+              placeholder: 'Operator',
+              readOnly: false,
+              inputMode: 'text',
+              ariaLabel: 'Operator',
+              showSearchButton: true,
+              onChange: (value: string) => this.onMultiCellChange(data[1], 'operator', value),
+              onSearch: () => this.onMultiLookup(data[1], 'operator'),
+              onKeydownHandler: null,
+            },
+          }),
+        };
+
+      case 'department':
+        return {
+          type: TableCellTypes.Custom,
+          key: 'department',
+          label: 'Department',
+          align: 'left',
+          combineFields: ['department', rowIndexField],
+          combineTemplate: (data: any[]) => ({
+            component: TableInputCellComponent,
+            componentData: {
+              value: data[0] || '',
+              placeholder: 'Department',
+              readOnly: false,
+              inputMode: 'text',
+              ariaLabel: 'Department',
+              showSearchButton: true,
+              onChange: (value: string) => this.onMultiCellChange(data[1], 'department', value),
+              onSearch: () => this.onMultiLookup(data[1], 'department'),
+              onKeydownHandler: null,
+            },
+          }),
+        };
+
+      case 'task':
+        return {
+          type: TableCellTypes.Custom,
+          key: 'task',
+          label: 'Task',
+          align: 'left',
+          combineFields: ['task', rowIndexField],
+          combineTemplate: (data: any[]) => ({
+            component: TableInputCellComponent,
+            componentData: {
+              value: data[0] || '',
+              placeholder: 'Task',
+              readOnly: false,
+              inputMode: 'text',
+              ariaLabel: 'Task',
+              showSearchButton: true,
+              onChange: (value: string) => this.onMultiCellChange(data[1], 'task', value),
+              onSearch: () => this.onMultiTaskSearch(data[1]),
+              onKeydownHandler: null,
+            },
+          }),
+        };
+
+      case 'financialProjectCode':
+        return {
+          type: TableCellTypes.Custom,
+          key: 'financialProjectCode',
+          label: 'Financial Project Code',
+          align: 'left',
+          combineFields: ['financialProjectCode', rowIndexField],
+          combineTemplate: (data: any[]) => ({
+            component: TableInputCellComponent,
+            componentData: {
+              value: data[0] || '',
+              placeholder: 'Financial Project Code',
+              readOnly: false,
+              inputMode: 'text',
+              ariaLabel: 'Financial Project Code',
+              showSearchButton: true,
+              onChange: (value: string) => this.onMultiCellChange(data[1], 'financialProjectCode', value),
+              onSearch: () => this.onMultiLookup(data[1], 'financialProjectCode'),
+              onKeydownHandler: null,
+            },
+          }),
+        };
+
+      case 'misc1':
+        return {
+          type: TableCellTypes.Custom,
+          key: 'misc1',
+          label: 'Misc 1',
+          align: 'left',
+          combineFields: ['misc1', rowIndexField],
+          combineTemplate: (data: any[]) => ({
+            component: TableInputCellComponent,
+            componentData: {
+              value: data[0] || '',
+              placeholder: 'Misc 1',
+              readOnly: false,
+              inputMode: 'text',
+              ariaLabel: 'Misc 1',
+              showSearchButton: false,
+              onChange: (value: string) => this.onMultiCellChange(data[1], 'misc1', value),
+              onSearch: null,
+              onKeydownHandler: null,
+            },
+          }),
+        };
+
+      case 'misc2':
+        return {
+          type: TableCellTypes.Custom,
+          key: 'misc2',
+          label: 'Misc 2',
+          align: 'left',
+          combineFields: ['misc2', rowIndexField],
+          combineTemplate: (data: any[]) => ({
+            component: TableInputCellComponent,
+            componentData: {
+              value: data[0] || '',
+              placeholder: 'Misc 2',
+              readOnly: false,
+              inputMode: 'text',
+              ariaLabel: 'Misc 2',
+              showSearchButton: false,
+              onChange: (value: string) => this.onMultiCellChange(data[1], 'misc2', value),
+              onSearch: null,
+              onKeydownHandler: null,
+            },
+          }),
+        };
+
+      case 'misc3':
+        return {
+          type: TableCellTypes.Custom,
+          key: 'misc3',
+          label: 'Misc 3',
+          align: 'left',
+          combineFields: ['misc3', rowIndexField],
+          combineTemplate: (data: any[]) => ({
+            component: TableInputCellComponent,
+            componentData: {
+              value: data[0] || '',
+              placeholder: 'Misc 3',
+              readOnly: false,
+              inputMode: 'text',
+              ariaLabel: 'Misc 3',
+              showSearchButton: false,
+              onChange: (value: string) => this.onMultiCellChange(data[1], 'misc3', value),
+              onSearch: null,
+              onKeydownHandler: null,
+            },
+          }),
+        };
+
+      case 'misc4':
+        return {
+          type: TableCellTypes.Custom,
+          key: 'misc4',
+          label: 'Misc 4',
+          align: 'left',
+          combineFields: ['misc4', rowIndexField],
+          combineTemplate: (data: any[]) => ({
+            component: TableInputCellComponent,
+            componentData: {
+              value: data[0] || '',
+              placeholder: 'Misc 4',
+              readOnly: false,
+              inputMode: 'text',
+              ariaLabel: 'Misc 4',
+              showSearchButton: false,
+              onChange: (value: string) => this.onMultiCellChange(data[1], 'misc4', value),
+              onSearch: null,
+              onKeydownHandler: null,
+            },
+          }),
+        };
+
+      default:
+        return null;
     }
   }
 
@@ -499,6 +1107,7 @@ export class AddUsagePanelComponent implements AfterViewInit {
   public createRowFormGroup(): FormGroup {
     return new FormGroup({
       asset: new FormControl<string | null>(null),
+      assetDescription: new FormControl<string | null>(null),
       transactionDate: new FormControl<Date | null>(new Date()),
       hoursUsed: new FormControl<number | null>(null),
       startDateTime: new FormControl<Date | null>(null),

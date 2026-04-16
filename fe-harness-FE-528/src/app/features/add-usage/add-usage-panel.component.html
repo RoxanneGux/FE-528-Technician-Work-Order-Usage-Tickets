@@ -425,57 +425,19 @@
     <!-- ═══════════════ Multi Entry Table ═══════════════ -->
     @if (entryMode() === 'multi') {
       <div class="multi-entry-section">
-        <div class="multi-entry-table">
-          <table class="table">
-            <thead>
-              <tr>
-                @if (mawoVisibleFields().includes('transactionDate')) { <th>Transaction Date</th> }
-                @if (mawoVisibleFields().includes('hoursUsed')) { <th>Hours Used</th> }
-                @if (mawoVisibleFields().includes('operator')) { <th>Operator</th> }
-                @if (mawoVisibleFields().includes('department')) { <th>Department</th> }
-                @if (mawoVisibleFields().includes('task')) { <th>Task</th> }
-                <th></th>
-              </tr>
-            </thead>
-            <tbody>
-              @for (row of multiEntryRows(); track $index) {
-                <tr [formGroup]="row">
-                  @if (mawoVisibleFields().includes('transactionDate')) {
-                    <td>
-                      <aw-form-field>
-                        <aw-date-picker #rowDatePicker formControlName="transactionDate" [placeholder]="'mm/dd/yyyy'"></aw-date-picker>
-                        <button ariaLabel="calendar" type="button" AwButtonIconOnly [buttonType]="'primary'" (click)="rowDatePicker.openCalendar()">
-                          <aw-icon [iconName]="'today'" [iconColor]="''"></aw-icon>
-                        </button>
-                      </aw-form-field>
-                    </td>
-                  }
-                  @if (mawoVisibleFields().includes('hoursUsed')) {
-                    <td><input AwInput type="text" inputmode="decimal" formControlName="hoursUsed" placeholder="0.00" (keydown)="onMeterKeydown($event)" /></td>
-                  }
-                  @if (mawoVisibleFields().includes('operator')) {
-                    <td><input AwInput formControlName="operator" placeholder="Operator" aria-label="Operator" /></td>
-                  }
-                  @if (mawoVisibleFields().includes('department')) {
-                    <td><input AwInput formControlName="department" placeholder="Department" aria-label="Department" /></td>
-                  }
-                  @if (mawoVisibleFields().includes('task')) {
-                    <td><input AwInput formControlName="task" placeholder="Task" aria-label="Task" /></td>
-                  }
-                  <td>
-                    <button AwButtonIconOnly [buttonType]="'secondary'" [ariaLabel]="'Delete row'" (click)="removeRow($index)">
-                      <aw-icon [iconName]="'delete'"></aw-icon>
-                    </button>
-                  </td>
-                </tr>
-              }
-            </tbody>
-          </table>
+        <div class="table-responsive d-block">
+          <aw-table
+            [columnsDefinition]="multiEntryColumns()"
+            [tableData]="multiEntryTableData()"
+            [optionsMenuHandler]="getMultiEntryRowActions"
+            [enableStickyOptions]="true"
+            [tableOptions]="{ noDataPlaceholder: 'No usage rows.' }">
+          </aw-table>
         </div>
         <div class="add-row-bar">
-          <button AwButton [buttonType]="'text'" (click)="addRow()">
+          <button AwButton [buttonType]="'outlined'" (click)="addRow()">
             <aw-icon [iconName]="'add'"></aw-icon>
-            <span>Add</span>
+            <span>Add Row</span>
           </button>
         </div>
       </div>
@@ -485,53 +447,57 @@
 
 <!-- Floating settings panel -->
 <div class="floating-display-mode">
-  <aw-form-field-label>Usage Display Mode</aw-form-field-label>
-  <aw-select-menu
-    [ariaLabel]="'Usage Display Mode'"
-    [singleSelectListItems]="displayModeOptions"
-    [enableListReset]="false"
-    [ngModel]="displayMode()"
-    (ngModelChange)="onDisplayModeChange($event)"
-  ></aw-select-menu>
-  <div class="time-format-selector">
-    <aw-form-field-label>Time Format</aw-form-field-label>
-    <aw-select-menu
-      [ariaLabel]="'Time Format'"
-      [singleSelectListItems]="timeFormatOptions"
-      [enableListReset]="false"
-      [ngModel]="timeFormat"
-      (ngModelChange)="onTimeFormatChange($event)"
-    ></aw-select-menu>
-  </div>
-  <div class="work-order-type-selector">
-    <aw-form-field-label>Work Order Type</aw-form-field-label>
-    <aw-select-menu
-      [ariaLabel]="'Work Order Type'"
-      [singleSelectListItems]="workOrderTypeOptions"
-      [enableListReset]="false"
-      [ngModel]="workOrderType()"
-      (ngModelChange)="onWorkOrderTypeChange($event)"
-    ></aw-select-menu>
-  </div>
-  <div class="misc-toggles-section">
-    <aw-form-field-label>Misc Fields</aw-form-field-label>
-    <div class="misc-toggle-row">
-      <label class="misc-toggle-label">Misc 1</label>
-      <aw-toggle [ariaLabel]="'Toggle Misc 1'" [ngModel]="showMisc1()" (ngModelChange)="showMisc1.set($event)"></aw-toggle>
+  <aw-expansion-panel class="d-block" [title]="'Settings'" [showExpander]="true" [expanded]="true">
+    <div class="settings-content">
+      <aw-form-field-label>Usage Display Mode</aw-form-field-label>
+      <aw-select-menu
+        [ariaLabel]="'Usage Display Mode'"
+        [singleSelectListItems]="displayModeOptions"
+        [enableListReset]="false"
+        [ngModel]="displayMode()"
+        (ngModelChange)="onDisplayModeChange($event)"
+      ></aw-select-menu>
+      <div class="time-format-selector">
+        <aw-form-field-label>Time Format</aw-form-field-label>
+        <aw-select-menu
+          [ariaLabel]="'Time Format'"
+          [singleSelectListItems]="timeFormatOptions"
+          [enableListReset]="false"
+          [ngModel]="timeFormat"
+          (ngModelChange)="onTimeFormatChange($event)"
+        ></aw-select-menu>
+      </div>
+      <div class="work-order-type-selector">
+        <aw-form-field-label>Work Order Type</aw-form-field-label>
+        <aw-select-menu
+          [ariaLabel]="'Work Order Type'"
+          [singleSelectListItems]="workOrderTypeOptions"
+          [enableListReset]="false"
+          [ngModel]="workOrderType()"
+          (ngModelChange)="onWorkOrderTypeChange($event)"
+        ></aw-select-menu>
+      </div>
+      <div class="misc-toggles-section">
+        <aw-form-field-label>Misc Fields</aw-form-field-label>
+        <div class="misc-toggle-row">
+          <label class="misc-toggle-label">Misc 1</label>
+          <aw-toggle [ariaLabel]="'Toggle Misc 1'" [ngModel]="showMisc1()" (ngModelChange)="showMisc1.set($event)"></aw-toggle>
+        </div>
+        <div class="misc-toggle-row">
+          <label class="misc-toggle-label">Misc 2</label>
+          <aw-toggle [ariaLabel]="'Toggle Misc 2'" [ngModel]="showMisc2()" (ngModelChange)="showMisc2.set($event)"></aw-toggle>
+        </div>
+        <div class="misc-toggle-row">
+          <label class="misc-toggle-label">Misc 3</label>
+          <aw-toggle [ariaLabel]="'Toggle Misc 3'" [ngModel]="showMisc3()" (ngModelChange)="showMisc3.set($event)"></aw-toggle>
+        </div>
+        <div class="misc-toggle-row">
+          <label class="misc-toggle-label">Misc 4</label>
+          <aw-toggle [ariaLabel]="'Toggle Misc 4'" [ngModel]="showMisc4()" (ngModelChange)="showMisc4.set($event)"></aw-toggle>
+        </div>
+      </div>
     </div>
-    <div class="misc-toggle-row">
-      <label class="misc-toggle-label">Misc 2</label>
-      <aw-toggle [ariaLabel]="'Toggle Misc 2'" [ngModel]="showMisc2()" (ngModelChange)="showMisc2.set($event)"></aw-toggle>
-    </div>
-    <div class="misc-toggle-row">
-      <label class="misc-toggle-label">Misc 3</label>
-      <aw-toggle [ariaLabel]="'Toggle Misc 3'" [ngModel]="showMisc3()" (ngModelChange)="showMisc3.set($event)"></aw-toggle>
-    </div>
-    <div class="misc-toggle-row">
-      <label class="misc-toggle-label">Misc 4</label>
-      <aw-toggle [ariaLabel]="'Toggle Misc 4'" [ngModel]="showMisc4()" (ngModelChange)="showMisc4.set($event)"></aw-toggle>
-    </div>
-  </div>
+  </aw-expansion-panel>
 </div>
 
 <!-- Footer action bar -->

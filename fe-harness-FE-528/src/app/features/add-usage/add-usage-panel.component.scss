@@ -146,42 +146,50 @@ $form-content-max-width: calc(#{$field-max-width} * 2 + 24px);
   padding-bottom: 8px !important;
 }
 
-// ── Multi-entry table ──
+// ── Multi-entry table (aw-table redesign) ──
 
 .multi-entry-section {
-  padding: 16px 0;
-}
-
-.multi-entry-table {
-  overflow-x: auto;
-
-  table {
-    width: 100%;
-    border-collapse: collapse;
-
-    th,
-    td {
-      padding: 8px 12px;
-      text-align: left;
-      vertical-align: middle;
-    }
-
-    th {
-      font-weight: 600;
-      font-size: 12px;
-      text-transform: uppercase;
-      color: var(--system-text-text-secondary, #5b6670);
-      border-bottom: 1px solid var(--system-line-divider-stroke-line-color, #cfd2d3);
-    }
-
-    td {
-      border-bottom: 1px solid var(--system-line-divider-stroke-line-color, #cfd2d3);
-    }
-  }
+  padding: 16px 0 80px;
 }
 
 .add-row-bar {
   padding: 8px 0;
+}
+
+// Cell width constraints via ::ng-deep for aw-table internal cells
+:host ::ng-deep {
+  // Asset cell
+  .aw-table-cell:has(app-table-input-cell[ng-reflect-aria-label="Asset"]) {
+    min-width: 180px;
+    max-width: 536px;
+  }
+
+  // Asset Description cell - allow text wrapping
+  .aw-table-cell:nth-child(2) {
+    white-space: normal !important;
+    word-wrap: break-word;
+  }
+
+  // Date-time picker cells (Start Date/Time, End Date/Time)
+  .aw-table-cell:has(app-table-date-time-cell) {
+    min-width: 440px;
+    max-width: 440px;
+  }
+
+  // Meter validation cells
+  .aw-table-cell:has(app-table-select-cell[ng-reflect-aria-label*="Validation"]) {
+    min-width: 256px;
+  }
+
+  // Lookup cells (Account, Operator, Department, Task, Financial Project Code) - min-width 256px
+  .aw-table-cell:has(app-table-input-cell[ng-reflect-show-search-button="true"]:not([ng-reflect-aria-label="Asset"])) {
+    min-width: 256px;
+  }
+
+  // Meter cells
+  .aw-table-cell:has(app-table-input-cell[ng-reflect-placeholder="$00.00"]) {
+    width: 180px;
+  }
 }
 
 .field-subtitle {
@@ -209,9 +217,16 @@ $form-content-max-width: calc(#{$field-max-width} * 2 + 24px);
   background: var(--system-surfaces-surfaces-raised, #fff);
   border: 1px solid var(--system-line-divider-stroke-line-color, #cfd2d3);
   border-radius: 8px;
-  padding: 12px 16px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
   min-width: 240px;
+
+  aw-expansion-panel {
+    background: transparent;
+  }
+}
+
+.settings-content {
+  padding: 12px 16px;
 }
 
 .time-format-selector {
