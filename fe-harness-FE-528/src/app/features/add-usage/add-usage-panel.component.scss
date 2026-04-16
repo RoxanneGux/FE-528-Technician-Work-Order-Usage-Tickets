@@ -176,9 +176,19 @@ $form-content-max-width: calc(#{$field-max-width} * 2 + 24px);
   }
 
   // Date-time picker cells (Start Date/Time, End Date/Time)
-  .aw-table-cell:has(app-table-date-time-cell) {
-    min-width: 440px;
-    max-width: 440px;
+  .cdk-column-startDateTime,
+  .cdk-column-endDateTime {
+    min-width: 440px !important;
+  }
+
+  // Ensure date-time picker component fills the cell
+  app-table-date-time-cell {
+    display: block;
+    width: 100%;
+
+    aw-date-time-picker {
+      width: 100%;
+    }
   }
 
   // Meter validation cells
