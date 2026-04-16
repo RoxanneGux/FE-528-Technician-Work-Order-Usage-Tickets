@@ -34,6 +34,7 @@ export type UsageField =
 
 /** Fields always visible regardless of display mode. */
 const ALWAYS_VISIBLE_FIELDS: UsageField[] = [
+  'asset',
   'transactionDate',
   'hoursUsed',
   'operator',
@@ -86,7 +87,7 @@ export const DISPLAY_MODE_FIELDS: Record<UsageDisplayMode, UsageField[]> = {
   meter: METER_FIELDS,
   business: BUSINESS_FIELDS,
   both: BOTH_FIELDS,
-  all: ['asset', ...BOTH_FIELDS, 'misc1', 'misc2', 'misc3', 'misc4'],
+  all: [...BOTH_FIELDS, 'misc1', 'misc2', 'misc3', 'misc4'],
 };
 
 /** Display mode options for the WO Details floating selector. */
