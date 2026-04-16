@@ -794,7 +794,7 @@ export class AddUsagePanelComponent implements AfterViewInit {
             component: TableInputCellComponent,
             componentData: {
               value: data[0] || '',
-              placeholder: '$00.00',
+              placeholder: '0.00',
               readOnly: false,
               inputMode: 'decimal',
               ariaLabel: 'Meter 1 Begin',
@@ -817,7 +817,7 @@ export class AddUsagePanelComponent implements AfterViewInit {
             component: TableInputCellComponent,
             componentData: {
               value: data[0] || '',
-              placeholder: '$00.00',
+              placeholder: '0.00',
               readOnly: false,
               inputMode: 'decimal',
               ariaLabel: 'Meter 1 End',
@@ -858,7 +858,7 @@ export class AddUsagePanelComponent implements AfterViewInit {
             component: TableInputCellComponent,
             componentData: {
               value: data[0] || '',
-              placeholder: '$00.00',
+              placeholder: '0.00',
               readOnly: false,
               inputMode: 'decimal',
               ariaLabel: 'Meter 2 Begin',
@@ -881,7 +881,7 @@ export class AddUsagePanelComponent implements AfterViewInit {
             component: TableInputCellComponent,
             componentData: {
               value: data[0] || '',
-              placeholder: '$00.00',
+              placeholder: '0.00',
               readOnly: false,
               inputMode: 'decimal',
               ariaLabel: 'Meter 2 End',
