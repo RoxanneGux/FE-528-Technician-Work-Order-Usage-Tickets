@@ -20,6 +20,7 @@ import {
   AwButtonSegmentedComponent,
   AwDatePickerComponent,
   AwDateTimePickerComponent,
+  AwDialogComponent,
   AwDividerComponent,
   AwExpansionPanelComponent,
   AwFormFieldComponent,
@@ -74,6 +75,7 @@ import {
     AwButtonSegmentedComponent,
     AwDatePickerComponent,
     AwDateTimePickerComponent,
+    AwDialogComponent,
     AwDividerComponent,
     AwFormFieldComponent,
     AwFormFieldLabelComponent,
@@ -363,10 +365,17 @@ export class AddUsagePanelComponent implements AfterViewInit {
 
   /** Returns action menu items for a multi-entry row. */
   public getMultiEntryRowActions = (rowData: any): TableActionMenu[] => {
-    return [
-      { title: 'Clear', action: () => this.onMultiAction(rowData._rowIndex, 'clear') },
-      { title: 'Get Components', action: () => this.onMultiAction(rowData._rowIndex, 'getComponents') },
-    ];
+    const isFirstRow = rowData._rowIndex === 0;
+    const actions: TableActionMenu[] = [];
+
+    if (isFirstRow) {
+      actions.push({ title: 'Clear', action: () => this.onMultiAction(rowData._rowIndex, 'clear') });
+    } else {
+      actions.push({ title: 'Delete', action: () => this.onMultiAction(rowData._rowIndex, 'delete') });
+    }
+    actions.push({ title: 'Get Components', action: () => this.onMultiAction(rowData._rowIndex, 'getComponents') });
+
+    return actions;
   };
 
   /** Switch between single and multi entry modes. */
@@ -639,9 +648,11 @@ export class AddUsagePanelComponent implements AfterViewInit {
   public onMultiCellChange(rowIndex: number, fieldName: string, value: any): void {
     const row = this.multiEntryRows()[rowIndex];
     if (row) {
-      row.get(fieldName)?.setValue(value);
-      // Trigger signal update to recalculate computed values (like totalUsage)
-      this.multiEntryRows.set([...this.multiEntryRows()]);
+      row.get(fieldName)?.setValue(value, { emitEvent: false });
+      // Only trigger signal update for fields that affect computed values (totalUsage)
+      if (fieldName === 'businessUsage' || fieldName === 'individualUsage') {
+        this.multiEntryRows.set([...this.multiEntryRows()]);
+      }
     }
   }
 
@@ -654,9 +665,45 @@ export class AddUsagePanelComponent implements AfterViewInit {
         Object.keys(defaults.controls).forEach(key => {
           row.get(key)?.setValue(defaults.get(key)?.value);
         });
+        this.multiEntryRows.set([...this.multiEntryRows()]);
+      }
+    } else if (action === 'delete') {
+      // Check if row has data
+      const row = this.multiEntryRows()[rowIndex];
+      if (row && this.rowHasData(row)) {
+        this._pendingDeleteRowIndex = rowIndex;
+        this.showDeleteRowDialog.set(true);
+      } else {
+        this.removeRow(rowIndex);
       }
     }
     // 'getComponents' — placeholder for future implementation
+  }
+
+  /** Signal to show/hide the delete row confirmation dialog. */
+  public readonly showDeleteRowDialog = signal(false);
+
+  /** Row index pending deletion confirmation. */
+  private _pendingDeleteRowIndex: number | null = null;
+
+  /** Check if a row FormGroup has any non-default data. */
+  private rowHasData(row: FormGroup): boolean {
+    const raw = row.getRawValue();
+    return Object.entries(raw).some(([key, value]) => {
+      if (key === 'reversal') return value === true;
+      if (value instanceof Date) return true;
+      if (key === 'transactionDate') return false; // Default date is always set
+      return value !== null && value !== '' && value !== 0;
+    });
+  }
+
+  /** Handle delete row dialog close. */
+  public onDeleteRowDialogAction(confirmed: boolean): void {
+    this.showDeleteRowDialog.set(false);
+    if (confirmed && this._pendingDeleteRowIndex !== null) {
+      this.removeRow(this._pendingDeleteRowIndex);
+    }
+    this._pendingDeleteRowIndex = null;
   }
 
   /** Map field name to TableCellInput definition for multi-entry columns. */

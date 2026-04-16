@@ -519,3 +519,20 @@
 @if (showTaskSearchDialog()) {
   <app-usage-task-search-dialog (close)="onTaskSearchClose($event)"></app-usage-task-search-dialog>
 }
+
+<!-- Delete Row Confirmation Dialog -->
+@if (showDeleteRowDialog()) {
+  <aw-dialog
+    [ariaLabel]="'Delete Row'"
+    [visible]="true"
+    [dialogOptions]="{
+      variant: 'alert',
+      title: 'Alert',
+      primaryButtonLabel: 'Continue',
+      secondaryButtonLabel: 'Cancel',
+      description: 'Permanently delete this row? This will remove all row data. You can\'t undo this action'
+    }"
+    (primaryAction)="onDeleteRowDialogAction(true)"
+    (secondaryAction)="onDeleteRowDialogAction(false)">
+  </aw-dialog>
+}
