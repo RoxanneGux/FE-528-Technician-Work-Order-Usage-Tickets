@@ -300,6 +300,11 @@ export class AddUsagePanelComponent implements AfterViewInit {
     return columns;
   });
 
+  /** Key that changes when columns change, forcing aw-table to re-render. */
+  public readonly tableRenderKey = computed(() => {
+    return this.multiEntryColumns().map(c => c.key).join(',');
+  });
+
   /** Derived visible fields based on the current display mode. */
   public readonly visibleFields = computed(() => {
     return DISPLAY_MODE_FIELDS[this.displayMode()] ?? DISPLAY_MODE_FIELDS['all'];
@@ -374,6 +379,16 @@ export class AddUsagePanelComponent implements AfterViewInit {
     const value = typeof event === 'object' && event !== null ? event.value : event;
     const valid: UsageDisplayMode[] = ['meter', 'business', 'both', 'all'];
     this.displayMode.set(valid.includes(value) ? value : 'all');
+    this._cdr.detectChanges();
+  }
+
+  /** Handle misc field toggle change and trigger change detection for aw-table. */
+  public onMiscToggle(field: number, value: boolean): void {
+    if (field === 1) this.showMisc1.set(value);
+    else if (field === 2) this.showMisc2.set(value);
+    else if (field === 3) this.showMisc3.set(value);
+    else if (field === 4) this.showMisc4.set(value);
+    this._cdr.detectChanges();
   }
 
   /** Handle time format selector change — extract value from select option object. */
