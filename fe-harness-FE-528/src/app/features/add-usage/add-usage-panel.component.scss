@@ -151,6 +151,11 @@ $form-content-max-width: calc(#{$field-max-width} * 2 + 24px);
   padding: 16px 0 80px;
 }
 
+// Ensure last data column isn't hidden behind sticky action menu column
+:host ::ng-deep .multi-entry-section .mat-mdc-table {
+  padding-right: 100px;
+}
+
 .add-row-bar {
   padding: 8px 0;
 }
