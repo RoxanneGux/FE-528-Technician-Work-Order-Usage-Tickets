@@ -350,6 +350,9 @@ export class AddUsagePanelComponent implements AfterViewInit {
   public readonly meter1Hint = computed(() => this.meter1Units() ? `Current: ${this.meter1Reading().toLocaleString()} ${this.meter1Units()}` : '');
   public readonly meter2Hint = computed(() => this.meter2Units() ? `Current: ${this.meter2Reading().toLocaleString()} ${this.meter2Units()}` : '');
 
+  /** Whether the selected asset has a meter 2 — hides meter 2 fields when false. */
+  public readonly hasMeter2 = computed(() => !!this.meter2Units());
+
   /** Entry mode segmented button labels. */
   public readonly entryModeLabels = ['Single Entry', 'Multi Entry'];
 

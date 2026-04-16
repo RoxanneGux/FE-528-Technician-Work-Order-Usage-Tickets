@@ -344,19 +344,21 @@ The Asset search dialog in the Add Usage panel shows assets after typing 2+ char
 
 ### Assets (11 total)
 
-| Equipment ID | Description | Asset Type | Asset Number | Active |
-|---|---|---|---|---|
-| R-12345 | MOTOR POOL SEDAN | Vehicle | R-12345 | Yes |
-| QA-FLEET-002 | QA FLEET TRUCK 002 | Vehicle | QA-FLEET-002 | Yes |
-| K123-456 | SERIES 50 DETROIT DIESEL GAS ENGINE | Engine | K123-456 | Yes |
-| QA-C-001 | CARGO VAN 2500 | Vehicle | QA-C-001 | Yes |
-| FL-VAN-03 | FLEET VAN 03 | Vehicle | FL-VAN-03 | Yes |
-| TX-TRUCK-07 | PICKUP TRUCK F-150 | Vehicle | TX-TRUCK-07 | Yes |
-| EQ-4821 | CENTRIFUGAL PUMP | Pump | EQ-4821 | Yes |
-| EQ-5102 | HYDRAULIC PRESS | Press | EQ-5102 | No |
-| ROAD07 | HIGHWAY 07 - MAIN CORRIDOR | Linear | ROAD07 | Yes |
-| UX-BRIDGE-LINEAR | UX TEST BRIDGE - LINEAR ASSET | Linear | UX-BRIDGE-LINEAR | Yes |
-| GEN-9900 | CATERPILLAR 3516B STANDBY DIESEL GENERATOR SET 2000KW EMERGENCY BACKUP POWER UNIT | Generator | GEN-9900 | Yes |
+| Equipment ID | Description | Asset Type | Active | Meter 1 | Meter 1 Reading | Meter 2 | Meter 2 Reading |
+|---|---|---|---|---|---|---|---|
+| R-12345 | MOTOR POOL SEDAN | Vehicle | Yes | miles | 45,230 | hours | 1,250 |
+| QA-FLEET-002 | QA FLEET TRUCK 002 | Vehicle | Yes | miles | 78,500 | hours | 3,200 |
+| K123-456 | SERIES 50 DETROIT DIESEL GAS ENGINE | Engine | Yes | hours | 12,400 | — | — |
+| QA-C-001 | CARGO VAN 2500 | Vehicle | Yes | miles | 32,100 | hours | 890 |
+| FL-VAN-03 | FLEET VAN 03 | Vehicle | Yes | miles | 56,700 | hours | 2,100 |
+| TX-TRUCK-07 | PICKUP TRUCK F-150 | Vehicle | Yes | miles | 91,200 | hours | 4,500 |
+| EQ-4821 | CENTRIFUGAL PUMP | Pump | Yes | hours | 8,750 | — | — |
+| EQ-5102 | HYDRAULIC PRESS | Press | No | hours | 3,200 | — | — |
+| ROAD07 | HIGHWAY 07 - MAIN CORRIDOR | Linear | Yes | miles | 150 | — | — |
+| UX-BRIDGE-LINEAR | UX TEST BRIDGE - LINEAR ASSET | Linear | Yes | miles | 25 | — | — |
+| GEN-9900 | CATERPILLAR 3516B STANDBY DIESEL GENERATOR SET 2000KW EMERGENCY BACKUP POWER UNIT | Generator | Yes | hours | 18,500 | gallons | 4,200 |
+
+> **Note:** Assets with "—" for Meter 2 have no second meter. When selected, Meter 2 fields (Begin, End, Validation) are hidden in both single-entry and multi-entry modes.
 
 ### Asset Search Scenarios
 
