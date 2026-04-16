@@ -191,9 +191,10 @@ $form-content-max-width: calc(#{$field-max-width} * 2 + 24px);
     }
   }
 
-  // Meter validation cells
-  .aw-table-cell:has(app-table-select-cell[ng-reflect-aria-label*="Validation"]) {
-    min-width: 256px;
+  // Meter validation cells — 320px min so dropdown text doesn't truncate
+  .cdk-column-meter1Validation,
+  .cdk-column-meter2Validation {
+    min-width: 320px !important;
   }
 
   // Lookup cells (Account, Operator, Department, Task, Financial Project Code) - min-width 256px
