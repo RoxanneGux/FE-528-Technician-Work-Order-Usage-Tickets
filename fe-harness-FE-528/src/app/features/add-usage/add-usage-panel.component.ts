@@ -653,12 +653,8 @@ export class AddUsagePanelComponent implements AfterViewInit {
       if (fieldName === 'asset' && (!value || value === '')) {
         row.get('assetDescription')?.setValue(null, { emitEvent: false });
       }
-      // Trigger signal update when fields are cleared or affect computed values
-      const needsRerender = !value || value === ''
-        || fieldName === 'businessUsage' || fieldName === 'individualUsage';
-      if (needsRerender) {
-        this.multiEntryRows.set([...this.multiEntryRows()]);
-      }
+      // Always trigger signal update to keep table in sync
+      this.multiEntryRows.set([...this.multiEntryRows()]);
     }
   }
 

@@ -1,4 +1,4 @@
-import { Component, input } from '@angular/core';
+import { Component, input, AfterViewInit, ElementRef, ViewChild } from '@angular/core';
 import {
   AwFormFieldComponent,
   AwInputDirective,
@@ -24,8 +24,8 @@ import {
   imports: [AwFormFieldComponent, AwInputDirective, AwButtonIconOnlyDirective, AwIconComponent],
   template: `
     <div class="table-input-cell">
-      <aw-form-field>
-        <input AwInput
+      <aw-form-field #formField>
+        <input AwInput #inputEl
           [value]="value()"
           [placeholder]="placeholder()"
           [readOnly]="readOnly()"
@@ -49,7 +49,10 @@ import {
     .table-input-cell { display: flex; gap: 4px; align-items: flex-start; }
   `]
 })
-export class TableInputCellComponent {
+export class TableInputCellComponent implements AfterViewInit {
+  @ViewChild('formField', { read: ElementRef }) formFieldEl!: ElementRef;
+  @ViewChild('inputEl') inputEl!: ElementRef<HTMLInputElement>;
+
   value = input<string>('');
   placeholder = input<string>('');
   readOnly = input<boolean>(false);
@@ -60,6 +63,22 @@ export class TableInputCellComponent {
   onChange = input<((value: string) => void) | null>(null);
   onSearch = input<(() => void) | null>(null);
   onKeydownHandler = input<((event: KeyboardEvent) => void) | null>(null);
+
+  /** Listen for clicks on the CCL clear button inside aw-form-field. */
+  ngAfterViewInit(): void {
+    const el = this.formFieldEl?.nativeElement;
+    if (!el) return;
+    // The CCL clear button has class 'aw-form-field-clear' — listen for clicks on it
+    el.addEventListener('click', (event: Event) => {
+      const target = event.target as HTMLElement;
+      // Check if the click was on the clear button or its child (the X icon)
+      if (target.closest('.aw-form-field-clear, .aw-clear-icon, [class*="clear"]')) {
+        setTimeout(() => {
+          this.onChange()?.call(null, '');
+        });
+      }
+    });
+  }
 
   onInput(event: Event): void {
     const value = (event.target as HTMLInputElement).value;
