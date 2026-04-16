@@ -649,7 +649,12 @@ export class AddUsagePanelComponent implements AfterViewInit {
     const row = this.multiEntryRows()[rowIndex];
     if (row) {
       row.get(fieldName)?.setValue(value, { emitEvent: false });
-      // Only trigger signal update for fields that affect computed values (totalUsage)
+      // Clear asset description when asset field is cleared
+      if (fieldName === 'asset' && (!value || value === '')) {
+        row.get('assetDescription')?.setValue(null, { emitEvent: false });
+        this.multiEntryRows.set([...this.multiEntryRows()]);
+      }
+      // Trigger signal update for fields that affect computed values (totalUsage)
       if (fieldName === 'businessUsage' || fieldName === 'individualUsage') {
         this.multiEntryRows.set([...this.multiEntryRows()]);
       }
