@@ -49,10 +49,10 @@ const METER_VALUE_FIELDS: UsageField[] = [
   'startDateTime',
   'endDateTime',
   'meter1Begin',
-  'meter2Begin',
   'meter1End',
-  'meter2End',
   'meter1Validation',
+  'meter2Begin',
+  'meter2End',
   'meter2Validation',
 ];
 
