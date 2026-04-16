@@ -555,12 +555,17 @@ export class AddUsagePanelComponent implements AfterViewInit {
   public onAssetSearchClose(result: any): void {
     this.showAssetSearchDialog.set(false);
     if (result?.action === 'go' && result.selectedAsset) {
-      const targetForm = this._activeMultiRowIndex !== null
-        ? this.multiEntryRows()[this._activeMultiRowIndex]
+      const isMulti = this._activeMultiRowIndex !== null;
+      const targetForm = isMulti
+        ? this.multiEntryRows()[this._activeMultiRowIndex!]
         : this.singleEntryForm;
       targetForm?.get('asset')?.setValue(result.selectedAsset.EquipmentId);
       targetForm?.get('assetDescription')?.setValue(result.selectedAsset.EquipmentDescription);
       this._activeMultiRowIndex = null;
+      // Trigger signal update so aw-table re-renders with new values
+      if (isMulti) {
+        this.multiEntryRows.set([...this.multiEntryRows()]);
+      }
     }
   }
 
@@ -573,11 +578,15 @@ export class AddUsagePanelComponent implements AfterViewInit {
   public onTaskSearchClose(result: any): void {
     this.showTaskSearchDialog.set(false);
     if (result?.taskId) {
-      const targetForm = this._activeMultiRowIndex !== null
-        ? this.multiEntryRows()[this._activeMultiRowIndex]
+      const isMulti = this._activeMultiRowIndex !== null;
+      const targetForm = isMulti
+        ? this.multiEntryRows()[this._activeMultiRowIndex!]
         : this.singleEntryForm;
       targetForm?.get('task')?.setValue(`(${result.taskId}) ${result.taskDescription}`);
       this._activeMultiRowIndex = null;
+      if (isMulti) {
+        this.multiEntryRows.set([...this.multiEntryRows()]);
+      }
     }
   }
 
