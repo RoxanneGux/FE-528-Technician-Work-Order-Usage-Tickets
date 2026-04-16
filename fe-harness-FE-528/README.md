@@ -74,6 +74,12 @@ All dividers hide automatically when their adjacent sections are not visible.
 - All fields visible based on Usage Display Mode selection
 - Transaction Date label
 
+#### Meter Field Tooltips (Multi Entry Table)
+
+In the multi-entry table, hovering over Meter 1 or Meter 2 Begin/End fields shows a native browser tooltip with the current meter reading (e.g. "Current: 45,230 miles"). This helps users reference the last known reading while entering new values. The tooltip text comes from the same hint data shown below the meter fields in the single-entry form.
+
+> **Dev Note:** We attempted to use `AwToolTipDirective` from the CCL but it does not work reliably inside `aw-table` custom cells — the directive's event listeners get lost when the table re-renders cells. Native HTML `title` attribute is used as a fallback.
+
 #### MAWO Mode (Multi-Asset Work Order)
 
 When "MAWO" is selected in the Work Order Type toggle:

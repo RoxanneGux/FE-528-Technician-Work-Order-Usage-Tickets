@@ -4,40 +4,36 @@ import {
   AwInputDirective,
   AwButtonIconOnlyDirective,
   AwIconComponent,
-  AwToolTipDirective,
 } from '@assetworks-llc/aw-component-lib';
 
 /**
  * Editable text input cell for use inside aw-table via TableCellTypes.Custom.
  * Renders an aw-form-field with an AwInput and an optional icon-only search button.
+ *
+ * NOTE FOR DEVELOPERS: We attempted to use AwToolTipDirective (CCL) for the tooltip
+ * on meter fields, but it does not work reliably inside aw-table custom cells.
+ * The directive attaches event listeners on ngOnInit, but because aw-table destroys
+ * and recreates custom cell components when tableData changes (via @for track key),
+ * the tooltip element gets orphaned or never attaches properly. The native HTML
+ * `title` attribute is used instead as a reliable fallback. If CCL adds support for
+ * tooltips inside table cells in the future, this can be revisited.
  */
 @Component({
   selector: 'app-table-input-cell',
   standalone: true,
-  imports: [AwFormFieldComponent, AwInputDirective, AwButtonIconOnlyDirective, AwIconComponent, AwToolTipDirective],
+  imports: [AwFormFieldComponent, AwInputDirective, AwButtonIconOnlyDirective, AwIconComponent],
   template: `
     <div class="table-input-cell">
       <aw-form-field>
-        @if (tooltip()) {
-          <input AwInput AwToolTip
-            [value]="value()"
-            [placeholder]="placeholder()"
-            [readOnly]="readOnly()"
-            [attr.inputmode]="inputMode()"
-            [attr.aria-label]="ariaLabel()"
-            [tooltipMessage]="tooltip()"
-            (input)="onInput($event)"
-            (keydown)="onKeydown($event)" />
-        } @else {
-          <input AwInput
-            [value]="value()"
-            [placeholder]="placeholder()"
-            [readOnly]="readOnly()"
-            [attr.inputmode]="inputMode()"
-            [attr.aria-label]="ariaLabel()"
-            (input)="onInput($event)"
-            (keydown)="onKeydown($event)" />
-        }
+        <input AwInput
+          [value]="value()"
+          [placeholder]="placeholder()"
+          [readOnly]="readOnly()"
+          [attr.inputmode]="inputMode()"
+          [attr.aria-label]="ariaLabel()"
+          [attr.title]="tooltip() || null"
+          (input)="onInput($event)"
+          (keydown)="onKeydown($event)" />
       </aw-form-field>
       @if (showSearchButton()) {
         <button AwButtonIconOnly [buttonType]="'primary'"
