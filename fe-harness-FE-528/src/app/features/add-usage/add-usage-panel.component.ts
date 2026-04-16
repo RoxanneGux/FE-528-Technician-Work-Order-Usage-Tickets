@@ -342,11 +342,11 @@ export class AddUsagePanelComponent implements AfterViewInit {
     this._mockData.financialProjectCodes().map(f => ({ label: `(${f.id}) ${f.name}`, value: f.id })),
   );
 
-  /** Mock meter data for hint text display. */
-  public readonly meter1Units = signal<string>('miles');
-  public readonly meter1Reading = signal<number>(45230);
-  public readonly meter2Units = signal<string>('hours');
-  public readonly meter2Reading = signal<number>(1250);
+  /** Mock meter data for hint text display — empty until asset is selected. */
+  public readonly meter1Units = signal<string>('');
+  public readonly meter1Reading = signal<number>(0);
+  public readonly meter2Units = signal<string>('');
+  public readonly meter2Reading = signal<number>(0);
   public readonly meter1Hint = computed(() => this.meter1Units() ? `Current: ${this.meter1Reading().toLocaleString()} ${this.meter1Units()}` : '');
   public readonly meter2Hint = computed(() => this.meter2Units() ? `Current: ${this.meter2Reading().toLocaleString()} ${this.meter2Units()}` : '');
 
@@ -588,6 +588,42 @@ export class AddUsagePanelComponent implements AfterViewInit {
     alert(`This button would open an aw-dialog with a table inside for searching ${fieldName} records.`);
   }
 
+  /** Mock meter readings per asset — in production this comes from the API. */
+  private readonly _assetMeterData: Record<string, { m1Units: string; m1Reading: number; m2Units: string; m2Reading: number }> = {
+    'R-12345': { m1Units: 'miles', m1Reading: 45230, m2Units: 'hours', m2Reading: 1250 },
+    'QA-FLEET-002': { m1Units: 'miles', m1Reading: 78500, m2Units: 'hours', m2Reading: 3200 },
+    'K123-456': { m1Units: 'hours', m1Reading: 12400, m2Units: '', m2Reading: 0 },
+    'QA-C-001': { m1Units: 'miles', m1Reading: 32100, m2Units: 'hours', m2Reading: 890 },
+    'FL-VAN-03': { m1Units: 'miles', m1Reading: 56700, m2Units: 'hours', m2Reading: 2100 },
+    'TX-TRUCK-07': { m1Units: 'miles', m1Reading: 91200, m2Units: 'hours', m2Reading: 4500 },
+    'EQ-4821': { m1Units: 'hours', m1Reading: 8750, m2Units: '', m2Reading: 0 },
+    'EQ-5102': { m1Units: 'hours', m1Reading: 3200, m2Units: '', m2Reading: 0 },
+    'ROAD07': { m1Units: 'miles', m1Reading: 150, m2Units: '', m2Reading: 0 },
+    'UX-BRIDGE-LINEAR': { m1Units: 'miles', m1Reading: 25, m2Units: '', m2Reading: 0 },
+    'GEN-9900': { m1Units: 'hours', m1Reading: 18500, m2Units: 'gallons', m2Reading: 4200 },
+  };
+
+  /** Update meter hint signals based on selected asset. */
+  private updateMeterHints(assetId: string | null): void {
+    const data = assetId ? this._assetMeterData[assetId] : null;
+    this.meter1Units.set(data?.m1Units ?? '');
+    this.meter1Reading.set(data?.m1Reading ?? 0);
+    this.meter2Units.set(data?.m2Units ?? '');
+    this.meter2Reading.set(data?.m2Reading ?? 0);
+  }
+
+  /** Get meter hint tooltip for a specific multi-entry row based on its asset. */
+  private getRowMeterHint(rowIndex: number, meterNum: 1 | 2): string {
+    const row = this.multiEntryRows()[rowIndex];
+    const assetId = row?.get('asset')?.value;
+    if (!assetId) return '';
+    const data = this._assetMeterData[assetId];
+    if (!data) return '';
+    const units = meterNum === 1 ? data.m1Units : data.m2Units;
+    const reading = meterNum === 1 ? data.m1Reading : data.m2Reading;
+    return units ? `Current: ${reading.toLocaleString()} ${units}` : '';
+  }
+
   /** Handle asset search dialog close. */
   public onAssetSearchClose(result: any): void {
     this.showAssetSearchDialog.set(false);
@@ -598,6 +634,10 @@ export class AddUsagePanelComponent implements AfterViewInit {
         : this.singleEntryForm;
       targetForm?.get('asset')?.setValue(result.selectedAsset.EquipmentId);
       targetForm?.get('assetDescription')?.setValue(result.selectedAsset.EquipmentDescription);
+      // Update meter hints for single-entry mode
+      if (!isMulti) {
+        this.updateMeterHints(result.selectedAsset.EquipmentId);
+      }
       this._activeMultiRowIndex = null;
       // Trigger signal update so aw-table re-renders with new values
       if (isMulti) {
@@ -653,8 +693,11 @@ export class AddUsagePanelComponent implements AfterViewInit {
       if (fieldName === 'asset' && (!value || value === '')) {
         row.get('assetDescription')?.setValue(null, { emitEvent: false });
       }
-      // Always trigger signal update to keep table in sync
-      this.multiEntryRows.set([...this.multiEntryRows()]);
+      // Only trigger table re-render for fields that affect computed display values
+      // Do NOT trigger for regular text typing — it causes focus loss
+      if (fieldName === 'businessUsage' || fieldName === 'individualUsage') {
+        this.multiEntryRows.set([...this.multiEntryRows()]);
+      }
     }
   }
 
@@ -800,7 +843,7 @@ export class AddUsagePanelComponent implements AfterViewInit {
               readOnly: false,
               inputMode: 'decimal',
               ariaLabel: 'Meter 1 Begin',
-              tooltip: this.meter1Hint(),
+              tooltip: this.getRowMeterHint(data[1], 1),
               showSearchButton: false,
               onChange: (value: string) => this.onMultiCellChange(data[1], 'meter1Begin', value),
               onSearch: null,
@@ -824,7 +867,7 @@ export class AddUsagePanelComponent implements AfterViewInit {
               readOnly: false,
               inputMode: 'decimal',
               ariaLabel: 'Meter 1 End',
-              tooltip: this.meter1Hint(),
+              tooltip: this.getRowMeterHint(data[1], 1),
               showSearchButton: false,
               onChange: (value: string) => this.onMultiCellChange(data[1], 'meter1End', value),
               onSearch: null,
@@ -866,7 +909,7 @@ export class AddUsagePanelComponent implements AfterViewInit {
               readOnly: false,
               inputMode: 'decimal',
               ariaLabel: 'Meter 2 Begin',
-              tooltip: this.meter2Hint(),
+              tooltip: this.getRowMeterHint(data[1], 2),
               showSearchButton: false,
               onChange: (value: string) => this.onMultiCellChange(data[1], 'meter2Begin', value),
               onSearch: null,
@@ -890,7 +933,7 @@ export class AddUsagePanelComponent implements AfterViewInit {
               readOnly: false,
               inputMode: 'decimal',
               ariaLabel: 'Meter 2 End',
-              tooltip: this.meter2Hint(),
+              tooltip: this.getRowMeterHint(data[1], 2),
               showSearchButton: false,
               onChange: (value: string) => this.onMultiCellChange(data[1], 'meter2End', value),
               onSearch: null,
