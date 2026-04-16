@@ -116,7 +116,6 @@ $form-content-max-width: calc(#{$field-max-width} * 2 + 24px);
 
   aw-form-field {
     flex: 1;
-    max-width: $field-max-width;
     display: block;
     width: 100%;
     min-width: 0;
