@@ -4,6 +4,7 @@ import {
   AwInputDirective,
   AwButtonIconOnlyDirective,
   AwIconComponent,
+  AwToolTipDirective,
 } from '@assetworks-llc/aw-component-lib';
 
 /**
@@ -13,18 +14,30 @@ import {
 @Component({
   selector: 'app-table-input-cell',
   standalone: true,
-  imports: [AwFormFieldComponent, AwInputDirective, AwButtonIconOnlyDirective, AwIconComponent],
+  imports: [AwFormFieldComponent, AwInputDirective, AwButtonIconOnlyDirective, AwIconComponent, AwToolTipDirective],
   template: `
     <div class="table-input-cell">
       <aw-form-field>
-        <input AwInput
-          [value]="value()"
-          [placeholder]="placeholder()"
-          [readOnly]="readOnly()"
-          [attr.inputmode]="inputMode()"
-          [attr.aria-label]="ariaLabel()"
-          (input)="onInput($event)"
-          (keydown)="onKeydown($event)" />
+        @if (tooltip()) {
+          <input AwInput AwToolTip
+            [value]="value()"
+            [placeholder]="placeholder()"
+            [readOnly]="readOnly()"
+            [attr.inputmode]="inputMode()"
+            [attr.aria-label]="ariaLabel()"
+            [tooltipMessage]="tooltip()"
+            (input)="onInput($event)"
+            (keydown)="onKeydown($event)" />
+        } @else {
+          <input AwInput
+            [value]="value()"
+            [placeholder]="placeholder()"
+            [readOnly]="readOnly()"
+            [attr.inputmode]="inputMode()"
+            [attr.aria-label]="ariaLabel()"
+            (input)="onInput($event)"
+            (keydown)="onKeydown($event)" />
+        }
       </aw-form-field>
       @if (showSearchButton()) {
         <button AwButtonIconOnly [buttonType]="'primary'"
@@ -46,6 +59,7 @@ export class TableInputCellComponent {
   readOnly = input<boolean>(false);
   inputMode = input<string>('text');
   ariaLabel = input<string>('');
+  tooltip = input<string>('');
   showSearchButton = input<boolean>(false);
   onChange = input<((value: string) => void) | null>(null);
   onSearch = input<(() => void) | null>(null);
