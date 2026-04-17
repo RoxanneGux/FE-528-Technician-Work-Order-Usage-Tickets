@@ -136,6 +136,10 @@ export class AddUsagePanelComponent implements AfterViewInit {
     if (this.isMAWO()) {
       fields = fields.filter(f => !MAWO_HIDDEN_FIELDS.includes(f));
     }
+    // Hide meter 2 fields if selected asset has no meter 2
+    if (!this.hasMeter2()) {
+      fields = fields.filter(f => !f.startsWith('meter2'));
+    }
     // Apply individual misc field toggles
     if (!this.showMisc1()) fields = fields.filter(f => f !== 'misc1');
     if (!this.showMisc2()) fields = fields.filter(f => f !== 'misc2');
