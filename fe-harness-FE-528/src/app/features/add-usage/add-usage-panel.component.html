@@ -431,7 +431,7 @@
     <!-- ═══════════════ Multi Entry Table ═══════════════ -->
     @if (entryMode() === 'multi') {
       <div class="multi-entry-section">
-        <div class="table-responsive d-block">
+        <div class="multi-entry-scroll-container">
           @for (key of [tableRenderKey()]; track key) {
             <aw-table
               [columnsDefinition]="multiEntryColumns()"
