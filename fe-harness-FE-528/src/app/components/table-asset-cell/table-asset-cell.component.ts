@@ -116,9 +116,17 @@ export class TableAssetCellComponent implements OnInit, AfterViewInit {
       this.descriptionIsError = result.isError;
     }
 
-    // Emit value changes to parent
+    // Sync value to parent FormGroup on every change.
+    // Use a microtask to avoid interfering with aw-form-field's clear icon toggle
+    // which can steal focus on the first keystroke.
+    let initialized = false;
     this.ctrl.valueChanges.subscribe(val => {
-      this.onChange()?.call(null, val ?? '');
+      if (!initialized) {
+        initialized = true;
+        setTimeout(() => this.onChange()?.call(null, val ?? ''), 0);
+      } else {
+        this.onChange()?.call(null, val ?? '');
+      }
     });
   }
 
