@@ -89,7 +89,7 @@ $form-content-max-width: calc(#{$field-max-width} * 2 + 24px);
   @media (min-width: 992px) {
     flex-direction: row;
     gap: 24px;
-    align-items: flex-end;
+    align-items: flex-start;
   }
 }
 

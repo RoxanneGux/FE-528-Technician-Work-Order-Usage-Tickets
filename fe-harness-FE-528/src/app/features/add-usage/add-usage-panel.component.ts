@@ -8,6 +8,7 @@ import {
   output,
   signal,
   ViewChild,
+  WritableSignal,
 } from '@angular/core';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { provideNativeDateAdapter } from '@angular/material/core';
@@ -1555,7 +1556,7 @@ export class AddUsagePanelComponent implements AfterViewInit {
 
   /** Watch lookup field value changes and clear description when field is emptied (e.g., X button, select-all+delete). */
   private _watchLookupFieldClears(): void {
-    const fields: { name: string; descSignal: typeof this.singleAssetDesc; errorSignal: typeof this.singleAssetDescError }[] = [
+    const fields: { name: string; descSignal: WritableSignal<string>; errorSignal: WritableSignal<boolean> }[] = [
       { name: 'asset', descSignal: this.singleAssetDesc, errorSignal: this.singleAssetDescError },
       { name: 'account', descSignal: this.singleAccountDesc, errorSignal: this.singleAccountDescError },
       { name: 'operator', descSignal: this.singleOperatorDesc, errorSignal: this.singleOperatorDescError },
