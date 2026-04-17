@@ -28,7 +28,7 @@
               <aw-form-field-label [required]="true">Asset</aw-form-field-label>
               <div class="field-with-icon">
                 <aw-form-field>
-                  <input AwInput formControlName="asset" aria-label="Asset" (blur)="onSingleFieldBlur('asset')" />
+                  <input AwInput formControlName="asset" aria-label="Asset" (blur)="onSingleFieldBlur('asset')" (input)="onLookupFieldInput('asset', $event)" />
                 </aw-form-field>
                 <button AwButtonIconOnly [buttonType]="'primary'" ariaLabel="Search Asset" type="button" (click)="onAssetSearch()">
                   <aw-icon [iconName]="'search'" [iconColor]="''"></aw-icon>
@@ -276,7 +276,7 @@
                 <aw-form-field-label>Account</aw-form-field-label>
                 <div class="field-with-icon">
                   <aw-form-field>
-                    <input AwInput formControlName="account" aria-label="Account" (blur)="onSingleFieldBlur('account')" />
+                    <input AwInput formControlName="account" aria-label="Account" (blur)="onSingleFieldBlur('account')" (input)="onLookupFieldInput('account', $event)" />
                   </aw-form-field>
                   <button AwButtonIconOnly [buttonType]="'primary'" ariaLabel="Search Account" type="button" (click)="onLookupPlaceholder('Account')">
                     <aw-icon [iconName]="'search'" [iconColor]="''"></aw-icon>
@@ -292,7 +292,7 @@
                 <aw-form-field-label>Operator</aw-form-field-label>
                 <div class="field-with-icon">
                   <aw-form-field>
-                    <input AwInput formControlName="operator" aria-label="Operator" (blur)="onSingleFieldBlur('operator')" />
+                    <input AwInput formControlName="operator" aria-label="Operator" (blur)="onSingleFieldBlur('operator')" (input)="onLookupFieldInput('operator', $event)" />
                   </aw-form-field>
                   <button AwButtonIconOnly [buttonType]="'primary'" ariaLabel="Search Operator" type="button" (click)="onLookupPlaceholder('Operator')">
                     <aw-icon [iconName]="'search'" [iconColor]="''"></aw-icon>
@@ -314,7 +314,7 @@
                 <aw-form-field-label [required]="true">Department</aw-form-field-label>
                 <div class="field-with-icon">
                   <aw-form-field>
-                    <input AwInput formControlName="department" aria-label="Department" (blur)="onSingleFieldBlur('department')" />
+                    <input AwInput formControlName="department" aria-label="Department" (blur)="onSingleFieldBlur('department')" (input)="onLookupFieldInput('department', $event)" />
                   </aw-form-field>
                   <button AwButtonIconOnly [buttonType]="'primary'" ariaLabel="Search Department" type="button" (click)="onLookupPlaceholder('Department')">
                     <aw-icon [iconName]="'search'" [iconColor]="''"></aw-icon>
@@ -330,7 +330,7 @@
                 <aw-form-field-label>Task</aw-form-field-label>
                 <div class="field-with-icon">
                   <aw-form-field>
-                    <input AwInput formControlName="task" aria-label="Task" (blur)="onSingleFieldBlur('task')" />
+                    <input AwInput formControlName="task" aria-label="Task" (blur)="onSingleFieldBlur('task')" (input)="onLookupFieldInput('task', $event)" />
                   </aw-form-field>
                   <button AwButtonIconOnly [buttonType]="'primary'" ariaLabel="Search Task" type="button" (click)="onTaskSearch()">
                     <aw-icon [iconName]="'search'" [iconColor]="''"></aw-icon>
@@ -351,7 +351,7 @@
               <aw-form-field-label>Financial Project Code</aw-form-field-label>
               <div class="field-with-icon">
                 <aw-form-field>
-                  <input AwInput formControlName="financialProjectCode" aria-label="Financial Project Code" (blur)="onSingleFieldBlur('financialProjectCode')" />
+                  <input AwInput formControlName="financialProjectCode" aria-label="Financial Project Code" (blur)="onSingleFieldBlur('financialProjectCode')" (input)="onLookupFieldInput('financialProjectCode', $event)" />
                 </aw-form-field>
                 <button AwButtonIconOnly [buttonType]="'primary'" ariaLabel="Search Financial Project Code" type="button" (click)="onLookupPlaceholder('Financial Project Code')">
                   <aw-icon [iconName]="'search'" [iconColor]="''"></aw-icon>

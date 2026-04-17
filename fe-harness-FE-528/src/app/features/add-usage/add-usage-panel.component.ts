@@ -569,6 +569,7 @@ export class AddUsagePanelComponent implements AfterViewInit {
   }
 
   /** Blur handler for single-entry lookup fields — resolves value and updates description signals. */
+  /** Blur handler for single-entry lookup fields — resolves value and updates description signals. */
   public onSingleFieldBlur(fieldName: string): void {
     const value = this.singleEntryForm.get(fieldName)?.value ?? '';
     const result = this.lookupField(fieldName, value);
@@ -604,6 +605,21 @@ export class AddUsagePanelComponent implements AfterViewInit {
         this.singleFpcDesc.set(result.text);
         this.singleFpcDescError.set(result.isError);
         break;
+    }
+  }
+
+  /** Clear description immediately when a lookup field input is emptied (e.g., X button, select-all+delete). */
+  public onLookupFieldInput(fieldName: string, event: Event): void {
+    const value = (event.target as HTMLInputElement)?.value ?? '';
+    if (!value.trim()) {
+      switch (fieldName) {
+        case 'asset':              this.singleAssetDesc.set(''); this.singleAssetDescError.set(false); break;
+        case 'account':            this.singleAccountDesc.set(''); this.singleAccountDescError.set(false); break;
+        case 'operator':           this.singleOperatorDesc.set(''); this.singleOperatorDescError.set(false); break;
+        case 'department':         this.singleDepartmentDesc.set(''); this.singleDepartmentDescError.set(false); break;
+        case 'task':               this.singleTaskDesc.set(''); this.singleTaskDescError.set(false); break;
+        case 'financialProjectCode': this.singleFpcDesc.set(''); this.singleFpcDescError.set(false); break;
+      }
     }
   }
 
