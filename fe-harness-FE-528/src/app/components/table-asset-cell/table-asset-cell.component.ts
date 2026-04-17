@@ -51,6 +51,8 @@ import {
             [class.table-asset-cell__desc--error]="descriptionIsError">
             {{ descriptionText }}
           </span>
+        } @else {
+          <span class="table-asset-cell__desc" style="visibility:hidden">&nbsp;</span>
         }
       </div>
     </div>

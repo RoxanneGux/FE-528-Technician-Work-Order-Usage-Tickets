@@ -19,17 +19,24 @@ import {
   standalone: true,
   imports: [AwFormFieldComponent, AwDatePickerComponent, AwButtonIconOnlyDirective, AwIconComponent, ReactiveFormsModule],
   template: `
-    <aw-form-field>
-      <aw-date-picker #datePicker
-        [formControl]="formControl()"
-        [placeholder]="'mm/dd/yyyy'">
-      </aw-date-picker>
-      <button ariaLabel="calendar" type="button" AwButtonIconOnly
-        [buttonType]="'primary'" (click)="datePicker.openCalendar()">
-        <aw-icon [iconName]="'today'" [iconColor]="''"></aw-icon>
-      </button>
-    </aw-form-field>
-  `
+    <div class="table-date-cell">
+      <aw-form-field>
+        <aw-date-picker #datePicker
+          [formControl]="formControl()"
+          [placeholder]="'mm/dd/yyyy'">
+        </aw-date-picker>
+        <button ariaLabel="calendar" type="button" AwButtonIconOnly
+          [buttonType]="'primary'" (click)="datePicker.openCalendar()">
+          <aw-icon [iconName]="'today'" [iconColor]="''"></aw-icon>
+        </button>
+      </aw-form-field>
+      <span class="table-date-cell__spacer">&nbsp;</span>
+    </div>
+  `,
+  styles: [`
+    .table-date-cell { display: flex; flex-direction: column; gap: 2px; }
+    .table-date-cell__spacer { display: block; font-size: 12px; line-height: 16px; visibility: hidden; }
+  `]
 })
 export class TableDateCellComponent implements AfterViewInit {
   @ViewChild('datePicker') private _datePicker!: AwDatePickerComponent;

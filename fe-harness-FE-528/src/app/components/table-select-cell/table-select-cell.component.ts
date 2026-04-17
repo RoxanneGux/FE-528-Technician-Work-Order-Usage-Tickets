@@ -11,14 +11,21 @@ import { AwSelectMenuComponent, SingleSelectOption } from '@assetworks-llc/aw-co
   standalone: true,
   imports: [AwSelectMenuComponent, ReactiveFormsModule],
   template: `
-    <aw-select-menu
-      [singleSelectListItems]="options()"
-      [enableListReset]="true"
-      [placeholder]="placeholder()"
-      [formControl]="formControl()"
-      [ariaLabel]="ariaLabel()">
-    </aw-select-menu>
-  `
+    <div class="table-select-cell">
+      <aw-select-menu
+        [singleSelectListItems]="options()"
+        [enableListReset]="true"
+        [placeholder]="placeholder()"
+        [formControl]="formControl()"
+        [ariaLabel]="ariaLabel()">
+      </aw-select-menu>
+      <span class="table-select-cell__spacer">&nbsp;</span>
+    </div>
+  `,
+  styles: [`
+    .table-select-cell { display: flex; flex-direction: column; gap: 2px; }
+    .table-select-cell__spacer { display: block; font-size: 12px; line-height: 16px; visibility: hidden; }
+  `]
 })
 export class TableSelectCellComponent {
   options = input<SingleSelectOption[]>([]);

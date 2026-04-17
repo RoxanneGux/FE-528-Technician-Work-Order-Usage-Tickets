@@ -15,17 +15,24 @@ import {
   standalone: true,
   imports: [AwDateTimePickerComponent, AwButtonIconOnlyDirective, AwIconComponent, ReactiveFormsModule],
   template: `
-    <aw-date-time-picker #dateTimePicker
-      [formControl]="formControl()"
-      [timeFormat]="timeFormat()"
-      [ariaLabel]="{date: ariaLabel() + ' Date', time: ariaLabel() + ' Time'}"
-      [placeholder]="{date: 'mm/dd/yyyy', time: timePlaceholder()}">
-      <button [attr.aria-label]="'open ' + ariaLabel() + ' picker'" type="button"
-        AwButtonIconOnly [buttonType]="'primary'" (click)="dateTimePicker.openDateTimePicker()">
-        <aw-icon [iconName]="'today'" [iconColor]="''"></aw-icon>
-      </button>
-    </aw-date-time-picker>
-  `
+    <div class="table-datetime-cell">
+      <aw-date-time-picker #dateTimePicker
+        [formControl]="formControl()"
+        [timeFormat]="timeFormat()"
+        [ariaLabel]="{date: ariaLabel() + ' Date', time: ariaLabel() + ' Time'}"
+        [placeholder]="{date: 'mm/dd/yyyy', time: timePlaceholder()}">
+        <button [attr.aria-label]="'open ' + ariaLabel() + ' picker'" type="button"
+          AwButtonIconOnly [buttonType]="'primary'" (click)="dateTimePicker.openDateTimePicker()">
+          <aw-icon [iconName]="'today'" [iconColor]="''"></aw-icon>
+        </button>
+      </aw-date-time-picker>
+      <span class="table-datetime-cell__spacer">&nbsp;</span>
+    </div>
+  `,
+  styles: [`
+    .table-datetime-cell { display: flex; flex-direction: column; gap: 2px; }
+    .table-datetime-cell__spacer { display: block; font-size: 12px; line-height: 16px; visibility: hidden; }
+  `]
 })
 export class TableDateTimeCellComponent {
   formControl = input.required<FormControl>();

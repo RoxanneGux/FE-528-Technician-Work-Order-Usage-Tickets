@@ -1,43 +1,41 @@
-import { Component, input, OnInit } from '@angular/core';
+import { Component, input, OnInit, AfterViewInit, ElementRef, ViewChild } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import {
-  AwFormFieldComponent,
-  AwInputDirective,
+  AwSearchComponent,
   AwButtonIconOnlyDirective,
   AwIconComponent,
 } from '@assetworks-llc/aw-component-lib';
 
 /**
- * Editable text input cell for use inside aw-table via TableCellTypes.Custom.
- * Renders an aw-form-field with an AwInput and an optional icon-only search button.
+ * Editable input cell for use inside aw-table via TableCellTypes.Custom.
+ * Uses aw-search instead of aw-form-field because aw-search's X clear button
+ * properly resets the FormControl value, while aw-form-field's X only clears the DOM.
  *
- * Uses a local FormControl for two-way binding so the CCL's built-in clear (X) button
- * works correctly. The [value] one-way binding approach caused the cleared value to be
- * immediately overwritten by the stale signal input on the next change detection cycle.
- *
- * NOTE FOR DEVELOPERS: We attempted to use AwToolTipDirective (CCL) for the tooltip
- * on meter fields, but it does not work reliably inside aw-table custom cells.
- * The directive attaches event listeners on ngOnInit, but because aw-table destroys
- * and recreates custom cell components when tableData changes (via @for track key),
- * the tooltip element gets orphaned or never attaches properly. The native HTML
- * `title` attribute is used instead as a reliable fallback.
+ * When searchOptions are provided, shows autocomplete dropdown.
+ * When searchOptions are empty, acts as a plain text input with working clear.
  */
 @Component({
   selector: 'app-table-input-cell',
   standalone: true,
-  imports: [ReactiveFormsModule, AwFormFieldComponent, AwInputDirective, AwButtonIconOnlyDirective, AwIconComponent],
+  imports: [ReactiveFormsModule, AwSearchComponent, AwButtonIconOnlyDirective, AwIconComponent],
   template: `
     <div class="table-input-cell">
-      <aw-form-field>
-        <input AwInput
-          [formControl]="ctrl"
+      <div class="table-input-cell__field">
+        <aw-search
+          [ariaLabel]="ariaLabel()"
           [placeholder]="placeholder()"
-          [readOnly]="readOnly()"
-          [attr.inputmode]="inputMode()"
-          [attr.aria-label]="ariaLabel()"
-          [attr.title]="tooltip() || null"
-          (keydown)="onKeydown($event)" />
-      </aw-form-field>
+          [formControl]="ctrl"
+          [attr.title]="tooltip() || null">
+        </aw-search>
+        @if (localSubtitle) {
+          <span class="table-input-cell__subtitle"
+            [class.table-input-cell__subtitle--error]="localSubtitleError">
+            {{ localSubtitle }}
+          </span>
+        } @else {
+          <span class="table-input-cell__spacer">&nbsp;</span>
+        }
+      </div>
       @if (showSearchButton()) {
         <button AwButtonIconOnly [buttonType]="'primary'"
           [ariaLabel]="'Search ' + ariaLabel()"
@@ -50,42 +48,88 @@ import {
   `,
   styles: [`
     .table-input-cell { display: flex; gap: 4px; align-items: flex-start; }
+    .table-input-cell__field { flex: 1; min-width: 0; }
+    .table-input-cell__subtitle {
+      display: block;
+      font-size: 12px;
+      line-height: 16px;
+      color: var(--system-text-text-secondary, #5b6670);
+      margin-top: 2px;
+    }
+    .table-input-cell__subtitle--error {
+      color: var(--system-text-text-secondary, #5b6670);
+    }
+    .table-input-cell__spacer {
+      display: block;
+      font-size: 12px;
+      line-height: 16px;
+      margin-top: 2px;
+      visibility: hidden;
+    }
   `]
 })
-export class TableInputCellComponent implements OnInit {
+export class TableInputCellComponent implements OnInit, AfterViewInit {
+  @ViewChild(AwSearchComponent, { read: ElementRef }) private _searchEl!: ElementRef;
   value = input<string>('');
   placeholder = input<string>('');
   readOnly = input<boolean>(false);
   inputMode = input<string>('text');
   ariaLabel = input<string>('');
   tooltip = input<string>('');
+  subtitle = input<string>('');
+  subtitleError = input<boolean>(false);
+  /** Optional lookup function called on blur to get subtitle text. Returns {text, isError}. */
+  lookupOnBlur = input<((value: string) => { text: string; isError: boolean }) | null>(null);
   showSearchButton = input<boolean>(false);
   onChange = input<((value: string) => void) | null>(null);
   onSearch = input<(() => void) | null>(null);
+  onBlur = input<(() => void) | null>(null);
   onKeydownHandler = input<((event: KeyboardEvent) => void) | null>(null);
 
-  /** Local FormControl for two-way binding — CCL clear button works with this. */
-  ctrl = new FormControl<string>('');
-  private _lastEmittedValue = '';
+  ctrl = new FormControl<any>('');
+  /** Local subtitle that updates on blur without re-rendering the table. */
+  localSubtitle = '';
+  localSubtitleError = false;
 
   ngOnInit(): void {
-    // Set initial value from input
     const initial = this.value() ?? '';
     this.ctrl.setValue(initial, { emitEvent: false });
-    this._lastEmittedValue = initial;
-    // Subscribe to value changes (typing + CCL clear button)
-    // Only emit when value actually changes to avoid clearing on tab-through
+    // Set initial subtitle from inputs
+    this.localSubtitle = this.subtitle();
+    this.localSubtitleError = this.subtitleError();
+    // If we have a lookup function and initial value, compute subtitle
+    if (initial && this.lookupOnBlur()) {
+      const result = this.lookupOnBlur()!(initial);
+      this.localSubtitle = result.text;
+      this.localSubtitleError = result.isError;
+    }
     this.ctrl.valueChanges.subscribe(val => {
-      const newVal = val ?? '';
-      if (newVal !== this._lastEmittedValue) {
-        this._lastEmittedValue = newVal;
-        this.onChange()?.call(null, newVal);
-      }
+      const resolved = typeof val === 'object' && val !== null ? (val.value ?? val.label ?? '') : (val ?? '');
+      this.onChange()?.call(null, resolved);
     });
   }
 
-  onKeydown(event: KeyboardEvent): void {
-    this.onKeydownHandler()?.call(null, event);
+  ngAfterViewInit(): void {
+    const input = this._searchEl?.nativeElement?.querySelector('input');
+    if (input) {
+      input.addEventListener('blur', () => {
+        setTimeout(() => {
+          const currentVal = this.ctrl.value ?? '';
+          const resolved = typeof currentVal === 'object' ? (currentVal.value ?? '') : currentVal;
+          // Update subtitle locally using lookup function — no table re-render
+          const lookup = this.lookupOnBlur();
+          if (lookup && resolved) {
+            const result = lookup(resolved);
+            this.localSubtitle = result.text;
+            this.localSubtitleError = result.isError;
+          } else if (!resolved) {
+            this.localSubtitle = '';
+            this.localSubtitleError = false;
+          }
+          this.onBlur()?.call(null);
+        }, 50);
+      });
+    }
   }
 
   onSearchClick(): void {

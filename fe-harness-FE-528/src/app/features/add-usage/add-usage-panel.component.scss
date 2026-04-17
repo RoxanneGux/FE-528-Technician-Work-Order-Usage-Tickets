@@ -178,6 +178,11 @@ $form-content-max-width: calc(#{$field-max-width} * 2 + 24px);
 
 // Cell width constraints via ::ng-deep for aw-table internal cells
 :host ::ng-deep {
+  // Align all cell content to top so they line up with the asset cell's description
+  .aw-table-cell {
+    vertical-align: top !important;
+  }
+
   // Asset cell
   .cdk-column-asset {
     min-width: 256px !important;
