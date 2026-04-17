@@ -80,6 +80,10 @@ In the multi-entry table, hovering over Meter 1 or Meter 2 Begin/End fields show
 
 > **Dev Note:** We attempted to use `AwToolTipDirective` from the CCL but it does not work reliably inside `aw-table` custom cells — the directive's event listeners get lost when the table re-renders cells. Native HTML `title` attribute is used as a fallback.
 
+#### Conditional Meter 2 Visibility
+
+Meter 2 fields (Begin, End, Validation) are automatically hidden when the selected asset has no second meter. This applies to both single-entry and multi-entry modes. Assets with meter 2 data (e.g. QA-FLEET-002) show all meter fields; assets without (e.g. K123-456) hide meter 2 entirely. The visibility is driven by the `hasMeter2` computed signal, which checks the asset's meter data after selection. See the MOCK-DATA-GUIDE for which assets have meter 2.
+
 #### MAWO Mode (Multi-Asset Work Order)
 
 When "MAWO" is selected in the Work Order Type toggle:
