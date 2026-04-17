@@ -245,6 +245,12 @@ $form-content-max-width: calc(#{$field-max-width} * 2 + 24px);
   color: var(--system-text-text-secondary, #5b6670);
 }
 
+.field-desc {
+  display: block;
+  color: var(--system-text-text-secondary, #5b6670);
+  margin-left: 2px;
+}
+
 // ── Sticky footer ──
 
 .aw-sticky-footer {

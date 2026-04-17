@@ -384,6 +384,56 @@ export class AddUsagePanelComponent implements AfterViewInit {
     this._mockData.financialProjectCodes().map(f => ({ label: `(${f.id}) ${f.name}`, value: f.id })),
   );
 
+  // ── Single-entry description signals ──
+
+  /** Asset description text for single-entry mode. */
+  public readonly singleAssetDesc = signal<string>('');
+  /** Whether the single-entry asset description is an error ("NOT DEFINED"). */
+  public readonly singleAssetDescError = signal<boolean>(false);
+
+  /** Account description text for single-entry mode. */
+  public readonly singleAccountDesc = signal<string>('');
+  /** Whether the single-entry account description is an error. */
+  public readonly singleAccountDescError = signal<boolean>(false);
+
+  /** Operator description text for single-entry mode. */
+  public readonly singleOperatorDesc = signal<string>('');
+  /** Whether the single-entry operator description is an error. */
+  public readonly singleOperatorDescError = signal<boolean>(false);
+
+  /** Department description text for single-entry mode. */
+  public readonly singleDepartmentDesc = signal<string>('');
+  /** Whether the single-entry department description is an error. */
+  public readonly singleDepartmentDescError = signal<boolean>(false);
+
+  /** Task description text for single-entry mode. */
+  public readonly singleTaskDesc = signal<string>('');
+  /** Whether the single-entry task description is an error. */
+  public readonly singleTaskDescError = signal<boolean>(false);
+
+  /** Financial project code description text for single-entry mode. */
+  public readonly singleFpcDesc = signal<string>('');
+  /** Whether the single-entry FPC description is an error. */
+  public readonly singleFpcDescError = signal<boolean>(false);
+
+  /** Flat lookup map of all task IDs to names for blur-based resolution. */
+  private readonly _taskLookupMap = computed<{ id: string; name: string }[]>(() => [
+    { id: 'TSK-101', name: 'Oil Change' },
+    { id: 'TSK-102', name: 'Brake Pad Replacement' },
+    { id: 'TSK-103', name: 'Tire Rotation' },
+    { id: 'TSK-104', name: 'Air Filter Replacement' },
+    { id: 'TSK-105', name: 'Coolant Flush' },
+    { id: 'TSK-106', name: 'Transmission Service' },
+    { id: 'TSK-107', name: 'Battery Replacement' },
+    { id: 'TSK-108', name: 'Spark Plug Replacement' },
+    { id: 'TSK-109', name: 'Alignment Service' },
+    { id: 'TSK-110', name: 'Oil Filter Replacement' },
+    { id: 'TSK-111', name: 'Oil Pan Gasket' },
+    { id: 'TSK-112', name: 'Oil Pump Service' },
+    { id: 'TSK-113', name: 'Front Brake Rotor' },
+    { id: 'TSK-114', name: 'Front Caliper Service' },
+  ]);
+
   /** Mock meter data for hint text display — empty until asset is selected. */
   public readonly meter1Units = signal<string>('');
   public readonly meter1Reading = signal<number>(0);
@@ -449,6 +499,110 @@ export class AddUsagePanelComponent implements AfterViewInit {
   public onTimeFormatChange(event: any): void {
     const value = typeof event === 'object' && event !== null ? event.value : event;
     this.timeFormat = value === '24h' ? '24h' : '12h';
+  }
+
+  /**
+   * Resolve a lookup field value against mock data.
+   * Returns { text: description, isError: boolean }.
+   * Match found → { text: name/description, isError: false }
+   * No match, non-empty → { text: 'NOT DEFINED', isError: true }
+   * Empty input → { text: '', isError: false }
+   */
+  public lookupField(fieldName: string, value: string): { text: string; isError: boolean } {
+    const trimmed = (value ?? '').trim();
+    if (!trimmed) return { text: '', isError: false };
+
+    switch (fieldName) {
+      case 'asset': {
+        const match = this.assetSearchOptions().find(
+          a => a.value.toLowerCase() === trimmed.toLowerCase()
+        );
+        return match
+          ? { text: match.description, isError: false }
+          : { text: 'NOT DEFINED', isError: true };
+      }
+      case 'account': {
+        const match = this._mockData.accounts().find(
+          a => a.id.toLowerCase() === trimmed.toLowerCase()
+        );
+        return match
+          ? { text: match.name, isError: false }
+          : { text: 'NOT DEFINED', isError: true };
+      }
+      case 'operator': {
+        const match = this._mockData.operators().find(
+          o => o.id.toLowerCase() === trimmed.toLowerCase()
+        );
+        return match
+          ? { text: match.name, isError: false }
+          : { text: 'NOT DEFINED', isError: true };
+      }
+      case 'department': {
+        const match = this._mockData.departments().find(
+          d => d.id.toLowerCase() === trimmed.toLowerCase()
+        );
+        return match
+          ? { text: match.name, isError: false }
+          : { text: 'NOT DEFINED', isError: true };
+      }
+      case 'task': {
+        const match = this._taskLookupMap().find(
+          t => t.id.toLowerCase() === trimmed.toLowerCase()
+        );
+        return match
+          ? { text: match.name, isError: false }
+          : { text: 'NOT DEFINED', isError: true };
+      }
+      case 'financialProjectCode': {
+        const match = this._mockData.financialProjectCodes().find(
+          f => f.id.toLowerCase() === trimmed.toLowerCase()
+        );
+        return match
+          ? { text: match.name, isError: false }
+          : { text: 'NOT DEFINED', isError: true };
+      }
+      default:
+        return { text: '', isError: false };
+    }
+  }
+
+  /** Blur handler for single-entry lookup fields — resolves value and updates description signals. */
+  public onSingleFieldBlur(fieldName: string): void {
+    const value = this.singleEntryForm.get(fieldName)?.value ?? '';
+    const result = this.lookupField(fieldName, value);
+
+    // Uppercase the input value on blur (matches production WAC behavior)
+    const trimmed = (value ?? '').trim();
+    if (trimmed) {
+      this.singleEntryForm.get(fieldName)?.setValue(trimmed.toUpperCase(), { emitEvent: false });
+    }
+
+    switch (fieldName) {
+      case 'asset':
+        this.singleAssetDesc.set(result.text);
+        this.singleAssetDescError.set(result.isError);
+        break;
+      case 'account':
+        this.singleAccountDesc.set(result.text);
+        this.singleAccountDescError.set(result.isError);
+        break;
+      case 'operator':
+        this.singleOperatorDesc.set(result.text);
+        this.singleOperatorDescError.set(result.isError);
+        break;
+      case 'department':
+        this.singleDepartmentDesc.set(result.text);
+        this.singleDepartmentDescError.set(result.isError);
+        break;
+      case 'task':
+        this.singleTaskDesc.set(result.text);
+        this.singleTaskDescError.set(result.isError);
+        break;
+      case 'financialProjectCode':
+        this.singleFpcDesc.set(result.text);
+        this.singleFpcDescError.set(result.isError);
+        break;
+    }
   }
 
   /** Handle work order type selector change — extract value from select option object. */
@@ -686,6 +840,8 @@ export class AddUsagePanelComponent implements AfterViewInit {
       // Update meter hints for single-entry mode
       if (!isMulti) {
         this.updateMeterHints(result.selectedAsset.EquipmentId);
+        this.singleAssetDesc.set(result.selectedAsset.EquipmentDescription);
+        this.singleAssetDescError.set(false);
       }
       this._activeMultiRowIndex = null;
       if (isMulti) {
@@ -712,6 +868,12 @@ export class AddUsagePanelComponent implements AfterViewInit {
         ? this.multiEntryRows()[this._activeMultiRowIndex!]
         : this.singleEntryForm;
       targetForm?.get('task')?.setValue(`(${result.taskId}) ${result.taskDescription}`);
+      // Update single-entry task description signals
+      if (!isMulti) {
+        const taskResult = this.lookupField('task', result.taskId);
+        this.singleTaskDesc.set(taskResult.text);
+        this.singleTaskDescError.set(taskResult.isError);
+      }
       this._activeMultiRowIndex = null;
       if (isMulti) {
         this.multiEntryRows.set([...this.multiEntryRows()]);
@@ -1103,6 +1265,7 @@ export class AddUsagePanelComponent implements AfterViewInit {
               onChange: (value: string) => this.onMultiCellChange(data[1], 'account', value),
               onSearch: () => this.onMultiLookup(data[1], 'account'),
               onKeydownHandler: null,
+              lookupOnBlur: (value: string) => this.lookupField('account', value),
             },
           }),
         };
@@ -1126,6 +1289,7 @@ export class AddUsagePanelComponent implements AfterViewInit {
               onChange: (value: string) => this.onMultiCellChange(data[1], 'operator', value),
               onSearch: () => this.onMultiLookup(data[1], 'operator'),
               onKeydownHandler: null,
+              lookupOnBlur: (value: string) => this.lookupField('operator', value),
             },
           }),
         };
@@ -1149,6 +1313,7 @@ export class AddUsagePanelComponent implements AfterViewInit {
               onChange: (value: string) => this.onMultiCellChange(data[1], 'department', value),
               onSearch: () => this.onMultiLookup(data[1], 'department'),
               onKeydownHandler: null,
+              lookupOnBlur: (value: string) => this.lookupField('department', value),
             },
           }),
         };
@@ -1172,6 +1337,7 @@ export class AddUsagePanelComponent implements AfterViewInit {
               onChange: (value: string) => this.onMultiCellChange(data[1], 'task', value),
               onSearch: () => this.onMultiTaskSearch(data[1]),
               onKeydownHandler: null,
+              lookupOnBlur: (value: string) => this.lookupField('task', value),
             },
           }),
         };
@@ -1195,6 +1361,7 @@ export class AddUsagePanelComponent implements AfterViewInit {
               onChange: (value: string) => this.onMultiCellChange(data[1], 'financialProjectCode', value),
               onSearch: () => this.onMultiLookup(data[1], 'financialProjectCode'),
               onKeydownHandler: null,
+              lookupOnBlur: (value: string) => this.lookupField('financialProjectCode', value),
             },
           }),
         };

@@ -116,6 +116,10 @@ export class TableInputCellComponent implements OnInit, AfterViewInit {
         setTimeout(() => {
           const currentVal = this.ctrl.value ?? '';
           const resolved = typeof currentVal === 'object' ? (currentVal.value ?? '') : currentVal;
+          // Uppercase the input value on blur
+          if (resolved.trim()) {
+            this.ctrl.setValue(resolved.trim().toUpperCase(), { emitEvent: false });
+          }
           // Update subtitle locally using lookup function — no table re-render
           const lookup = this.lookupOnBlur();
           if (lookup && resolved) {

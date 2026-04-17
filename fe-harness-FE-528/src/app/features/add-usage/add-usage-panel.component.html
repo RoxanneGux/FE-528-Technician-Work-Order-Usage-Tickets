@@ -28,12 +28,15 @@
               <aw-form-field-label [required]="true">Asset</aw-form-field-label>
               <div class="field-with-icon">
                 <aw-form-field>
-                  <input AwInput formControlName="asset" aria-label="Asset" />
+                  <input AwInput formControlName="asset" aria-label="Asset" (blur)="onSingleFieldBlur('asset')" />
                 </aw-form-field>
                 <button AwButtonIconOnly [buttonType]="'primary'" ariaLabel="Search Asset" type="button" (click)="onAssetSearch()">
                   <aw-icon [iconName]="'search'" [iconColor]="''"></aw-icon>
                 </button>
               </div>
+              @if (singleAssetDesc()) {
+                <span class="aw-c-1 field-desc">{{ singleAssetDesc() }}</span>
+              }
             </div>
           }
           @if (mawoVisibleFields().includes('transactionDate')) {
@@ -273,12 +276,15 @@
                 <aw-form-field-label>Account</aw-form-field-label>
                 <div class="field-with-icon">
                   <aw-form-field>
-                    <input AwInput formControlName="account" aria-label="Account" />
+                    <input AwInput formControlName="account" aria-label="Account" (blur)="onSingleFieldBlur('account')" />
                   </aw-form-field>
                   <button AwButtonIconOnly [buttonType]="'primary'" ariaLabel="Search Account" type="button" (click)="onLookupPlaceholder('Account')">
                     <aw-icon [iconName]="'search'" [iconColor]="''"></aw-icon>
                   </button>
                 </div>
+                @if (singleAccountDesc()) {
+                  <span class="aw-c-1 field-desc">{{ singleAccountDesc() }}</span>
+                }
               </div>
             }
             @if (mawoVisibleFields().includes('operator')) {
@@ -286,12 +292,15 @@
                 <aw-form-field-label>Operator</aw-form-field-label>
                 <div class="field-with-icon">
                   <aw-form-field>
-                    <input AwInput formControlName="operator" aria-label="Operator" />
+                    <input AwInput formControlName="operator" aria-label="Operator" (blur)="onSingleFieldBlur('operator')" />
                   </aw-form-field>
                   <button AwButtonIconOnly [buttonType]="'primary'" ariaLabel="Search Operator" type="button" (click)="onLookupPlaceholder('Operator')">
                     <aw-icon [iconName]="'search'" [iconColor]="''"></aw-icon>
                   </button>
                 </div>
+                @if (singleOperatorDesc()) {
+                  <span class="aw-c-1 field-desc">{{ singleOperatorDesc() }}</span>
+                }
               </div>
             }
           </div>
@@ -305,12 +314,15 @@
                 <aw-form-field-label [required]="true">Department</aw-form-field-label>
                 <div class="field-with-icon">
                   <aw-form-field>
-                    <input AwInput formControlName="department" aria-label="Department" />
+                    <input AwInput formControlName="department" aria-label="Department" (blur)="onSingleFieldBlur('department')" />
                   </aw-form-field>
                   <button AwButtonIconOnly [buttonType]="'primary'" ariaLabel="Search Department" type="button" (click)="onLookupPlaceholder('Department')">
                     <aw-icon [iconName]="'search'" [iconColor]="''"></aw-icon>
                   </button>
                 </div>
+                @if (singleDepartmentDesc()) {
+                  <span class="aw-c-1 field-desc">{{ singleDepartmentDesc() }}</span>
+                }
               </div>
             }
             @if (mawoVisibleFields().includes('task')) {
@@ -318,12 +330,15 @@
                 <aw-form-field-label>Task</aw-form-field-label>
                 <div class="field-with-icon">
                   <aw-form-field>
-                    <input AwInput formControlName="task" aria-label="Task" />
+                    <input AwInput formControlName="task" aria-label="Task" (blur)="onSingleFieldBlur('task')" />
                   </aw-form-field>
                   <button AwButtonIconOnly [buttonType]="'primary'" ariaLabel="Search Task" type="button" (click)="onTaskSearch()">
                     <aw-icon [iconName]="'search'" [iconColor]="''"></aw-icon>
                   </button>
                 </div>
+                @if (singleTaskDesc()) {
+                  <span class="aw-c-1 field-desc">{{ singleTaskDesc() }}</span>
+                }
               </div>
             }
           </div>
@@ -336,12 +351,15 @@
               <aw-form-field-label>Financial Project Code</aw-form-field-label>
               <div class="field-with-icon">
                 <aw-form-field>
-                  <input AwInput formControlName="financialProjectCode" aria-label="Financial Project Code" />
+                  <input AwInput formControlName="financialProjectCode" aria-label="Financial Project Code" (blur)="onSingleFieldBlur('financialProjectCode')" />
                 </aw-form-field>
                 <button AwButtonIconOnly [buttonType]="'primary'" ariaLabel="Search Financial Project Code" type="button" (click)="onLookupPlaceholder('Financial Project Code')">
                   <aw-icon [iconName]="'search'" [iconColor]="''"></aw-icon>
                 </button>
               </div>
+              @if (singleFpcDesc()) {
+                <span class="aw-c-1 field-desc">{{ singleFpcDesc() }}</span>
+              }
             </div>
             <div class="form-field"></div>
           </div>

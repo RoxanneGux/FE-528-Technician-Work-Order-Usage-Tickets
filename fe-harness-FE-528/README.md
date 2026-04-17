@@ -58,6 +58,14 @@ These fields allow free text entry AND have a search icon button for lookup dial
 | **Department** | Placeholder alert (dialog not yet implemented) |
 | **Financial Project Code** | Placeholder alert (dialog not yet implemented) |
 
+**Description behavior:** All six lookup fields resolve descriptions on blur (tab off). When the user types a value and leaves the field, the typed value is matched against mock data and a description line appears below the input:
+
+- **Match found** — the resolved name/description is shown (e.g., type `ACC-001` → "General Maintenance")
+- **No match** — "NOT DEFINED" is shown
+- **Empty field** — description is hidden
+
+This works in both single-entry form and multi-entry table modes. In multi-entry, empty cells show a hidden spacer to maintain consistent row height. Selecting a value via the Asset Search or Task Lookup dialog also populates the description.
+
 #### Section Dividers
 
 The form uses conditional dividers to separate sections:

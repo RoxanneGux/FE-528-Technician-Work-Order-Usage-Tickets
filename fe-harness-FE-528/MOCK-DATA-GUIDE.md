@@ -399,6 +399,42 @@ The Task lookup dialog shows tasks filtered by type. Defaults to Repair filter.
 | Select a task | Click a row, then click "Add" — field shows (Task ID) Description |
 
 
+## Lookup Field Descriptions
+
+When a user types a value in a lookup field and tabs off (blur), the field resolves the value against mock data and displays a description below the input. This applies to all six lookup fields in both single-entry and multi-entry modes.
+
+### Data Sources Per Field
+
+| Field | Data Source | Match Key | Returns |
+|-------|-----------|-----------|---------|
+| Asset | `assetSearchOptions` (component) | `value` (equipment ID) | `description` |
+| Account | `MockDataService.accounts()` | `id` | `name` |
+| Operator | `MockDataService.operators()` | `id` | `name` |
+| Department | `MockDataService.departments()` | `id` | `name` |
+| Task | `_taskLookupMap` (component computed) | `id` | `name` |
+| Financial Project Code | `MockDataService.financialProjectCodes()` | `id` | `name` |
+
+All lookups are case-insensitive. Empty or whitespace-only input hides the description.
+
+### Lookup Field Description Scenarios
+
+| Scenario | How | Expected Result |
+|----------|-----|-----------------|
+| Match found (Asset) | Type `R-12345` in Asset field, tab off | "MOTOR POOL SEDAN" appears below the field |
+| Match found (Account) | Type `ACC-001` in Account field, tab off | "General Maintenance" appears below the field |
+| Match found (Operator) | Type `OP-001` in Operator field, tab off | "John Miller" appears below the field |
+| Match found (Department) | Type `DEPT-001` in Department field, tab off | "Maintenance" appears below the field |
+| Match found (Task) | Type `TSK-101` in Task field, tab off | "Oil Change" appears below the field |
+| Match found (FPC) | Type `FPC-001` in Financial Project Code field, tab off | "FY2026 Infrastructure" appears below the field |
+| No match | Type `INVALID` in any lookup field, tab off | "NOT DEFINED" appears below the field |
+| Empty field | Clear any lookup field and tab off | Description text is hidden |
+| Dialog selection (Asset) | Select an asset via Asset Search dialog | Asset description appears below the field |
+| Dialog selection (Task) | Select a task via Task Lookup dialog | Task description appears below the field |
+| Multi-entry match | In multi-entry mode, type `OP-001` in Operator cell, tab off | "John Miller" appears below the cell |
+| Multi-entry no match | In multi-entry mode, type `INVALID` in any lookup cell, tab off | "NOT DEFINED" appears below the cell |
+| Multi-entry empty | In multi-entry mode, clear a lookup cell, tab off | Hidden spacer maintains row height |
+
+
 ## MAWO Parent Work Order
 
 | Field | Value |
