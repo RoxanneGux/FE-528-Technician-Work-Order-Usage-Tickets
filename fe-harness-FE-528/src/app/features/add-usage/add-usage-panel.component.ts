@@ -242,6 +242,7 @@ export class AddUsagePanelComponent implements AfterViewInit {
     this.attachInputListeners(this._startDateTimePicker, 'start');
     this.attachInputListeners(this._endDateTimePicker, 'end');
     this.attachTransactionDateListeners();
+    this._watchLookupFieldClears();
   }
 
   /** Active entry mode — single form or multi-row table. */
@@ -1550,6 +1551,26 @@ export class AddUsagePanelComponent implements AfterViewInit {
       this._cdr.detectChanges();
       setTimeout(() => { input.placeholder = 'mm/dd/yyyy'; });
     });
+  }
+
+  /** Watch lookup field value changes and clear description when field is emptied (e.g., X button, select-all+delete). */
+  private _watchLookupFieldClears(): void {
+    const fields: { name: string; descSignal: typeof this.singleAssetDesc; errorSignal: typeof this.singleAssetDescError }[] = [
+      { name: 'asset', descSignal: this.singleAssetDesc, errorSignal: this.singleAssetDescError },
+      { name: 'account', descSignal: this.singleAccountDesc, errorSignal: this.singleAccountDescError },
+      { name: 'operator', descSignal: this.singleOperatorDesc, errorSignal: this.singleOperatorDescError },
+      { name: 'department', descSignal: this.singleDepartmentDesc, errorSignal: this.singleDepartmentDescError },
+      { name: 'task', descSignal: this.singleTaskDesc, errorSignal: this.singleTaskDescError },
+      { name: 'financialProjectCode', descSignal: this.singleFpcDesc, errorSignal: this.singleFpcDescError },
+    ];
+    for (const { name, descSignal, errorSignal } of fields) {
+      this.singleEntryForm.get(name)?.valueChanges.subscribe(val => {
+        if (!(val ?? '').trim()) {
+          descSignal.set('');
+          errorSignal.set(false);
+        }
+      });
+    }
   }
 
   /** Attach keydown and blur listeners to the internal date and time inputs of a date-time picker. */
