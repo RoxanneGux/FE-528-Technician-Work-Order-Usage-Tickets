@@ -40,6 +40,7 @@ import {
 
 import { TableTextSubtextComponent } from '../../components/table-text-subtext/table-text-subtext.component';
 import { TableInputCellComponent } from '../../components/table-input-cell/table-input-cell.component';
+import { TableAssetCellComponent } from '../../components/table-asset-cell/table-asset-cell.component';
 import { TableDateCellComponent } from '../../components/table-date-cell/table-date-cell.component';
 import { TableDateTimeCellComponent } from '../../components/table-date-time-cell/table-date-time-cell.component';
 import { TableSelectCellComponent } from '../../components/table-select-cell/table-select-cell.component';
@@ -89,6 +90,7 @@ import {
     AwExpansionPanelComponent,
     TableTextSubtextComponent,
     TableInputCellComponent,
+    TableAssetCellComponent,
     TableDateCellComponent,
     TableDateTimeCellComponent,
     TableSelectCellComponent,
@@ -267,35 +269,54 @@ export class AddUsagePanelComponent implements AfterViewInit {
     const visibleFields = this.mawoVisibleFields();
     const columns: TableCellInput[] = [];
 
-    // Asset column — always visible
+    // Asset column — always visible. Uses production WAC pattern: aw-form-field + AwInput + description span.
     columns.push({
       type: TableCellTypes.Custom,
       key: 'asset',
       label: 'Asset',
       align: 'left',
-      combineFields: ['asset', '_rowIndex'],
-      combineTemplate: (data: any[]) => ({
-        component: TableInputCellComponent,
-        componentData: {
-          value: data[0] || '',
-          placeholder: 'Asset',
-          readOnly: false,
-          inputMode: 'text',
-          ariaLabel: 'Asset',
-          showSearchButton: true,
-          onChange: (value: string) => this.onMultiCellChange(data[1], 'asset', value),
-          onSearch: () => this.onMultiAssetSearch(data[1]),
-          onKeydownHandler: null,
-        },
-      }),
-    });
-
-    // Asset Description column — always visible, read-only
-    columns.push({
-      type: TableCellTypes.Title,
-      key: 'assetDescription',
-      label: 'Asset Description',
-      align: 'left',
+      combineFields: ['asset', '_rowIndex', 'assetDescription'],
+      combineTemplate: (data: any[]) => {
+        const assetValue = data[0] || '';
+        const description = data[2] || '';
+        let initialDesc = '';
+        let initialDescError = false;
+        if (assetValue) {
+          initialDesc = description || 'NOT DEFINED';
+          initialDescError = !description;
+        }
+        return {
+          component: TableAssetCellComponent,
+          componentData: {
+            value: assetValue,
+            placeholder: 'Asset',
+            ariaLabel: 'Asset',
+            initialDescription: initialDesc,
+            initialDescriptionError: initialDescError,
+            lookupFn: (val: string) => {
+              const match = this.assetSearchOptions().find(
+                a => a.value.toLowerCase() === val.toLowerCase()
+              );
+              if (match) {
+                const row = this.multiEntryRows()[data[1]];
+                row?.get('assetDescription')?.setValue(match.description, { emitEvent: false });
+                this.updateMeterHints(match.value);
+                return { description: match.description, isError: false };
+              }
+              return { description: 'NOT DEFINED', isError: true };
+            },
+            onChange: (value: string) => this.onMultiCellChange(data[1], 'asset', value),
+            onSearch: () => this.onMultiAssetSearch(data[1]),
+            onBlurCallback: () => {
+              const idx = data[1];
+              const rows = this.multiEntryRows();
+              if (idx === rows.length - 1 && this.rowHasData(rows[idx])) {
+                this.addRow();
+              }
+            },
+          },
+        };
+      },
     });
 
     // Dynamic columns based on visible fields
@@ -322,6 +343,21 @@ export class AddUsagePanelComponent implements AfterViewInit {
   public readonly operatorOptions = computed<SingleSelectOption[]>(() =>
     this._mockData.operators().map(op => ({ label: `(${op.id}) ${op.name}`, value: op.id })),
   );
+
+  /** Asset autocomplete options for the multi-entry search cell. */
+  public readonly assetSearchOptions = computed<{ label: string; value: string; description: string }[]>(() => [
+    { label: 'R-12345', value: 'R-12345', description: 'MOTOR POOL SEDAN' },
+    { label: 'QA-FLEET-002', value: 'QA-FLEET-002', description: 'QA FLEET TRUCK 002' },
+    { label: 'K123-456', value: 'K123-456', description: 'SERIES 50 DETROIT DIESEL GAS ENGINE' },
+    { label: 'QA-C-001', value: 'QA-C-001', description: 'CARGO VAN 2500' },
+    { label: 'FL-VAN-03', value: 'FL-VAN-03', description: 'FLEET VAN 03' },
+    { label: 'TX-TRUCK-07', value: 'TX-TRUCK-07', description: 'PICKUP TRUCK F-150' },
+    { label: 'EQ-4821', value: 'EQ-4821', description: 'CENTRIFUGAL PUMP' },
+    { label: 'EQ-5102', value: 'EQ-5102', description: 'HYDRAULIC PRESS' },
+    { label: 'ROAD07', value: 'ROAD07', description: 'HIGHWAY 07 - MAIN CORRIDOR' },
+    { label: 'UX-BRIDGE-LINEAR', value: 'UX-BRIDGE-LINEAR', description: 'UX TEST BRIDGE - LINEAR ASSET' },
+    { label: 'GEN-9900', value: 'GEN-9900', description: 'CATERPILLAR 3516B STANDBY DIESEL GENERATOR SET 2000KW EMERGENCY BACKUP POWER UNIT' },
+  ]);
 
   /** Department dropdown options. */
   public readonly departmentOptions = computed<SingleSelectOption[]>(() =>
@@ -705,16 +741,20 @@ export class AddUsagePanelComponent implements AfterViewInit {
     const row = this.multiEntryRows()[rowIndex];
     if (row) {
       row.get(fieldName)?.setValue(value, { emitEvent: false });
-      // Clear asset description when asset field is cleared
-      if (fieldName === 'asset' && (!value || value === '')) {
-        row.get('assetDescription')?.setValue(null, { emitEvent: false });
+
+      // Asset field: auto-populate description from matching asset, or clear it
+      if (fieldName === 'asset') {
+        const match = value ? this.assetSearchOptions().find(
+          a => a.value.toLowerCase() === value.toLowerCase()
+        ) : null;
+        row.get('assetDescription')?.setValue(match?.description ?? null, { emitEvent: false });
+        // Update meter hints if exact match found
+        if (match) {
+          this.updateMeterHints(match.value);
+        }
       }
-      // Auto-add a new row when user starts typing in the last row
-      if (value && rowIndex === this.multiEntryRows().length - 1) {
-        this.addRow();
-      }
+
       // Only trigger table re-render for fields that affect computed display values
-      // Do NOT trigger for regular text typing — it causes focus loss
       if (fieldName === 'businessUsage' || fieldName === 'individualUsage') {
         this.multiEntryRows.set([...this.multiEntryRows()]);
       }

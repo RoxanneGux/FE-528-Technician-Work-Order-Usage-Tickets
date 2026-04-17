@@ -161,8 +161,8 @@ $form-content-max-width: calc(#{$field-max-width} * 2 + 24px);
 
 // Scrollable container for the table only — title, toggle, and add-row stay outside
 .multi-entry-scroll-container {
-  overflow: auto;
-  max-height: 60vh;
+  overflow-x: auto;
+  overflow-y: visible;
   border: 1px solid var(--system-line-divider-stroke-line-color, #cfd2d3);
   border-radius: 4px;
 }
@@ -179,9 +179,8 @@ $form-content-max-width: calc(#{$field-max-width} * 2 + 24px);
 // Cell width constraints via ::ng-deep for aw-table internal cells
 :host ::ng-deep {
   // Asset cell
-  .aw-table-cell:has(app-table-input-cell[ng-reflect-aria-label="Asset"]) {
-    min-width: 180px;
-    max-width: 536px;
+  .cdk-column-asset {
+    min-width: 256px !important;
   }
 
   // Asset Description cell - allow text wrapping instead of truncation
