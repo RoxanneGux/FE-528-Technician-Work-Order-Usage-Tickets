@@ -202,6 +202,11 @@ $form-content-max-width: calc(#{$field-max-width} * 2 + 24px);
     min-width: 440px !important;
   }
 
+  // Transaction date column — wide enough for mm/dd/yyyy + calendar button
+  .cdk-column-transactionDate {
+    min-width: 256px !important;
+  }
+
   // Ensure date-time picker component fills the cell
   app-table-date-time-cell {
     display: block;
