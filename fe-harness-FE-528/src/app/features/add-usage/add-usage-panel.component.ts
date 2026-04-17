@@ -560,6 +560,24 @@ export class AddUsagePanelComponent implements AfterViewInit {
     this.multiEntryRows.update(rows => [...rows, this.createRowFormGroup()]);
   }
 
+  /** Auto-add a new row when focus enters the last table row. */
+  public onTableFocusIn(event: FocusEvent): void {
+    const target = event.target as HTMLElement;
+    if (!target) return;
+    // Find the closest table row (tr) element
+    const row = target.closest('tr');
+    if (!row) return;
+    // Get all body rows (skip header row)
+    const table = row.closest('table');
+    if (!table) return;
+    const bodyRows = Array.from(table.querySelectorAll('tbody tr'));
+    const rowIndex = bodyRows.indexOf(row);
+    // If focus is in the last row, auto-add a new one
+    if (rowIndex >= 0 && rowIndex === this.multiEntryRows().length - 1) {
+      this.addRow();
+    }
+  }
+
   /** Remove a row from the multi-entry table by index. */
   public removeRow(index: number): void {
     this.multiEntryRows.update(rows => rows.filter((_, i) => i !== index));
@@ -571,7 +589,10 @@ export class AddUsagePanelComponent implements AfterViewInit {
       const entry = this.extractEntry(this.singleEntryForm);
       this.close.emit({ mode: 'single', entries: [entry] });
     } else {
-      const entries = this.multiEntryRows().map(row => this.extractEntry(row));
+      // Filter out blank rows before submitting
+      const entries = this.multiEntryRows()
+        .filter(row => this.rowHasData(row))
+        .map(row => this.extractEntry(row));
       this.close.emit({ mode: 'multi', entries });
     }
   }
@@ -701,6 +722,10 @@ export class AddUsagePanelComponent implements AfterViewInit {
       // Clear asset description when asset field is cleared
       if (fieldName === 'asset' && (!value || value === '')) {
         row.get('assetDescription')?.setValue(null, { emitEvent: false });
+      }
+      // Auto-add a new row when user starts typing in the last row
+      if (value && rowIndex === this.multiEntryRows().length - 1) {
+        this.addRow();
       }
       // Only trigger table re-render for fields that affect computed display values
       // Do NOT trigger for regular text typing — it causes focus loss
@@ -1319,17 +1344,18 @@ export class AddUsagePanelComponent implements AfterViewInit {
     input.addEventListener('keydown', (e: KeyboardEvent) => this.onDateKeydown(e));
     input.addEventListener('blur', () => {
       const value = input.value.trim();
-      if (value) {
-        const error = this.validateDate(value);
-        if (error) {
-          input.value = '';
-          this.singleEntryForm.get('transactionDate')?.setValue(null);
-          (this._transactionDatePicker as any).showClearIcon?.set(false);
-          this._cdr.detectChanges();
-          // Override CCL's format pattern placeholder after it re-renders
-          setTimeout(() => { input.placeholder = 'mm/dd/yyyy'; });
-        }
-      }
+      if (!value) return;
+      // Accept dates with or without leading zeros
+      if (/^\d{1,2}\/\d{1,2}\/\d{4}$/.test(value)) return;
+      // Also skip if FormControl has a valid Date (CCL set it via calendar)
+      const ctrlValue = this.singleEntryForm.get('transactionDate')?.value;
+      if (ctrlValue instanceof Date && !isNaN(ctrlValue.getTime())) return;
+      // Garbage input — clear it
+      input.value = '';
+      this.singleEntryForm.get('transactionDate')?.setValue(null);
+      (this._transactionDatePicker as any).showClearIcon?.set(false);
+      this._cdr.detectChanges();
+      setTimeout(() => { input.placeholder = 'mm/dd/yyyy'; });
     });
   }
 

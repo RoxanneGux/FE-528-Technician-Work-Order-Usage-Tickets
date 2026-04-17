@@ -66,13 +66,21 @@ export class TableInputCellComponent implements OnInit {
 
   /** Local FormControl for two-way binding — CCL clear button works with this. */
   ctrl = new FormControl<string>('');
+  private _lastEmittedValue = '';
 
   ngOnInit(): void {
     // Set initial value from input
-    this.ctrl.setValue(this.value(), { emitEvent: false });
+    const initial = this.value() ?? '';
+    this.ctrl.setValue(initial, { emitEvent: false });
+    this._lastEmittedValue = initial;
     // Subscribe to value changes (typing + CCL clear button)
+    // Only emit when value actually changes to avoid clearing on tab-through
     this.ctrl.valueChanges.subscribe(val => {
-      this.onChange()?.call(null, val ?? '');
+      const newVal = val ?? '';
+      if (newVal !== this._lastEmittedValue) {
+        this._lastEmittedValue = newVal;
+        this.onChange()?.call(null, newVal);
+      }
     });
   }
 

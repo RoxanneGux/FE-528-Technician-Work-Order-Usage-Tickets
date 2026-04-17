@@ -48,14 +48,19 @@ export class TableDateCellComponent implements AfterViewInit {
       e.preventDefault();
     });
 
-    // Blur validation — reset invalid dates
+    // Blur validation — only reset if user typed garbage (not a valid date pattern)
     input.addEventListener('blur', () => {
       const value = input.value.trim();
-      if (value && !/^\d{2}\/\d{2}\/\d{4}$/.test(value)) {
-        input.value = '';
-        this.formControl()?.setValue(null);
-        (this._datePicker as any).showClearIcon?.set(false);
-      }
+      if (!value) return; // Empty is fine
+      // Accept dates with or without leading zeros: M/D/YYYY, MM/DD/YYYY, etc.
+      if (/^\d{1,2}\/\d{1,2}\/\d{4}$/.test(value)) return; // Valid format
+      // Also skip if the FormControl has a valid Date object (CCL set it via calendar)
+      const ctrlValue = this.formControl()?.value;
+      if (ctrlValue instanceof Date && !isNaN(ctrlValue.getTime())) return;
+      // Garbage input — clear it
+      input.value = '';
+      this.formControl()?.setValue(null);
+      (this._datePicker as any).showClearIcon?.set(false);
     });
   }
 }
