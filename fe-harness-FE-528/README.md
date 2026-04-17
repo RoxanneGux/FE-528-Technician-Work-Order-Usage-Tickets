@@ -84,6 +84,14 @@ In the multi-entry table, hovering over Meter 1 or Meter 2 Begin/End fields show
 
 Meter 2 fields (Begin, End, Validation) are automatically hidden when the selected asset has no second meter. This applies to both single-entry and multi-entry modes. Assets with meter 2 data (e.g. QA-FLEET-002) show all meter fields; assets without (e.g. K123-456) hide meter 2 entirely. The visibility is driven by the `hasMeter2` computed signal, which checks the asset's meter data after selection. See the MOCK-DATA-GUIDE for which assets have meter 2.
 
+#### Auto-Add Rows (Multi Entry Table)
+
+New rows are automatically added when the user enters data in the last row of the table — no need to click the "+ Add Row" button each time. This triggers when:
+- Typing into any field on the last row
+- Selecting an asset via the search dialog on the last row
+
+Blank rows are automatically filtered out on save, so extra empty rows don't get submitted. The "+ Add Row" button remains available for users who prefer to click.
+
 #### MAWO Mode (Multi-Asset Work Order)
 
 When "MAWO" is selected in the Work Order Type toggle:

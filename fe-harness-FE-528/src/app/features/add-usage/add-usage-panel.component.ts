@@ -560,24 +560,6 @@ export class AddUsagePanelComponent implements AfterViewInit {
     this.multiEntryRows.update(rows => [...rows, this.createRowFormGroup()]);
   }
 
-  /** Auto-add a new row when focus enters the last table row. */
-  public onTableFocusIn(event: FocusEvent): void {
-    const target = event.target as HTMLElement;
-    if (!target) return;
-    // Find the closest table row (tr) element
-    const row = target.closest('tr');
-    if (!row) return;
-    // Get all body rows (skip header row)
-    const table = row.closest('table');
-    if (!table) return;
-    const bodyRows = Array.from(table.querySelectorAll('tbody tr'));
-    const rowIndex = bodyRows.indexOf(row);
-    // If focus is in the last row, auto-add a new one
-    if (rowIndex >= 0 && rowIndex === this.multiEntryRows().length - 1) {
-      this.addRow();
-    }
-  }
-
   /** Remove a row from the multi-entry table by index. */
   public removeRow(index: number): void {
     this.multiEntryRows.update(rows => rows.filter((_, i) => i !== index));
@@ -659,8 +641,9 @@ export class AddUsagePanelComponent implements AfterViewInit {
     this.showAssetSearchDialog.set(false);
     if (result?.action === 'go' && result.selectedAsset) {
       const isMulti = this._activeMultiRowIndex !== null;
+      const rowIdx = this._activeMultiRowIndex;
       const targetForm = isMulti
-        ? this.multiEntryRows()[this._activeMultiRowIndex!]
+        ? this.multiEntryRows()[rowIdx!]
         : this.singleEntryForm;
       targetForm?.get('asset')?.setValue(result.selectedAsset.EquipmentId);
       targetForm?.get('assetDescription')?.setValue(result.selectedAsset.EquipmentDescription);
@@ -669,8 +652,11 @@ export class AddUsagePanelComponent implements AfterViewInit {
         this.updateMeterHints(result.selectedAsset.EquipmentId);
       }
       this._activeMultiRowIndex = null;
-      // Trigger signal update so aw-table re-renders with new values
       if (isMulti) {
+        // Auto-add row if asset was selected on the last row
+        if (rowIdx === this.multiEntryRows().length - 1) {
+          this.addRow();
+        }
         this.multiEntryRows.set([...this.multiEntryRows()]);
       }
     }
