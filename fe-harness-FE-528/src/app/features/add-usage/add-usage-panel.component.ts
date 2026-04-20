@@ -995,10 +995,8 @@ export class AddUsagePanelComponent implements AfterViewInit {
         // the active input cell. Meter hints are updated on blur via lookupFn instead.
       }
 
-      // Only trigger table re-render for fields that affect computed display values
-      if (fieldName === 'businessUsage' || fieldName === 'individualUsage') {
-        this.multiEntryRows.set([...this.multiEntryRows()]);
-      }
+      // Don't trigger table re-render during typing — it destroys the active input cell.
+      // Total Usage reads live FormGroup values via combineTemplate instead.
     }
   }
 
@@ -1363,10 +1361,12 @@ export class AddUsagePanelComponent implements AfterViewInit {
           key: 'totalUsage',
           label: 'Total Usage',
           align: 'left',
-          combineFields: ['businessUsage', 'individualUsage', '_rowIndex'],
+          combineFields: ['_rowIndex'],
           combineTemplate: (data: any[]) => {
-            const business = parseFloat(data[0]) || 0;
-            const individual = parseFloat(data[1]) || 0;
+            // Read live FormGroup values so total updates without table re-render
+            const row = this.multiEntryRows()[data[0]];
+            const business = parseFloat(row?.get('businessUsage')?.value) || 0;
+            const individual = parseFloat(row?.get('individualUsage')?.value) || 0;
             const total = (business + individual).toFixed(2);
             return {
               component: TableTextSubtextComponent,

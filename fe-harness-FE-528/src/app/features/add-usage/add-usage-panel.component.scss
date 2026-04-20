@@ -169,7 +169,7 @@ $form-content-max-width: calc(#{$field-max-width} * 2 + 24px);
 
 // Ensure last data column isn't hidden behind sticky action menu column
 :host ::ng-deep .multi-entry-section .mat-mdc-table {
-  padding-right: 100px;
+  padding-right: 56px;
 }
 
 .add-row-bar {
@@ -186,6 +186,12 @@ $form-content-max-width: calc(#{$field-max-width} * 2 + 24px);
 
   // Align all cell content to top so they line up with the asset cell's description
   .aw-table-cell {
+    vertical-align: top !important;
+  }
+
+  // Action menu column — align button to top of cell
+  .cdk-column-action .aw-table-cell,
+  .cdk-column-action {
     vertical-align: top !important;
   }
 

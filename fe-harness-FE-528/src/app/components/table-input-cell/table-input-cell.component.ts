@@ -115,9 +115,21 @@ export class TableInputCellComponent implements OnInit, AfterViewInit {
       input.addEventListener('blur', () => {
         setTimeout(() => {
           const currentVal = this.ctrl.value ?? '';
-          const resolved = typeof currentVal === 'object' ? (currentVal.value ?? '') : currentVal;
-          // Uppercase the input value on blur
-          if (resolved.trim()) {
+          let resolved = typeof currentVal === 'object' ? (currentVal.value ?? '') : currentVal;
+
+          // For decimal fields, strip non-numeric characters on blur
+          if (this.inputMode() === 'decimal' && resolved) {
+            const sanitized = String(resolved).replace(/[^\d.]/g, '').replace(/(\..*)\./g, '$1');
+            if (sanitized !== String(resolved)) {
+              resolved = sanitized;
+              this.ctrl.setValue(sanitized, { emitEvent: false });
+              input.value = sanitized;
+              this.onChange()?.call(null, sanitized);
+            }
+          }
+
+          // Uppercase the input value on blur (skip for decimal fields)
+          if (resolved.trim() && this.inputMode() !== 'decimal') {
             const upper = resolved.trim().toUpperCase();
             this.ctrl.setValue(upper, { emitEvent: false });
             input.value = upper;
