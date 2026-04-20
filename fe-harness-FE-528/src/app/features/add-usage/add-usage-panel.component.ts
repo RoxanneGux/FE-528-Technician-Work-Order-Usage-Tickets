@@ -107,9 +107,29 @@ import {
   styleUrl: './add-usage-panel.component.scss',
 })
 export class AddUsagePanelComponent implements AfterViewInit {
-  @ViewChild('startDateTimePicker') private _startDateTimePicker!: AwDateTimePickerComponent;
-  @ViewChild('endDateTimePicker') private _endDateTimePicker!: AwDateTimePickerComponent;
-  @ViewChild('transactionDatePicker') private _transactionDatePicker!: AwDatePickerComponent;
+  private _startDateTimePicker!: AwDateTimePickerComponent;
+  @ViewChild('startDateTimePicker') set startDateTimePickerRef(picker: AwDateTimePickerComponent) {
+    if (picker && picker !== this._startDateTimePicker) {
+      this._startDateTimePicker = picker;
+      this.attachInputListeners(picker, 'start');
+    }
+  }
+
+  private _endDateTimePicker!: AwDateTimePickerComponent;
+  @ViewChild('endDateTimePicker') set endDateTimePickerRef(picker: AwDateTimePickerComponent) {
+    if (picker && picker !== this._endDateTimePicker) {
+      this._endDateTimePicker = picker;
+      this.attachInputListeners(picker, 'end');
+    }
+  }
+
+  private _transactionDatePicker!: AwDatePickerComponent;
+  @ViewChild('transactionDatePicker') set transactionDatePickerRef(picker: AwDatePickerComponent) {
+    if (picker && picker !== this._transactionDatePicker) {
+      this._transactionDatePicker = picker;
+      this.attachTransactionDateListeners();
+    }
+  }
 
   public readonly close = output<UsageEntryResult | null>();
 
@@ -244,9 +264,7 @@ export class AddUsagePanelComponent implements AfterViewInit {
 
   /** Attach keydown and blur listeners to internal date/time inputs after view initializes. */
   ngAfterViewInit(): void {
-    this.attachInputListeners(this._startDateTimePicker, 'start');
-    this.attachInputListeners(this._endDateTimePicker, 'end');
-    this.attachTransactionDateListeners();
+    // Date picker listeners are now attached via ViewChild setters (re-attach on @if re-creation)
     this._watchLookupFieldClears();
   }
 
