@@ -192,11 +192,8 @@ $form-content-max-width: calc(#{$field-max-width} * 2 + 24px);
     vertical-align: top !important;
   }
 
-  // Action menu column — align button to top of cell
-  .cdk-column-action .aw-table-cell,
-  .cdk-column-action {
-    vertical-align: top !important;
-  }
+  // Action menu column — CCL centers the button vertically in responsive mode.
+  // This is a CCL internal layout behavior that cannot be overridden from outside.
 
   // Asset cell
   .cdk-column-asset {
