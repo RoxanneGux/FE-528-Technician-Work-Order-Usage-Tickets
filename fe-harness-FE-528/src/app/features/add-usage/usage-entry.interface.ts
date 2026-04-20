@@ -198,3 +198,11 @@ export interface MockMAWOParent {
   parentTitle: string;
   children: MockMAWOChildWorkOrder[];
 }
+
+/** Metadata for a multi-entry row, tracked separately from the FormGroup. */
+export interface RowMeta {
+  /** Nesting depth: 0 for top-level, 1 for direct component, 2 for sub-component, etc. */
+  nestingDepth: number;
+  /** Whether "Get Components" has been executed for this row. */
+  componentsFetched: boolean;
+}

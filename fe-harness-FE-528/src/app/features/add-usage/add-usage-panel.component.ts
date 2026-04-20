@@ -45,9 +45,11 @@ import { TableAssetCellComponent } from '../../components/table-asset-cell/table
 import { TableDateCellComponent } from '../../components/table-date-cell/table-date-cell.component';
 import { TableDateTimeCellComponent } from '../../components/table-date-time-cell/table-date-time-cell.component';
 import { TableSelectCellComponent } from '../../components/table-select-cell/table-select-cell.component';
+import { TableComponentIndicatorCellComponent } from '../../components/table-component-indicator-cell/table-component-indicator-cell.component';
 import { MockDataService } from '../../services/mock-data.service';
 import { UsageAssetSearchDialogComponent } from './asset-search-dialog.component';
 import { UsageTaskSearchDialogComponent } from './task-search-dialog.component';
+import { COMPONENT_MOCK_DATA, INHERITED_FIELDS } from './component-mock-data';
 import {
   DISPLAY_MODE_FIELDS,
   MAWO_HIDDEN_FIELDS,
@@ -56,6 +58,7 @@ import {
   UsageDisplayMode,
   UsageEntry,
   UsageEntryResult,
+  RowMeta,
   WORK_ORDER_TYPE_OPTIONS,
   WorkOrderType,
 } from './usage-entry.interface';
@@ -95,6 +98,7 @@ import {
     TableDateCellComponent,
     TableDateTimeCellComponent,
     TableSelectCellComponent,
+    TableComponentIndicatorCellComponent,
     UsageAssetSearchDialogComponent,
     UsageTaskSearchDialogComponent,
   ],
@@ -252,8 +256,29 @@ export class AddUsagePanelComponent implements AfterViewInit {
   /** Reactive form for single-entry mode. */
   public readonly singleEntryForm = this.createRowFormGroup();
 
+  /** Row metadata map keyed by stable row ID. Tracks nesting depth and componentsFetched state. */
+  public readonly rowMetadata: WritableSignal<Map<number, RowMeta>> = signal(new Map<number, RowMeta>());
+
+  /** Counter for assigning stable row IDs. */
+  private _nextRowId = 0;
+
+  /** Get metadata for a row by ID, returning defaults if not found. */
+  public getRowMeta(rowId: number): RowMeta {
+    return this.rowMetadata().get(rowId) ?? { nestingDepth: 0, componentsFetched: false };
+  }
+
   /** Array of FormGroups for multi-entry rows, initialized with one row. */
-  public readonly multiEntryRows = signal<FormGroup[]>([this.createRowFormGroup()]);
+  public readonly multiEntryRows: WritableSignal<FormGroup[]> = (() => {
+    const initialRow = this.createRowFormGroup();
+    const rowId = this._nextRowId++;
+    (initialRow as any)._rowId = rowId;
+    this.rowMetadata.update(map => {
+      const newMap = new Map(map);
+      newMap.set(rowId, { nestingDepth: 0, componentsFetched: false });
+      return newMap;
+    });
+    return signal<FormGroup[]>([initialRow]);
+  })();
 
   /** Flat row objects for aw-table [tableData] binding. */
   public readonly multiEntryTableData = computed(() => {
@@ -262,7 +287,9 @@ export class AddUsagePanelComponent implements AfterViewInit {
       const business = parseFloat(raw.businessUsage) || 0;
       const individual = parseFloat(raw.individualUsage) || 0;
       const totalUsage = (business + individual).toFixed(2);
-      return { ...raw, _rowIndex: index, totalUsage };
+      const rowId = (row as any)._rowId ?? -1;
+      const meta = this.getRowMeta(rowId);
+      return { ...raw, _rowIndex: index, totalUsage, _nestingDepth: meta.nestingDepth, _componentsFetched: meta.componentsFetched, _rowId: rowId };
     });
   });
 
@@ -270,6 +297,19 @@ export class AddUsagePanelComponent implements AfterViewInit {
   public readonly multiEntryColumns = computed<TableCellInput[]>(() => {
     const visibleFields = this.mawoVisibleFields();
     const columns: TableCellInput[] = [];
+
+    // Component Indicator Column — first column, shows nesting depth icons
+    columns.push({
+      type: TableCellTypes.Custom,
+      key: '_componentIndicator',
+      label: ' ',
+      align: 'center',
+      combineFields: ['_nestingDepth'],
+      combineTemplate: (data: any[]) => ({
+        component: TableComponentIndicatorCellComponent,
+        componentData: { nestingDepth: data[0] || 0 },
+      }),
+    });
 
     // Asset column — always visible. Uses production WAC pattern: aw-form-field + AwInput + description span.
     columns.push({
@@ -304,6 +344,12 @@ export class AddUsagePanelComponent implements AfterViewInit {
                 row?.get('assetDescription')?.setValue(match.description, { emitEvent: false });
                 this.updateMeterHints(match.value);
                 return { description: match.description, isError: false };
+              }
+              // Component rows have assetDescription pre-set — use it if available
+              const row = this.multiEntryRows()[data[1]];
+              const existingDesc = row?.get('assetDescription')?.value;
+              if (existingDesc) {
+                return { description: existingDesc, isError: false };
               }
               return { description: 'NOT DEFINED', isError: true };
             },
@@ -470,7 +516,15 @@ export class AddUsagePanelComponent implements AfterViewInit {
     } else {
       actions.push({ title: 'Delete', action: () => this.onMultiAction(rowData._rowIndex, 'delete') });
     }
-    actions.push({ title: 'Get Components', action: () => this.onMultiAction(rowData._rowIndex, 'getComponents') });
+
+    // Conditionally include "Get Components"
+    const rowIndex = rowData._rowIndex;
+    const row = this.multiEntryRows()[rowIndex];
+    const assetId = row?.get('asset')?.value;
+    const meta = this.getRowMeta(rowData._rowId);
+    if (assetId && COMPONENT_MOCK_DATA[assetId] && !meta.componentsFetched) {
+      actions.push({ title: 'Get Components', action: () => this.onMultiAction(rowData._rowIndex, 'getComponents') });
+    }
 
     return actions;
   };
@@ -765,7 +819,15 @@ export class AddUsagePanelComponent implements AfterViewInit {
 
   /** Append a new empty row to the multi-entry table. */
   public addRow(): void {
-    this.multiEntryRows.update(rows => [...rows, this.createRowFormGroup()]);
+    const newRow = this.createRowFormGroup();
+    const rowId = this._nextRowId++;
+    this.rowMetadata.update(map => {
+      const newMap = new Map(map);
+      newMap.set(rowId, { nestingDepth: 0, componentsFetched: false });
+      return newMap;
+    });
+    (newRow as any)._rowId = rowId;
+    this.multiEntryRows.update(rows => [...rows, newRow]);
   }
 
   /** Remove a row from the multi-entry table by index. */
@@ -928,10 +990,9 @@ export class AddUsagePanelComponent implements AfterViewInit {
           a => a.value.toLowerCase() === value.toLowerCase()
         ) : null;
         row.get('assetDescription')?.setValue(match?.description ?? null, { emitEvent: false });
-        // Update meter hints if exact match found
-        if (match) {
-          this.updateMeterHints(match.value);
-        }
+        // Don't call updateMeterHints here — it triggers signal writes that cause
+        // multiEntryColumns to recompute, which re-renders the table and destroys
+        // the active input cell. Meter hints are updated on blur via lookupFn instead.
       }
 
       // Only trigger table re-render for fields that affect computed display values
@@ -961,8 +1022,58 @@ export class AddUsagePanelComponent implements AfterViewInit {
       } else {
         this.removeRow(rowIndex);
       }
+    } else if (action === 'getComponents') {
+      this.onGetComponents(rowIndex);
     }
-    // 'getComponents' — placeholder for future implementation
+  }
+
+  /** Execute "Get Components" for a row — inserts component rows below the parent. */
+  private onGetComponents(rowIndex: number): void {
+    const rows = this.multiEntryRows();
+    const parentRow = rows[rowIndex];
+    if (!parentRow) return;
+
+    const parentRowId = (parentRow as any)._rowId;
+    const parentMeta = this.getRowMeta(parentRowId);
+    const assetId = parentRow.get('asset')?.value;
+    const components = COMPONENT_MOCK_DATA[assetId];
+    if (!components || components.length === 0) return;
+
+    const newRows = [...rows];
+    const newMetadata = new Map(this.rowMetadata());
+
+    // Mark parent as fetched
+    newMetadata.set(parentRowId, { ...parentMeta, componentsFetched: true });
+
+    // Insert component rows
+    let insertIndex = rowIndex + 1;
+    for (const comp of components) {
+      const childRow = this.createRowFormGroup();
+
+      // Copy inherited fields from parent
+      for (const field of INHERITED_FIELDS) {
+        const parentValue = parentRow.get(field)?.value;
+        childRow.get(field)?.setValue(parentValue, { emitEvent: false });
+      }
+
+      // Override asset fields with component data
+      childRow.get('asset')?.setValue(comp.assetId, { emitEvent: false });
+      childRow.get('assetDescription')?.setValue(comp.assetDescription, { emitEvent: false });
+
+      // Assign metadata
+      const childRowId = this._nextRowId++;
+      (childRow as any)._rowId = childRowId;
+      newMetadata.set(childRowId, {
+        nestingDepth: parentMeta.nestingDepth + 1,
+        componentsFetched: false,
+      });
+
+      newRows.splice(insertIndex, 0, childRow);
+      insertIndex++;
+    }
+
+    this.rowMetadata.set(newMetadata);
+    this.multiEntryRows.set(newRows);
   }
 
   /** Signal to show/hide the delete row confirmation dialog. */

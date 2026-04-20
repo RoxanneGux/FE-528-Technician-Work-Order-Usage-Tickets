@@ -117,15 +117,17 @@ export class TableAssetCellComponent implements OnInit, AfterViewInit {
     }
 
     // Sync value to parent FormGroup on every change.
-    // Use a microtask to avoid interfering with aw-form-field's clear icon toggle
-    // which can steal focus on the first keystroke.
+    // Use a microtask on the first emission to avoid interfering with
+    // aw-form-field's clear icon toggle which can steal focus on mount.
+    // IMPORTANT: Read ctrl.value at execution time (not the captured closure value)
+    // to avoid stale value overwrites when the user types quickly.
     let initialized = false;
-    this.ctrl.valueChanges.subscribe(val => {
+    this.ctrl.valueChanges.subscribe(() => {
       if (!initialized) {
         initialized = true;
-        setTimeout(() => this.onChange()?.call(null, val ?? ''), 0);
+        setTimeout(() => this.onChange()?.call(null, this.ctrl.value ?? ''), 0);
       } else {
-        this.onChange()?.call(null, val ?? '');
+        this.onChange()?.call(null, this.ctrl.value ?? '');
       }
     });
   }
@@ -134,18 +136,29 @@ export class TableAssetCellComponent implements OnInit, AfterViewInit {
     // Nothing needed — blur is handled via template (blur) binding
   }
 
-  /** Handle blur: lookup description and notify parent. */
+  /** Handle blur: uppercase value, lookup description, and notify parent. */
   handleBlur(): void {
     // Small delay to let aw-form-field clear button work before we read the value
     setTimeout(() => {
       const currentVal = (this.ctrl.value ?? '').trim();
       const lookup = this.lookupFn();
 
-      if (lookup && currentVal) {
-        const result = lookup(currentVal);
+      // Uppercase on blur — matches single-entry behavior
+      if (currentVal) {
+        const upper = currentVal.toUpperCase();
+        if (upper !== this.ctrl.value) {
+          this.ctrl.setValue(upper, { emitEvent: false });
+          this.onChange()?.call(null, upper);
+        }
+      }
+
+      const resolvedVal = (this.ctrl.value ?? '').trim();
+
+      if (lookup && resolvedVal) {
+        const result = lookup(resolvedVal);
         this.descriptionText = result.description;
         this.descriptionIsError = result.isError;
-      } else if (!currentVal) {
+      } else if (!resolvedVal) {
         this.descriptionText = '';
         this.descriptionIsError = false;
       }

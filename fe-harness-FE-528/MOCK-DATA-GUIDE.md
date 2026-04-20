@@ -278,6 +278,38 @@ Times are formatted as "H:MM AM/PM" (e.g., "9:00 AM", "2:30 PM").
 | `business` | Business Usage Only | Transaction Date, Department, Task |
 | `all` | All Values (incl. Misc Codes) | Transaction Date, Hours Used, Operator, Department, Task |
 
+## Component Hierarchy (Get Components)
+
+The "Get Components" action in the multi-entry table fetches mock component data for an asset and inserts child rows below the parent. Components can have sub-components, enabling multi-level nesting.
+
+### Assets with Components
+
+| Asset ID | Asset Description | Components |
+|----------|-------------------|------------|
+| R-12345 | MOTOR POOL SEDAN | COMP-A (FRONT AXLE ASSEMBLY), COMP-B (REAR DIFFERENTIAL) |
+| EQ-4821 | CENTRIFUGAL PUMP | COMP-C (IMPELLER SHAFT), COMP-D (BEARING HOUSING) |
+
+### Components with Sub-Components
+
+| Component ID | Component Description | Sub-Components |
+|--------------|----------------------|----------------|
+| COMP-A | FRONT AXLE ASSEMBLY | SUB-A1 (WHEEL HUB LEFT) |
+
+### Hierarchy Tree
+
+```
+R-12345 (MOTOR POOL SEDAN)
+├── COMP-A (FRONT AXLE ASSEMBLY)
+│   └── SUB-A1 (WHEEL HUB LEFT)
+└── COMP-B (REAR DIFFERENTIAL)
+
+EQ-4821 (CENTRIFUGAL PUMP)
+├── COMP-C (IMPELLER SHAFT)
+└── COMP-D (BEARING HOUSING)
+```
+
+> **Note:** Only assets listed above show the "Get Components" action in the row menu. The action disappears after being used once per row.
+
 ## Quick Scenarios
 
 | I want to... | How |
@@ -320,6 +352,9 @@ Times are formatted as "H:MM AM/PM" (e.g., "9:00 AM", "2:30 PM").
 | Delete a multi-entry row | Open Add Usage panel → switch to Multi Entry → click delete icon on a row |
 | Change usage display mode | Use the floating "Usage Display Mode" selector in the bottom-right corner of the WO Details page |
 | See different field configurations | Change the display mode selector → open Add Usage panel → fields change based on mode |
+| Get Components (with sub-components) | Open Add Usage panel → Multi Entry → set asset to `R-12345` → click row action menu → "Get Components" → then click "Get Components" on COMP-A row to see sub-components |
+| Get Components (no sub-components) | Open Add Usage panel → Multi Entry → set asset to `EQ-4821` → click row action menu → "Get Components" |
+| Get Components unavailable | Open Add Usage panel → Multi Entry → set asset to `QA-FLEET-002` (or any asset not in the component hierarchy) → action menu will not show "Get Components" |
 
 ### Side Drawer Filter Scenarios
 
