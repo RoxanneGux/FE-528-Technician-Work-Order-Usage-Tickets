@@ -42,7 +42,7 @@
         <div class="work-filter-fields">
           <aw-form-field class="work-filter-field">
             <aw-icon [iconName]="'search'" position="prefix"></aw-icon>
-            <input AwInput [placeholder]="searchPlaceholder()" [formControl]="searchControl" />
+            <input AwInput [placeholder]="searchPlaceholder()" [formControl]="searchControl" aria-label="Search current work" />
           </aw-form-field>
 
           <div class="work-filter-field">
@@ -122,6 +122,7 @@
                   <div class="p-3">
                     <div class="d-block">
                       <aw-table
+                        [ariaLabel]="'Work order tasks'"
                         [columnsDefinition]="taskColumns"
                         [tableData]="item.tasks ?? []">
                       </aw-table>
@@ -148,6 +149,7 @@
                   </div>
                   <div class="d-block">
                     <aw-table
+                      [ariaLabel]="'Asset work orders'"
                       [columnsDefinition]="assetWoColumns"
                       [tableData]="item.assetWoTableData ?? []"
                       [enableSingleSelection]="false">

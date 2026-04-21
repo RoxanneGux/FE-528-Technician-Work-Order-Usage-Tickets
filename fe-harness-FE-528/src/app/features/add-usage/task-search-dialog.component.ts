@@ -25,7 +25,7 @@ import { BaseDialogComponent } from '../../components/dialogs/base-dialog.compon
   imports: [AwButtonIconOnlyDirective, AwIconComponent],
   template: `
     @if (hasChildren()) {
-      <button AwButtonIconOnly [buttonType]="'primary'" (click)="handleClick()">
+      <button AwButtonIconOnly [buttonType]="'primary'" [ariaLabel]="'Drill down into ' + contractId()" (click)="handleClick()">
         <aw-icon [iconName]="'arrow_forward_ios'" [iconColor]="'aw-royal-blue'"></aw-icon>
       </button>
     }

@@ -10,7 +10,7 @@ import { AwIconComponent } from '@assetworks-llc/aw-component-lib';
   standalone: true,
   imports: [AwIconComponent],
   template: `
-    <div class="component-indicator-cell">
+    <div class="component-indicator-cell" role="presentation" [attr.aria-hidden]="true">
       @for (i of depthArray(); track i) {
         <aw-icon [iconName]="'subdirectory_arrow_right'" [iconSize]="16"></aw-icon>
       }

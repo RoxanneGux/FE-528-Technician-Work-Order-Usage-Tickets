@@ -1,12 +1,13 @@
 <div class="anchor-layout px-2 px-md-3 px-lg-4">
   <div class="anchor-layout__container">
-    <nav class="anchor-layout__sidebar d-none d-md-block">
+    <nav class="anchor-layout__sidebar d-none d-md-block" aria-label="Page sections">
       <ul class="list-unstyled m-0 p-0">
         @for (link of anchorLinks(); track link.fragment) {
           <li>
             <a class="anchor-layout__link d-flex align-items-center gap-2 px-3 py-2"
                (click)="scrollTo(link.fragment)"
-               role="button">
+               role="button"
+               [attr.aria-label]="'Navigate to ' + link.name">
               @if (link.icon) {
                 <span class="anchor-layout__icon" [class]="link.iconColor || ''">{{ link.icon }}</span>
               }

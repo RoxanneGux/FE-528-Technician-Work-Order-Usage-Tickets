@@ -8,7 +8,7 @@
       <div class="filter-fields">
         <aw-form-field class="filter-field">
           <aw-icon [iconName]="'search'" position="prefix"></aw-icon>
-          <input AwInput [placeholder]="'Search'" [formControl]="searchControl" />
+          <input AwInput [placeholder]="'Search'" [formControl]="searchControl" aria-label="Search employees" />
         </aw-form-field>
 
         <div class="filter-field">
@@ -70,6 +70,7 @@
     -->
     <div class="d-block" (click)="onEmployeeDetailClick($event)">
       <aw-table
+        [ariaLabel]="'Employee search results'"
         [columnsDefinition]="columns"
         [tableData]="tableData()"
         [tableHeight]="'calc(100vh - 420px)'"

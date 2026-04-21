@@ -49,7 +49,7 @@
                   [placeholder]="'mm/dd/yyyy'"
                   >
                 </aw-date-picker>
-                <button ariaLabel="calendar" type="button" AwButtonIconOnly [buttonType]="'primary'" (click)="transactionDatePicker.openCalendar()">
+                <button [ariaLabel]="'Open calendar'" type="button" AwButtonIconOnly [buttonType]="'primary'" (click)="transactionDatePicker.openCalendar()">
                   <aw-icon [iconName]="'today'" [iconColor]="''"></aw-icon>
                 </button>
               </aw-form-field>
@@ -435,6 +435,7 @@
             </div>
             <div class="sr-table-container">
               <aw-table
+                [ariaLabel]="'Children work orders'"
                 [columnsDefinition]="childWOColumns"
                 [tableData]="filteredChildWorkOrders()"
                 [tableOptions]="{ noDataPlaceholder: 'No children work orders found.' }">
@@ -452,6 +453,7 @@
         <div class="multi-entry-scroll-container">
           @for (key of [tableRenderKey()]; track key) {
             <aw-table
+              [ariaLabel]="'Multi-entry usage rows'"
               [columnsDefinition]="multiEntryColumns()"
               [tableData]="multiEntryTableData()"
               [optionsMenuHandler]="getMultiEntryRowActions"

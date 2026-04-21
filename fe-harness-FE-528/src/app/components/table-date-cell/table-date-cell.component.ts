@@ -25,7 +25,7 @@ import {
           [formControl]="formControl()"
           [placeholder]="'mm/dd/yyyy'">
         </aw-date-picker>
-        <button ariaLabel="calendar" type="button" AwButtonIconOnly
+        <button [ariaLabel]="'Open calendar'" type="button" AwButtonIconOnly
           [buttonType]="'primary'" (click)="datePicker.openCalendar()">
           <aw-icon [iconName]="'today'" [iconColor]="''"></aw-icon>
         </button>
