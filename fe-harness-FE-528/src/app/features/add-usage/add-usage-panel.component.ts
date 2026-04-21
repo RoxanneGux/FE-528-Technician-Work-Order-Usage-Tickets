@@ -1058,6 +1058,14 @@ export class AddUsagePanelComponent implements AfterViewInit {
     const newRows = [...rows];
     const newMetadata = new Map(this.rowMetadata());
 
+    // Uppercase the parent row's string fields before copying
+    for (const field of INHERITED_FIELDS) {
+      const val = parentRow.get(field)?.value;
+      if (typeof val === 'string' && val && val !== val.toUpperCase()) {
+        parentRow.get(field)?.setValue(val.toUpperCase(), { emitEvent: false });
+      }
+    }
+
     // Mark parent as fetched
     newMetadata.set(parentRowId, { ...parentMeta, componentsFetched: true });
 
@@ -1066,9 +1074,12 @@ export class AddUsagePanelComponent implements AfterViewInit {
     for (const comp of components) {
       const childRow = this.createRowFormGroup();
 
-      // Copy inherited fields from parent
+      // Copy inherited fields from parent, uppercasing string values
       for (const field of INHERITED_FIELDS) {
-        const parentValue = parentRow.get(field)?.value;
+        let parentValue = parentRow.get(field)?.value;
+        if (typeof parentValue === 'string' && parentValue) {
+          parentValue = parentValue.toUpperCase();
+        }
         childRow.get(field)?.setValue(parentValue, { emitEvent: false });
       }
 

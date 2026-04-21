@@ -310,6 +310,22 @@ EQ-4821 (CENTRIFUGAL PUMP)
 
 > **Note:** Only assets listed above show the "Get Components" action in the row menu. The action disappears after being used once per row.
 
+### Inherited Fields
+
+When component rows are inserted, these fields are copied from the parent row (uppercased):
+
+| Field | Inherited? |
+|-------|:---:|
+| Asset | ✅ (overridden with component ID) |
+| Asset Description | ✅ (overridden with component description) |
+| Operator | ✅ |
+| Department | ✅ |
+| Account | ✅ |
+| Task | ✅ |
+| Financial Project Code | ✅ |
+| Transaction Date | ✅ |
+| Hours Used, Meters, Usage, Misc | ❌ (defaults) |
+
 ## Quick Scenarios
 
 | I want to... | How |
@@ -328,6 +344,10 @@ EQ-4821 (CENTRIFUGAL PUMP)
 | Remove a selected employee | Open Employee Chooser → add employees → click Remove on any row in the Selected Employees table |
 | Toggle light/dark theme | Use the theme toggle in the top navigation bar |
 | Filter by location | Open Employee Chooser → click filter icon → select location(s) → table filters to matching employees |
+| Get Components (with sub-components) | Multi Entry → enter asset R-12345 → action menu → Get Components → COMP-A and COMP-B appear → action menu on COMP-A → Get Components → SUB-A1 appears |
+| Get Components (no sub-components) | Multi Entry → enter asset EQ-4821 → action menu → Get Components → COMP-C and COMP-D appear (no further nesting) |
+| Get Components unavailable | Multi Entry → enter asset QA-FLEET-002 → action menu → no "Get Components" option (asset has no components) |
+| Verify field inheritance | Multi Entry → fill in Operator, Account, Dept, Task on parent → Get Components → child rows inherit all values uppercased |
 | Filter by shift | Open Employee Chooser → click filter icon → select shift(s) → table filters to matching employees |
 | Filter by skill | Open Employee Chooser → click filter icon → select skill(s) → table filters to matching employees |
 | See filter chips | Each side drawer selection shows as a chip (e.g., "Assigned Location: Building A", "Skill: Mechanical") |

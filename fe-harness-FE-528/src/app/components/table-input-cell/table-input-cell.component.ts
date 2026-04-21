@@ -112,6 +112,14 @@ export class TableInputCellComponent implements OnInit, AfterViewInit {
   ngAfterViewInit(): void {
     const input = this._searchEl?.nativeElement?.querySelector('input');
     if (input) {
+      // Ensure aw-search displays the initial value — it can overwrite ctrl.value asynchronously
+      const initial = this.value() ?? '';
+      if (initial) {
+        setTimeout(() => {
+          input.value = initial;
+        }, 0);
+      }
+
       input.addEventListener('blur', () => {
         setTimeout(() => {
           const currentVal = this.ctrl.value ?? '';

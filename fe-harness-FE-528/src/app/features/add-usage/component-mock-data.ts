@@ -28,5 +28,6 @@ export const INHERITED_FIELDS: string[] = [
   'department',
   'account',
   'financialProjectCode',
+  'task',
   'transactionDate',
 ];

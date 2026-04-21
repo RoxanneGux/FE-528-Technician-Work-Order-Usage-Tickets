@@ -100,6 +100,21 @@ New rows are automatically added when the user enters data in the last row of th
 
 Blank rows are automatically filtered out on save, so extra empty rows don't get submitted. The "+ Add Row" button remains available for users who prefer to click.
 
+#### Get Components (Multi Entry Table)
+
+The row action menu includes a **Get Components** option for assets that have defined components in the mock data. When triggered:
+
+- Component rows are inserted directly below the parent row
+- A nesting indicator column (leftmost) shows `subdirectory_arrow_right` icons reflecting depth
+- Inherited fields are copied from the parent: Asset, Operator, Department, Account, Task, Financial Project Code, Transaction Date
+- All inherited values are uppercased automatically
+- Asset ID and description are overridden with the component's data
+- Components can have sub-components (e.g., COMP-A → SUB-A1), enabling infinite nesting
+- The "Get Components" action disappears after use (one-time per row)
+- Only assets with components in the mock data show the action (R-12345, EQ-4821, COMP-A)
+
+See `MOCK-DATA-GUIDE.md` for the full component hierarchy tree.
+
 #### MAWO Mode (Multi-Asset Work Order)
 
 When "MAWO" is selected in the Work Order Type toggle:
@@ -136,7 +151,8 @@ Dark mode toggle (moon icon, bottom-right) switches between light and dark theme
 | File | Purpose |
 |------|---------|
 | `src/app/features/add-usage/` | Add Usage panel (form, MAWO, children WO table) |
-| `src/app/features/add-usage/usage-entry.interface.ts` | Types, display mode field mappings, MAWO hidden fields |
+| `src/app/features/add-usage/component-mock-data.ts` | Component hierarchy mock data and inherited fields constant |
+| `src/app/features/add-usage/usage-entry.interface.ts` | Types, display mode field mappings, MAWO hidden fields, RowMeta |
 | `src/app/features/add-usage/asset-search-dialog.component.ts` | Asset lookup dialog |
 | `src/app/features/add-usage/task-search-dialog.component.ts` | Task lookup dialog (3-level drill-down) |
 | `src/app/features/work-order-details/` | Work Order Details page |
