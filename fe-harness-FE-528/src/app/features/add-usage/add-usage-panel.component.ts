@@ -529,19 +529,19 @@ export class AddUsagePanelComponent implements AfterViewInit {
     const isFirstRow = rowData._rowIndex === 0;
     const actions: TableActionMenu[] = [];
 
-    if (isFirstRow) {
-      actions.push({ title: 'Clear', action: () => this.onMultiAction(rowData._rowIndex, 'clear') });
-    } else {
-      actions.push({ title: 'Delete', action: () => this.onMultiAction(rowData._rowIndex, 'delete') });
-    }
-
-    // Conditionally include "Get Components"
+    // "Get Components" is always first when available
     const rowIndex = rowData._rowIndex;
     const row = this.multiEntryRows()[rowIndex];
     const assetId = row?.get('asset')?.value;
     const meta = this.getRowMeta(rowData._rowId);
     if (assetId && COMPONENT_MOCK_DATA[assetId] && !meta.componentsFetched) {
       actions.push({ title: 'Get Components', action: () => this.onMultiAction(rowData._rowIndex, 'getComponents') });
+    }
+
+    if (isFirstRow) {
+      actions.push({ title: 'Clear', action: () => this.onMultiAction(rowData._rowIndex, 'clear') });
+    } else {
+      actions.push({ title: 'Delete', action: () => this.onMultiAction(rowData._rowIndex, 'delete') });
     }
 
     return actions;
